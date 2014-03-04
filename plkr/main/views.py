@@ -1,4 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import *
+from django.core import serializers
+#render, RequestContext
+import json
+from main.models import *
 
 # Create your views here.
 def index(request):
@@ -12,8 +16,10 @@ def get_author(request, user_id):
 	# Get the author information
 	#
 	context = RequestContext(request)
-    
-	return None
+    	author = User.objects.get(id=user_id)
+	print("hello")
+	print(author.json())
+	return HttpResponse(json.dumps(author.json()), content_type="application/json")
 
 def get_friends(request, user_id):
 	# Get the user friends
@@ -33,9 +39,11 @@ def posts(request, post_id):
 	context = RequestContext(request)
     
 	if request.method == 'POST' or request.method == 'GET':
-    #return the post
+		pass
+        #return the post
 	elif request.method == 'PUT':
-    #insert/update the post
+		pass
+        #insert/update the post
     
 	return None
 

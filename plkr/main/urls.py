@@ -5,8 +5,8 @@ urlpatterns = patterns('',
 		url(r'^$', views.index, name="index" ),
 		#authors path
 		url(r'^author/(?P<user_id>\w+)/$', views.get_author, name="get_author"),
-		url(r'^author/post/(?P<post_id>\w+)/$', views.get_author_post,
-			name="authors_posts"),
+		#url(r'^author/post/(?P<post_id>\w+)/$', views.get_author_post,
+		#	name="authors_posts"),
 		#friends path
 		url(r'^friends/(?P<user_id>\w+)/$', views.get_friends,
 			name="get_friends"),

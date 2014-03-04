@@ -35,6 +35,14 @@ class User(models.Model):
     host = models.CharField(max_length = USER_HOST_MAX_SIZE)
     displayname = models.CharField(max_length = USER_DISPLAYNAME_MAX_SIZE)
     url = models.URLField()
+    
+    def json(self):
+        user = {} 
+        user["id"] = self.id
+        user["host"] = self.host
+        user["displayname"] = self.displayname
+        user["url"] = self.url
+        return user
 
     def __unicode__(self):
         return self.id
