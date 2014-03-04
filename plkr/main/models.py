@@ -18,18 +18,18 @@ POST_TITLE_MAX_SIZE = STR_MAX_SIZE
 POST_CONTENTTYPE_MAX_SIZE = STR_MAX_SIZE
 
 # Comment constant
-COMMENT_ID_MAX_SIZE = MAX_STR
+COMMENT_ID_MAX_SIZE = STR_MAX_SIZE
 COMMENT_MAX_SIZE = 5000
 
 # Friends list constants
-FLIST_ID_MAX_SIZE = MAX_STR
+FLIST_ID_MAX_SIZE = STR_MAX_SIZE
 
 # Category constants
-CAT_NAME_MAX_SIZE = MAX_STR
+CAT_NAME_MAX_SIZE = STR_MAX_SIZE
 
 
-Class User(models.Model):
-    '''
+class User(models.Model):
+    
     # max_length is based on the json given to us.
     id = models.CharField(max_length = USER_ID_MAX_SIZE, primary_key=True, unique=True)
     host = models.CharField(max_length = USER_HOST_MAX_SIZE)
@@ -38,34 +38,45 @@ Class User(models.Model):
 
     def __unicode__(self):
         return self.id
-    '''
 
-Class Category(models.Model):
-    '''
+
+class FriendsList(models.Model):
+    
+    id = models.CharField(max_length=FLIST_ID_MAX_SIZE, primary_key=True, unique=True)
+    user_who_sent_request = models.ForeignKey(User, unique=True, related_name = 'user_who_sent_request')
+    user_who_received_request = models.ForeignKey(User, unique=True, related_name ='user_who_received_requested')
+    accepted = models.BooleanField()
+    
+    def __unicode__(self):
+        return self.id
+
+
+class Category(models.Model):
+    
     name = models.CharField(max_length=CAT_NAME_MAX_SIZE, unique=True)
 
     def __unicode__(self):
         return self.name
-    '''
+    
 
-Class Post(models.Model):
-    '''
+class Post(models.Model):
+    
     id = models.CharField(max_length=POST_ID_MAX_SIZE, primary_key=True, unique=True)
     title = models.CharField(max_length= POST_TITLE_MAX_SIZE)
     author = models.ForeignKey(User)
-    source = model.URLField()
-    origin = model.URLField()
-    contentType = model.CharField(max_length = POST_CONTENTTPE_MAX_SIZE)
-    description = model.CharField(max_length = POST_DESCRIPTION_MAX_SIZE)
-    content = model.CharField(max_length = POST_CONTENT_MAX_SIZE)
-    categories = models.ManyToMany(Category)
+    source = models.URLField()
+    origin = models.URLField()
+    contentType = models.CharField(max_length = POST_CONTENTTYPE_MAX_SIZE)
+    description = models.CharField(max_length = POST_DESCRIPTION_MAX_SIZE)
+    content = models.CharField(max_length = POST_CONTENT_MAX_SIZE)
+    categories = models.ManyToManyField(Category)
 
     def __unicode__(self):
         return self.id
-    '''
+    
 
-Class Comment(model.Model):
-    '''
+class Comment(models.Model):
+    
     id = models.CharField(max_length=COMMENT_ID_MAX_SIZE, primary_key=True, unique=True)
     author = models.ForeignKey(User)
     pubdate = models.DateField()
@@ -74,17 +85,4 @@ Class Comment(model.Model):
 
     def __unicode__(self):
         return self.id
-    '''
-
-
-Class FriendsList(model.Model):
-    '''
-    id = models.CharField(max_length=FLIST_ID_MAX_SIZE, primary_key=True, unique=True)
-    user_who_sent_request = models.ForeignKey(User, unique=True)
-    user_who_received_request = models.ForeignKey(User, unique=True)
-    accepted = models.BooleanField()
     
-    def __unicode__(self):
-        return self.id
-    '''
-
