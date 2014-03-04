@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 
-Class Author(models.Model):
+Class User(models.Model):
 
 
 
@@ -23,5 +23,10 @@ Class Comment(model.Model):
 
 
 Class FriendsList(model.Model):
-
+    '''
+    id = models.CharField(max_length=128, primary_key=True, unique=True)
+    user_who_sent_request = models.ForeignKey(User, unique=True) 
+    user_who_received_request = models.ForeignKey(User, unique=True) 
+    accepted = models.BooleanField()
+    '''
 
