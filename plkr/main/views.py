@@ -17,8 +17,6 @@ def author(request, user_id):
 	#
 	context = RequestContext(request)
     	author = User.objects.get(id=user_id)
-	print("hello")
-	print(author.json())
 	return HttpResponse(json.dumps(author.json()), content_type="application/json")
 
 def friends(request, user1_id, user2_id = None):
@@ -36,7 +34,7 @@ def friends(request, user1_id, user2_id = None):
 			    flist = flist["authors"]
 			    authors = [f for f in flist if are_friends(user1_id, f)]
 			    resp["authors"] = authors		    
-		    except Exception e:
+		    except Exception, e:
 			    resp["authors"] = []
 
 	else:
@@ -68,8 +66,10 @@ def posts(request, post_id):
 	context = RequestContext(request)
     
 	if request.method == 'POST' or request.method == 'GET':
-		pass
         #return the post
+		post = Post.objects.get(id=post_id)
+	        print(post.json())
+		return HttpResponse(json.dumps(post.json()), content_type="application/json")
 	elif request.method == 'PUT':
 		pass
         #insert/update the post

@@ -69,6 +69,13 @@ class Category(models.Model):
 
 class Post(models.Model):
     
+    VISIBILITY_OPTIONS=(
+        ("PUBLIC", "Public"),
+        ("FOAF","Friend of a Friend"),
+        ("FRIENDS","Friends"),
+        ("PRIVATE","Private"),
+        ("SERVERONLY","Server Only"),
+    )
     id = models.CharField(max_length=POST_ID_MAX_SIZE, primary_key=True, unique=True)
     title = models.CharField(max_length= POST_TITLE_MAX_SIZE)
     author = models.ForeignKey(User)
@@ -78,10 +85,32 @@ class Post(models.Model):
     description = models.CharField(max_length = POST_DESCRIPTION_MAX_SIZE)
     content = models.CharField(max_length = POST_CONTENT_MAX_SIZE)
     categories = models.ManyToManyField(Category)
+    pubDate = models.DateField()
+    visibility = models.TextField(max_length = 10, choices = VISIBILITY_OPTIONS)
+    
+
+    def json(self):
+        post = {} 
+        post["title"] = self.title
+        post["source"] = self.source
+        post["origin"] = self.origin
+        post["description"] = self.description
+        post["content-type"] = self.contentType
+        post["content"] = self.content
+        post["author"] = User.objects.get(id=self.author).json()
+        #Implement this
+        post["categories"] = "IMPLEMENT"
+        post["comments"] = "IMPLEMENT"
+        post["pubDate"] = str(self.pubDate)
+        post["guid"] = self.id
+        post["visibility"] = self.visibility 
+
+        return post
 
     def __unicode__(self):
         return self.id
     
+
 
 class Comment(models.Model):
     
