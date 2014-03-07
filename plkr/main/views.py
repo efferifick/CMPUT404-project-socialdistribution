@@ -23,19 +23,19 @@ def friends(request, user1_id, user2_id = None):
 	context = RequestContext(request)
 	resp = dict()
 	if(user2_id == None):
-            #Get the user1 friends
-	    resp["query"] = "friends"
-	    resp["author"] = user1_id
-	    friends = []
-	   
-	    if request.method == 'POST':
-		    try:
-			    flist = json.loads(request.body)
-			    flist = flist["friends"]
-			    friends = [f for f in flist if are_friends(user1_id, f)]
-			    resp["friends"] = friends		    
-		    except Exception, e:
-			    resp["friends"] = []
+		#Get the user1 friends
+		resp["query"] = "friends"
+		resp["author"] = user1_id
+		friends = []
+
+		if request.method == 'POST':
+			try:
+				flist = json.loads(request.body)
+				flist = flist["friends"]
+				friends = [f for f in flist if are_friends(user1_id, f)]
+				resp["friends"] = friends		    
+			except Exception, e:
+				resp["friends"] = []
 
 	else:
 		if are_friends(user1_id, user2_id):
