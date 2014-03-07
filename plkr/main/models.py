@@ -98,9 +98,8 @@ class Post(models.Model):
         post["content-type"] = self.contentType
         post["content"] = self.content
         post["author"] = User.objects.get(id=self.author).json()
-        #Implement this
-        post["categories"] = "IMPLEMENT"
-        post["comments"] = "IMPLEMENT"
+        post["categories"] = [c.name for c in self.categories.all()]
+        post["comments"] = [com.json() for com in Comment.objects.filter(post=self.id)]
         post["pubDate"] = str(self.pubDate)
         post["guid"] = self.id
         post["visibility"] = self.visibility 
@@ -122,4 +121,11 @@ class Comment(models.Model):
 
     def __unicode__(self):
         return self.id
-    
+
+    def json(self):
+        comment = {}
+        comment["author"] = self.author.json()
+        comment["comment"] = self.comment
+        comment["pubDate"] = str(self.pubdate)
+        comment["guid"] = self.id
+        return comment
