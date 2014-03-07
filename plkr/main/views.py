@@ -26,22 +26,25 @@ def friends(request, user1_id, user2_id = None):
             #Get the user1 friends
 	    resp["query"] = "friends"
 	    resp["author"] = user1_id
-	    authors = []
+	    friends = []
 	   
 	    if request.method == 'POST':
 		    try:
 			    flist = json.loads(request.body)
-			    flist = flist["authors"]
-			    authors = [f for f in flist if are_friends(user1_id, f)]
-			    resp["authors"] = authors		    
+			    flist = flist["friends"]
+			    friends = [f for f in flist if are_friends(user1_id, f)]
+			    resp["friends"] = friends		    
 		    except Exception, e:
-			    resp["authors"] = []
+			    resp["friends"] = []
 
 	else:
 		if are_friends(user1_id, user2_id):
 			resp["friends"] = "YES"
 		else:
 			resp["friends"] = "NO"
+
+		resp["query"] = "friends"
+		#resp["friends"] = [user1_id, user2_id] In the spec the key friends is used twice
 
   	return HttpResponse(json.dumps(resp), content_type="application/json")
 
