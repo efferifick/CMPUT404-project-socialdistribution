@@ -35,7 +35,7 @@ class User(models.Model):
     host = models.CharField(max_length = USER_HOST_MAX_SIZE)
     displayname = models.CharField(max_length = USER_DISPLAYNAME_MAX_SIZE)
     url = models.URLField()
-    subscription_list = models.ManyToManyField(SubscriptionList)
+    #subscription_list = models.ManyToManyField(SubscriptionList)
 
     def json(self):
         user = {} 
@@ -49,22 +49,24 @@ class User(models.Model):
         return self.id
 
 
-class FriendsList(models.Model):
+class FriendRequest(models.Model):
     
-    id = models.CharField(max_length=FLIST_ID_MAX_SIZE, primary_key=True, unique=True)
-    user_who_sent_request = models.CharField(max_length = USER_ID_MAX_SIZE, primary_key=True, unique=True)
-    user_who_received_request = models.ForeignKey(User, unique=True, related_name ='user_who_received_requested')
+    id = models.AutoField(primary_key=True)
+    user_who_sent_request = models.CharField(max_length = USER_ID_MAX_SIZE)
+    user_who_received_request = models.ForeignKey(User, related_name ='user_who_received_requested')
     accepted = models.BooleanField()
     
     def __unicode__(self):
-        return self.id
+        return str(self.id)
 
+'''
 class SubscriptionList(models.Model):
     
     user_url = models.URLField(primary_key=True, unique=True)
 
     def __unicode__(self):
         return self.id
+'''
 
 class Category(models.Model):
     
