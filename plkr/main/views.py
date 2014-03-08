@@ -67,14 +67,44 @@ def are_friends(user1_id, user2_id):
 
 def posts(request, post_id):
 	context = RequestContext(request)
-    
+    	post = Post.objects.get(id=post_id)
+
 	if request.method == 'POST' or request.method == 'GET':
         #return the post
-		post = Post.objects.get(id=post_id)
 	        print(post.json())
 		return HttpResponse(json.dumps(post.json()), content_type="application/json")
 	elif request.method == 'PUT':
-		pass
+		body = json.loads(request.body)
+		for key, value in body.iteritems():
+			if key == "title":
+				post.title = value
+			elif key == "source":
+				post.source = value
+			elif key == "origin":
+				post.origin = value
+			elif key == "description":
+				post.description = value
+			elif key == "content-type":
+				post.contentType = value
+			elif key == "content":
+				post.content = value
+			#elif key == "author":
+				#post.author = value
+			elif key == "categories":
+				post.categories = value
+			elif key == "comments":
+				post.comments = value
+			elif key == "pubDate":
+				post.pubDate = value
+			elif key == "guid":
+				post.guid = value
+			elif key == "visibility":
+				post.visibility = value
+			
+		post.save()
+		
+		print post.origin
+
         #insert/update the post
     
 	return None

@@ -1,0 +1,15 @@
+# humanstxt.org/
+# The humans responsible & technology colophon
+
+# TEAM
+
+    Brandon Hayduk -- Developer -- @dluces
+    Diego Luces -- Developer -- 
+    Paulo Henrique Moreno -- Developer -- 
+    Marcus Vinicius Alves da Silva -- Developer -- 
+    Erick Ochoa -- Developer -- 
+
+# TECHNOLOGY COLOPHON
+
+    HTML5, CSS3
+    Twitter Bootstrap, jQuery
