@@ -14,4 +14,6 @@ urlpatterns = patterns('',
 			views.friends, name="are_friends"),
 		#post path
 		url(r'^post/(?P<post_id>\w+)/$', views.posts, name="posts"),
+		#friend request
+		url(r'^friendrequest/$', views.friendrequest, name="friendrequest"),
 		)
