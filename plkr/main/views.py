@@ -11,8 +11,7 @@ def index(request):
     # Request the context of the request.
     # The context contains information such as the client's machine details, for example.
     context = RequestContext(request)
-    
-    return None
+    return render_to_response('main/index.html', {}, context)
 
 def author(request, user_id):
     # Get the author information
