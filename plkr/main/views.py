@@ -1,5 +1,9 @@
 from django.shortcuts import *
 from django.core import serializers
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
 #render, RequestContext
 import json
 from main.models import *
@@ -17,7 +21,7 @@ def author(request, user_id):
     # Get the author information
     #
     context = RequestContext(request)
-    author = User.objects.get(id=user_id)
+    author = Author.objects.get(id=user_id)
     return HttpResponse(json.dumps(author.json()), content_type="application/json")
 
 def friends(request, user1_id, user2_id = None):
@@ -90,7 +94,7 @@ def posts(request, post_id):
         if post == {}:
             post = Post(id=post_id)
 
-        author = User.objects.get(id=body["author"]["id"])
+        author = Author.objects.get(id=body["author"]["id"])
         post.author = author
 
         for key, value in body.iteritems():
@@ -144,7 +148,7 @@ def friendrequest(request):
             friend = friend["author"]
             author = frequest["author"]
 
-            u_friend = User.objects.get(id=friend["id"])
+            u_friend = Author.objects.get(id=friend["id"])
 
             flist = FriendRequest(user_who_sent_request=author["id"], user_who_received_request=u_friend,accepted=False)
             flist.save()

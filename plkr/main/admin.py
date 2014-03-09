@@ -1,6 +1,7 @@
 from django.contrib import admin
-from main.models import User,Post,Comment,FriendRequest,Category
-admin.site.register(User)
+from main.models import Author, Post, Comment, FriendRequest, Category
+
+admin.site.register(Author)
 admin.site.register(Post)
 admin.site.register(Comment)
 admin.site.register(Category)
