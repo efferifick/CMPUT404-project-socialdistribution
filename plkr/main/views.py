@@ -157,3 +157,6 @@ def friendrequest(request):
 
 
 
+def notfound(request):
+    context = RequestContext(request)
+    return render_to_response('404.html', {}, context)

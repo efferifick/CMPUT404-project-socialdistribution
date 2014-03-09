@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from main import views
 
 urlpatterns = patterns('',
-		url(r'^$', views.index, name="index" ),
+		url(r'^$', views.index, name="index"),
 		#authors path
 		url(r'^author/(?P<user_id>\w+)/$', views.author, name="get_author"),
 		#url(r'^author/post/(?P<post_id>\w+)/$', views.get_author_post,
@@ -16,4 +16,7 @@ urlpatterns = patterns('',
 		url(r'^post/(?P<post_id>\w+)/$', views.posts, name="posts"),
 		#friend request
 		url(r'^friendrequest/$', views.friendrequest, name="friendrequest"),
+
+		# Whatever else
+		url(r'^.*$', views.notfound, name="notfound"),
 		)
