@@ -37,6 +37,14 @@ class Author(models.Model):
     host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
     displayname = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
     url = models.URLField()
+
+    @classmethod
+    def create(cls, user, displayName):
+        author = cls()
+        author.user = user
+        author.displayname = displayName
+        # Maybe set the future id
+        return author
     
     def json(self):
         user = {} 

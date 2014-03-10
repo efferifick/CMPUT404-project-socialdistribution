@@ -166,6 +166,43 @@ def friendrequest(request):
 
 def register(request):
     context = RequestContext(request)
+
+    if request.method == 'POST':
+        email = request.POST['email']
+        username = request.POST['username']
+        password = request.POST['password']
+        displayName = request.POST['displayName']
+
+        if email is None:
+            # Set error
+            pass
+
+        if username is None:
+            # Set error
+            pass
+
+        if password is None:
+            # Set error
+            pass
+
+        if displayName is None:
+            # Set error
+            pass
+
+        try:
+            user = User.objects.create_user(username, email, password)
+            author = Author.create(user, displayName)
+            user.save()
+            author.save()
+
+            # Add a success flash message
+
+            return redirect('django.contrib.auth.views.login')
+        except Exception, e:
+            # Add an error
+            # raise e
+            pass
+            
     return render_to_response('main/register.html', {}, context)
 
 def timeline(request):
