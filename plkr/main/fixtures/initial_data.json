@@ -13,6 +13,8 @@
       "is_superuser": true
     }
   },
+
+
   {
     "model": "auth.user",
     "pk": 2,
@@ -35,6 +37,356 @@
       "host": "http://localhost:8000/",
       "displayname": "dluces",
       "url": "http://localhost:8000/author/108ded43-8520-4035-a262-547454d32022"
+    }
+  },
+
+
+  {
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+      "first_name": "Test1",
+      "last_name": "Test1",
+      "email": "test1@localhost",
+      "username": "test1",
+      "password": "pbkdf2_sha256$12000$iSuQSsgWo6Uy$CAguisjVgbxSb7tjw0Dmh68UMZ0aLju0FNUDvWe58UQ=",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "main.author",
+    "pk": "108ded43-8520-4035-a262-547454d32023",
+    "fields": {
+      "user": 3,
+      "host": "http://localhost:8000/",
+      "displayname": "test1",
+      "url": "http://localhost:8000/author/108ded43-8520-4035-a262-547454d32023"
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+      "first_name": "Test2",
+      "last_name": "Test2",
+      "email": "test2@localhost",
+      "username": "test2",
+      "password": "pbkdf2_sha256$12000$iSuQSsgWo6Uy$CAguisjVgbxSb7tjw0Dmh68UMZ0aLju0FNUDvWe58UQ=",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false
+    }
+  },
+  {
+    "model": "main.author",
+    "pk": "108ded43-8520-4035-a262-547454d32024",
+    "fields": {
+      "user": 4,
+      "host": "http://localhost:8000/",
+      "displayname": "test2",
+      "url": "http://localhost:8000/author/108ded43-8520-4035-a262-547454d32024"
+    }
+  },
+
+
+  {
+    "model": "main.category",
+    "pk": 1,
+    "fields": {
+      "name": "plain"
+    }
+  },
+  {
+    "model": "main.category",
+    "pk": 2,
+    "fields": {
+      "name": "html"
+    }
+  },
+  {
+    "model": "main.category",
+    "pk": 3,
+    "fields": {
+      "name": "markdown"
+    }
+  },
+  {
+    "model": "main.category",
+    "pk": 4,
+    "fields": {
+      "name": "public"
+    }
+  },
+  {
+    "model": "main.category",
+    "pk": 5,
+    "fields": {
+      "name": "foaf"
+    }
+  },
+  {
+    "model": "main.category",
+    "pk": 6,
+    "fields": {
+      "name": "friends"
+    }
+  },
+  {
+    "model": "main.category",
+    "pk": 7,
+    "fields": {
+      "name": "private"
+    }
+  },
+  {
+    "model": "main.category",
+    "pk": 8,
+    "fields": {
+      "name": "serveronly"
+    }
+  },
+
+
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32025",
+    "fields": {
+      "title": "Plain+Public. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32025",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32025",
+      "contentType": "text/plain",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [1, 4],
+      "pubDate": "2014-03-10",
+      "visibility": "PUBLIC"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32026",
+    "fields": {
+      "title": "Html+Public. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32024",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32026",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32026",
+      "contentType": "text/html",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [2, 4],
+      "pubDate": "2014-03-10",
+      "visibility": "PUBLIC"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32027",
+    "fields": {
+      "title": "Markdown+Public. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32027",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32027",
+      "contentType": "text/markdown",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [3, 4],
+      "pubDate": "2014-03-10",
+      "visibility": "PUBLIC"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32028",
+    "fields": {
+      "title": "Plain+Foaf. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32028",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32028",
+      "contentType": "text/plain",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [1, 5],
+      "pubDate": "2014-03-10",
+      "visibility": "FOAF"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32029",
+    "fields": {
+      "title": "Html+Foaf. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32024",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32029",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32029",
+      "contentType": "text/html",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [2, 5],
+      "pubDate": "2014-03-10",
+      "visibility": "FOAF"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32030",
+    "fields": {
+      "title": "Markdown+Foaf. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32030",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32030",
+      "contentType": "text/markdown",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [3, 5],
+      "pubDate": "2014-03-10",
+      "visibility": "FOAF"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32031",
+    "fields": {
+      "title": "Plain+Friends. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32031",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32031",
+      "contentType": "text/plain",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [1, 6],
+      "pubDate": "2014-03-10",
+      "visibility": "FRIENDS"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32032",
+    "fields": {
+      "title": "Html+Friends. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32024",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32032",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32032",
+      "contentType": "text/html",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [2, 6],
+      "pubDate": "2014-03-10",
+      "visibility": "FRIENDS"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32033",
+    "fields": {
+      "title": "Markdown+Friends. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32033",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32033",
+      "contentType": "text/markdown",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [3, 6],
+      "pubDate": "2014-03-10",
+      "visibility": "FRIENDS"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32034",
+    "fields": {
+      "title": "Plain+Private. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32034",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32034",
+      "contentType": "text/plain",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [1, 7],
+      "pubDate": "2014-03-10",
+      "visibility": "PRIVATE"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32035",
+    "fields": {
+      "title": "Html+Private. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32024",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32035",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32035",
+      "contentType": "text/html",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [2, 7],
+      "pubDate": "2014-03-10",
+      "visibility": "PRIVATE"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32036",
+    "fields": {
+      "title": "Markdown+Private. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32036",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32036",
+      "contentType": "text/markdown",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [3, 7],
+      "pubDate": "2014-03-10",
+      "visibility": "PRIVATE"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32037",
+    "fields": {
+      "title": "Plain+ServerOnly. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32037",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32037",
+      "contentType": "text/plain",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [1, 8],
+      "pubDate": "2014-03-10",
+      "visibility": "SERVERONLY"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32037",
+    "fields": {
+      "title": "Html+ServerOnly. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32024",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32037",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32037",
+      "contentType": "text/html",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [2, 8],
+      "pubDate": "2014-03-10",
+      "visibility": "SERVERONLY"
+    }
+  },
+  {
+    "model": "main.post",
+    "pk": "108ded43-8520-4035-a262-547454d32038",
+    "fields": {
+      "title": "Markdown+ServerOnly. Maecenas risus mauris, blandit non cursus quis, congue id magna.",
+      "author": "108ded43-8520-4035-a262-547454d32023",
+      "source": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32038",
+      "origin": "http://localhost:8000/post/108ded43-8520-4035-a262-547454d32038",
+      "contentType": "text/markdown",
+      "description": "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique.",
+      "content": "Maecenas risus mauris, blandit non cursus quis, congue id magna. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Cras vitae ipsum vehicula, consequat ante in, pulvinar nulla. Maecenas ultrices dapibus ipsum, vel aliquam nulla. Vestibulum volutpat sagittis quam aliquet tristique. Interdum et malesuada fames ac ante ipsum primis in faucibus. Fusce interdum enim non est ultricies pharetra. Nulla eu turpis non est vulputate interdum id non nisl. Vivamus semper, justo eu consequat accumsan, nunc sapien vehicula tortor, vitae tincidunt mi diam eu magna. Vestibulum rhoncus, ligula quis porttitor accumsan, lectus nisl euismod tellus, non aliquet arcu justo et mauris. Duis sagittis sem justo, eget viverra ante fringilla aliquet. Vestibulum varius fermentum auctor. Nullam id quam adipiscing, consectetur dolor at, facilisis lacus. Quisque cursus, nulla non lobortis egestas, odio justo tincidunt massa, eu lobortis urna nibh sed nunc. Maecenas vitae blandit massa, et adipiscing quam. Mauris nisi leo, congue vel sapien ac, hendrerit varius neque. Morbi eleifend mauris eu aliquet pellentesque. Aliquam eros nisl, viverra ut ultricies ac, consectetur eget sapien. Vivamus sit amet felis eget massa ultricies interdum. Quisque eu ligula mauris. Fusce et lectus ac turpis sagittis viverra eu ac neque. Suspendisse potenti. Nullam posuere lorem eu nisl ultricies pulvinar.",
+      "categories": [3, 8],
+      "pubDate": "2014-03-10",
+      "visibility": "SERVERONLY"
     }
   }
 ]
