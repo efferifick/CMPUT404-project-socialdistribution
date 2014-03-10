@@ -3,8 +3,6 @@ from django.core import serializers
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
-#render, RequestContext
 import json
 from main.models import *
 
@@ -15,7 +13,11 @@ def index(request):
     # Request the context of the request.
     # The context contains information such as the client's machine details, for example.
     context = RequestContext(request)
+    if request.user.is_authenticated():
+        return redirect(timeline)
     return render_to_response('main/index.html', {}, context)
+
+# API
 
 def author(request, user_id):
     # Get the author information
@@ -160,6 +162,11 @@ def friendrequest(request):
     return HttpResponse(json.dumps(frequest), content_type="application/json")
 
 
+# Site
+
+def timeline(request):
+    context = RequestContext(request)
+    return render_to_response('main/timeline.html', {}, context)
 
 def notfound(request):
     context = RequestContext(request)
