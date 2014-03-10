@@ -133,7 +133,7 @@ class Post(models.Model):
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(Author)
-    pubdate = models.DateField()
+    pubDate = models.DateField()
     comment = models.CharField(max_length = COMMENT_MAX_SIZE)
     post = models.ForeignKey(Post)
 
