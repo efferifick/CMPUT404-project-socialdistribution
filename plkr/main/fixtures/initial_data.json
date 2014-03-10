@@ -1,0 +1,40 @@
+[
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+      "first_name": "Admin",
+      "last_name": "Admin",
+      "email": "admin@localhost",
+      "username": "admin",
+      "password": "pbkdf2_sha256$12000$bVkRsx962ahq$I81w4r8+TB1/cmxnIJieDyK2sThqQELsDQkzuvMc9FM=",
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": true
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+      "first_name": "Diego",
+      "last_name": "Luces",
+      "email": "dluces@ualberta.ca",
+      "username": "dluces",
+      "password": "pbkdf2_sha256$12000$iSuQSsgWo6Uy$CAguisjVgbxSb7tjw0Dmh68UMZ0aLju0FNUDvWe58UQ=",
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": true
+    }
+  },
+  {
+    "model": "main.author",
+    "pk": "108ded43-8520-4035-a262-547454d32022",
+    "fields": {
+      "user": 2,
+      "host": "http://localhost:8000/",
+      "displayname": "dluces",
+      "url": "http://localhost:8000/author/108ded43-8520-4035-a262-547454d32022"
+    }
+  }
+]
