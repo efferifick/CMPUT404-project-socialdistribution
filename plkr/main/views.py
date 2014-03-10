@@ -164,9 +164,21 @@ def friendrequest(request):
 
 # Site
 
+def register(request):
+    context = RequestContext(request)
+    return render_to_response('main/register.html', {}, context)
+
 def timeline(request):
     context = RequestContext(request)
     return render_to_response('main/timeline.html', {}, context)
+
+def profile(request):
+    context = RequestContext(request)
+    return render_to_response('main/profile.html', {}, context)
+
+def editProfile(request):
+    context = RequestContext(request)
+    return render_to_response('main/editProfile.html', {}, context)
 
 def notfound(request):
     context = RequestContext(request)

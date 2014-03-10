@@ -20,13 +20,19 @@ urlpatterns = patterns('',
 		# Posts - Specific one
 		url(r'^post/(?P<post_id>\w+)$', 'main.views.posts', name='posts'),
 		
-		# Session - Login
+		# Auth - Login
 		url(r'^login$', 'django.contrib.auth.views.login', {'template_name': 'main/login.html'}),
-		# Session - Logout
+		# Auth - Logout
 		url(r'^logout$', 'django.contrib.auth.views.logout', {'next_page': 'index'}),
+		# Auth - Register
+		url(r'^register$', 'main.views.register', name='register'),
 
 		# Timeline
 		url(r'^site/$', 'main.views.timeline', name='timeline'),
+		
+		#Profile
+		url(r'^site/profile$', 'main.views.profile', name='profile'),
+		url(r'^site/profile/edit$', 'main.views.editProfile', name='editProfile'),
 
 		# 404 Error
 		url(r'^.*$', 'main.views.notfound', name='notfound'),
