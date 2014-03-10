@@ -32,7 +32,8 @@ CAT_NAME_MAX_SIZE = STR_MAX_SIZE
 # Author Model
 class Author(models.Model):
     # max_length is based on the json given to us.
-    id = models.CharField(max_length = AUTHOR_ID_MAX_SIZE , primary_key=True, unique=True)
+    # TODO Change this to a UUID auto field
+    id = models.CharField(max_length = AUTHOR_ID_MAX_SIZE, primary_key=True, unique=True)
     user = models.OneToOneField(User)
     host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
     displayname = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
@@ -43,7 +44,6 @@ class Author(models.Model):
         author = cls()
         author.user = user
         author.displayname = displayName
-        # Maybe set the future id
         return author
     
     def json(self):
@@ -95,6 +95,7 @@ class Post(models.Model):
         ("SERVERONLY","Server Only"),
     )
 
+    # TODO Change this to a UUID auto field
     id = models.CharField(max_length=POST_ID_MAX_SIZE, primary_key=True, unique=True)
     title = models.CharField(max_length= POST_TITLE_MAX_SIZE)
     author = models.ForeignKey(Author)
@@ -129,7 +130,7 @@ class Post(models.Model):
 
 # Comment Model
 class Comment(models.Model):
-    id = models.CharField(max_length=COMMENT_ID_MAX_SIZE, primary_key=True, unique=True)
+    id = models.AutoField(primary_key=True)
     author = models.ForeignKey(Author)
     pubdate = models.DateField()
     comment = models.CharField(max_length = COMMENT_MAX_SIZE)

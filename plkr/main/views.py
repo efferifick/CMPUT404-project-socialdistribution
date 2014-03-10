@@ -1,8 +1,10 @@
-from django.shortcuts import *
-from django.core import serializers
+from django.contrib import messages
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core import serializers
+from django.db import IntegrityError
+from django.shortcuts import *
 import json
 from main.models import *
 
@@ -172,37 +174,62 @@ def register(request):
         username = request.POST['username']
         password = request.POST['password']
         displayName = request.POST['displayName']
+        error = False
 
-        if email is None:
+        if email is None or email == '':
             # Set error
-            pass
+            messages.error(request, 'Email is required.')
+            error = True
 
-        if username is None:
+        if username is None or username == '':
             # Set error
-            pass
+            messages.error(request, 'Username is required.')
+            error = True
 
-        if password is None:
+        if password is None or password == '':
             # Set error
-            pass
+            messages.error(request, 'Password is required.')
+            error = True
 
-        if displayName is None:
+        if displayName is None or displayName == '':
             # Set error
-            pass
+            messages.error(request, 'Display Name is required.')
+            error = True
 
-        try:
-            user = User.objects.create_user(username, email, password)
-            author = Author.create(user, displayName)
-            user.save()
-            author.save()
+        if not error:
+            try:
+                # Create a User wiith its username, email and password
+                user = User.objects.create_user(username, email, password)
+                # Users start as inactive so the admin can activate them
+                user.is_active = False
 
-            # Add a success flash message
+                # Create the Author and set the user and display name
+                author = Author.create(user, displayName)
 
-            return redirect('django.contrib.auth.views.login')
-        except Exception, e:
-            # Add an error
-            # raise e
-            pass
-            
+                # Save the User first
+                user.save()
+                # Save the Author last
+                author.save()
+
+                # Add a success flash message
+                messages.info(request, "Registration complete! Your account now needs to be approved by the administrator.")
+
+                # Send the user to the login screen
+                return redirect('django.contrib.auth.views.login')
+            except IntegrityError, e:
+                if "username" in e.message:
+                    # Add the username error
+                    messages.error(request, "Username is already taken.")
+                elif "email" in e.message:
+                    # Add the email error
+                    messages.error(request, "An account is associated to that email.")
+                else:
+                    # Add the generic error
+                    messages.error(request, e.message)
+            except Exception, e:
+                # Add the generic error
+                messages.error(request, e.message)
+
     return render_to_response('main/register.html', {}, context)
 
 def timeline(request):
