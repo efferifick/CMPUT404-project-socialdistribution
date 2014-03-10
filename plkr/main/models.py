@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django_extensions.db.fields import UUIDField
 
 # Create your models here.
 
@@ -33,7 +34,7 @@ CAT_NAME_MAX_SIZE = STR_MAX_SIZE
 class Author(models.Model):
     # max_length is based on the json given to us.
     # TODO Change this to a UUID auto field
-    id = models.CharField(max_length = AUTHOR_ID_MAX_SIZE, primary_key=True, unique=True)
+    id = UUIDField(primary_key=True, auto=True)
     user = models.OneToOneField(User)
     host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
     displayname = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
@@ -96,7 +97,7 @@ class Post(models.Model):
     )
 
     # TODO Change this to a UUID auto field
-    id = models.CharField(max_length=POST_ID_MAX_SIZE, primary_key=True, unique=True)
+    id = UUIDField(primary_key=True, auto=True)
     title = models.CharField(max_length= POST_TITLE_MAX_SIZE)
     author = models.ForeignKey(Author)
     source = models.URLField()
