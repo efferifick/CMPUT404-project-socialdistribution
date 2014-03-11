@@ -234,21 +234,18 @@ def register(request):
 
 def timeline(request):
     context = RequestContext(request)
-    return render_to_response('main/timeline.html', {}, context)
+    # TODO We have to build a function to get the user's stream
+    posts = Post.objects.all()
+    return render_to_response('main/timeline.html', {'posts': posts}, context)
 
 def profile(request):
     '''
     This function returns the profile for the currently logged in user
- 
     '''
     context = RequestContext(request)
-    author = Author.objects.get(user = request.user)
-    authorid = author.id
-    posts = []
-    user = author.json()
-    posts = [ p.json() for p in Post.objects.filter(author=authorid)]
-
-    return render_to_response('main/profile.html', {'user' : user, 'posts' : posts}, context)
+    author = request.user.author
+    posts = Post.objects.filter(author=author)
+    return render_to_response('main/profile.html', {'posts' : posts}, context)
 
 
 def editProfile(request):

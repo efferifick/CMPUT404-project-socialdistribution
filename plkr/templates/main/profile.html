@@ -1,22 +1,21 @@
 {% extends "layout.html" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Profile{% endblock %}
 
 {% block content %}
 	
-	{% if form.errors %}
-	<p>Your username and password didn't match. Please try again.</p>
-	{% endif %}
+	<h1>{{ user.author.displayname }}</h1>
+	<p><a href="{% url 'editProfile' %}">Edit Profile</a></p>
+	
+	<div class="form-group">
+		<p>Email: {{ user.email }}</p>
+		<p>Username: {{ user.username }}</p>
+		<p>Display Name: {{ user.author.displayname }}</p>
+	</div>
 
-	<h1>{{ user.displayname }}</h1>
-	<h2><a href="/site/profile/edit">Edit Profile</a></h2>
-	 {% for p in posts %}
-                    <div>
-                        <h2>{{ p.title }}</h2>
-                        <p>
-                        {{p.content}}
-                        </p>
-                    </div>
-	{% endfor %}
+	<div id="posts">
+		<h2>Stream</h2>
+		{% include "main/postList.html" with posts=posts %}
+	</div>
 
 {% endblock %}

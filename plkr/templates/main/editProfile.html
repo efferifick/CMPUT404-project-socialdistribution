@@ -1,19 +1,31 @@
 {% extends "layout.html" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Edit Profile{% endblock %}
 
 {% block content %}
-
-	{% if form.errors %}
-	<p>Your username and password didn't match. Please try again.</p>
-	{% endif %}
-
-	<form class="" role="form" action="/site/profile/edit" method="post">
+	
+	<h1>{{ user.author.displayname }}</h1>
+	<p><a href="{% url 'profile' %}">Back</a></p>
+	
+	<form role="form" action="{% url 'editProfile' %}" method="post">
 		{% csrf_token %}
-		Username: <input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="" value="{{ username }}"/>
-		Display name: <input type="text" name="displayname" class="form-control" placeholder="Username" required="" autofocus="" value="{{ author.displayname }}"/>
-		Email Addres: <input type="text" name="email" class="form-control" placeholder="Username" required="" autofocus="" value="{{ email }}"/>
-		<button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
+		<div class="form-group">
+			<label for="email">Email</label>
+			<input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{ user.email }}">
+		</div>
+  		<div class="form-group">
+			<label for="username">Username</label>
+			<input type="text" class="form-control" id="username" name="username" placeholder="Username" value="{{ user.username }}">
+		</div>
+		<div class="form-group">
+			<label for="password">Password</label>
+			<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+		</div>
+		<div class="form-group">
+			<label for="displayName">Display Name</label>
+			<input type="text" class="form-control" id="displayName" name="displayName" placeholder="Display Name" value="{{ user.author.displayname }}">
+		</div>
+	  	<button type="submit" class="btn btn-default">Submit</button>
 	</form>
 
 {% endblock %}
