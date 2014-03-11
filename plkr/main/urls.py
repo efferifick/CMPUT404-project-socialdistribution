@@ -7,15 +7,15 @@ urlpatterns = patterns('',
 		# API URLs
 		
 		# Author - Specific one
-		url(r'^author/(?P<user_id>[a-zA-Z0-9\-]+)$', 'main.views.author', name='get_author'),
+		url(r'^author/(?P<user_id>[a-zA-Z0-9\-]+)$', 'main.views.api_author', name='get_author'),
 		#url(r'^author/post/(?P<post_id>\w+)$', views.get_author_post, name='authors_posts'),
 		
 		# Friends - Of an author
-		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)$', 'main.views.friends', name='get_friends'),
+		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)$', 'main.views.api_friends', name='get_friends'),
 		# Friends - Check friendship
-		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)/(?P<user2_id>[a-zA-Z0-9\-]+)$', 'main.views.friends', name='are_friends'),
+		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)/(?P<user2_id>[a-zA-Z0-9\-]+)$', 'main.views.api_friends', name='are_friends'),
 		# Friends - Send request
-		url(r'^friendrequest$', 'main.views.friendrequest', name='friendrequest'),
+		url(r'^friendrequest$', 'main.views.api_friendrequest', name='friendrequest'),
 		
 		# Site
 

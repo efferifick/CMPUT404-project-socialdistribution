@@ -24,14 +24,14 @@ def index(request):
 
 # API
 
-def author(request, user_id):
+def api_author(request, user_id):
     # Get the author information
     #
     context = RequestContext(request)
     author = Author.objects.get(id=user_id)
     return HttpResponse(json.dumps(author.json()), content_type="application/json")
 
-def friends(request, user1_id, user2_id = None):
+def api_friends(request, user1_id, user2_id = None):
     context = RequestContext(request)
     resp = dict()
     if(user2_id == None):
@@ -44,13 +44,13 @@ def friends(request, user1_id, user2_id = None):
             try:
                 flist = json.loads(request.body)
                 flist = flist["authors"]
-                friends = [f for f in flist if are_friends(user1_id, f)]
+                friends = [f for f in flist if api_are_friends(user1_id, f)]
                 resp["friends"] = friends           
             except Exception, e:
                 resp["friends"] = []
 
     else:
-        if are_friends(user1_id, user2_id):
+        if api_are_friends(user1_id, user2_id):
             resp["friends"] = "YES"
         else:
             resp["friends"] = "NO"
@@ -60,24 +60,26 @@ def friends(request, user1_id, user2_id = None):
 
     return HttpResponse(json.dumps(resp), content_type="application/json")
 
-def are_friends(user1_id, user2_id):
+def api_are_friends(user1_id, user2_id):
         # Return if user1 and user2 are friends
     # Check user1's list, if not in this list check on user2's list for 
     # friendship relationship. This is because friendslist strores who 
     # requested the friendship
-    resp = True
+    
+    if user1_id == user2_id:
+        return True
+
     try:
             f = FriendRequest.objects.get(user_who_sent_request = user1_id, user_who_received_request = user2_id, accepted = True)
-           
     except Exception,e:
         try:
             f = FriendRequest.objects.get(user_who_sent_request = user2_id, user_who_received_request = user1_id, accepted = True)
         except:
-            resp = False
+            return False
 
-    return resp
+    return True
 
-def posts(request, post_id):
+def api_posts(request, post_id):
     context = RequestContext(request)
     try:
         post = Post.objects.get(id=post_id)
@@ -136,14 +138,14 @@ def posts(request, post_id):
 
     return None
 
-def get_author_posts(request, user_id):
+def api_get_author_posts(request, user_id):
     # Get the all posts by the user
     #
     context = RequestContext(request)
     
     return None 
 
-def friendrequest(request):
+def api_friendrequest(request):
     context = RequestContext(request)
 
     if request.method == 'POST':
@@ -163,6 +165,8 @@ def friendrequest(request):
         except Exception, e:
             print(e)
             frequest = {}
+    else:
+        raise Http404
 
     return HttpResponse(json.dumps(frequest), content_type="application/json")
 
