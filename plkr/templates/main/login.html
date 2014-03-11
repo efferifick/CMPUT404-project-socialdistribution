@@ -11,7 +11,7 @@
 
 	<form class="form-signin" role="form" action="{% url 'django.contrib.auth.views.login' %}" method="post">
 		{% csrf_token %}
-		<input type="hidden" name="next" value="{% url "index" %}" />
+		<input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{% url 'index' %}{% endif %}" />
 		<input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="" />
 		<input type="password" name="password" class="form-control" placeholder="Password" required="" />
 		<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
