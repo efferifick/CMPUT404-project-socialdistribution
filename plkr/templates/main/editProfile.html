@@ -3,18 +3,17 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-	<h1 class="form-signin-heading">Please sign in</h1>
-	
+
 	{% if form.errors %}
 	<p>Your username and password didn't match. Please try again.</p>
 	{% endif %}
 
-	<form class="form-signin" role="form" action="{% url 'django.contrib.auth.views.login' %}" method="post">
+	<form class="" role="form" action="/site/profile/edit" method="post">
 		{% csrf_token %}
-		<input type="hidden" name="next" value="{% url "index" %}" />
-		<input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="" />
-		<input type="password" name="password" class="form-control" placeholder="Password" required="" />
-		<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+		Username: <input type="text" name="username" class="form-control" placeholder="Username" required="" autofocus="" value="{{ username }}"/>
+		Display name: <input type="text" name="displayname" class="form-control" placeholder="Username" required="" autofocus="" value="{{ author.displayname }}"/>
+		Email Addres: <input type="text" name="email" class="form-control" placeholder="Username" required="" autofocus="" value="{{ email }}"/>
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
 	</form>
 
 {% endblock %}

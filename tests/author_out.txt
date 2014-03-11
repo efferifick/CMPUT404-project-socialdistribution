@@ -1,0 +1,1 @@
+{"url": "http://localhost:8000/author/108ded43-8520-4035-a262-547454d32024", "host": "http://localhost:8000/", "displayname": "test2", "id": "108ded43-8520-4035-a262-547454d32024"}
