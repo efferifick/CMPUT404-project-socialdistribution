@@ -13,6 +13,12 @@
 				{{ post.description|safe }}
 			{% endif %}
 			<p><a href="#post-{{ post.id }}">Read more</a></p>
+
+			{% if post.image %}
+				<div class="post-image">
+					<img src="{{ post.image.url }}" alt="{{ post.image.name }}" />
+				</div>
+			{% endif %}
 		</section>
 		<footer class="post-footer">
 			<h2 class="sr-only">Comments</h2>
