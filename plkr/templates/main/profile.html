@@ -5,7 +5,7 @@
 {% block content %}
 	
 	<h1>{{ user.author.displayname }}</h1>
-	<p><a href="{% url 'editProfile' %}">Edit Profile</a></p>
+	<p><a href="{% url 'profileEdit' %}">Edit Profile</a></p>
 	
 	<div class="form-group">
 		<p>Email: {{ user.email }}</p>

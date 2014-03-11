@@ -248,7 +248,7 @@ def profile(request):
     return render_to_response('main/profile.html', {'posts' : posts}, context)
 
 
-def editProfile(request):
+def profileEdit(request):
     '''
     This view is used to edit the profile for the currently logged in user
     '''

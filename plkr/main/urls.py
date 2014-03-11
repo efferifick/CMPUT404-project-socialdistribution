@@ -32,7 +32,7 @@ urlpatterns = patterns('',
 		
 		#Profile
 		url(r'^site/profile$', 'main.views.profile', name='profile'),
-		url(r'^site/profile/edit$', 'main.views.editProfile', name='editProfile'),
+		url(r'^site/profile/edit$', 'main.views.profileEdit', name='profileEdit'),
 
 		# 404 Error
 		url(r'^.*$', 'main.views.notfound', name='notfound'),

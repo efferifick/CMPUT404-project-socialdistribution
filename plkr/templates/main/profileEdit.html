@@ -7,7 +7,7 @@
 	<h1>{{ user.author.displayname }}</h1>
 	<p><a href="{% url 'profile' %}">Back</a></p>
 	
-	<form role="form" action="{% url 'editProfile' %}" method="post">
+	<form role="form" action="{% url 'profileEdit' %}" method="post">
 		{% csrf_token %}
 		<div class="form-group">
 			<label for="email">Email</label>
