@@ -82,7 +82,7 @@ class Category(models.Model):
     name = models.CharField(max_length=CAT_NAME_MAX_SIZE, unique=True)
 
     def __unicode__(self):
-        return self.name
+        return unicode(self.name) or u''
 
 # Post Model
 class Post(models.Model):
@@ -113,6 +113,7 @@ class Post(models.Model):
     categories = models.ManyToManyField(Category)
     pubDate = models.DateField()
     visibility = models.TextField(max_length = 10, choices = VISIBILITY_OPTIONS)
+    image = models.ImageField(upload_to='posts')
 
     def json(self):
         post = {} 
@@ -132,7 +133,7 @@ class Post(models.Model):
         return post
 
     def __unicode__(self):
-        return self.id
+        return unicode(self.id) or u''
 
 # Comment Model
 class Comment(models.Model):

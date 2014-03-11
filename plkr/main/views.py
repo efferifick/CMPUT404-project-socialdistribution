@@ -1,3 +1,4 @@
+import datetime
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
@@ -7,6 +8,7 @@ from django.db import IntegrityError
 from django.shortcuts import *
 import json
 from main.models import *
+import os.path
 
 our_host = "http://127.0.0.1:8000/"
 
@@ -246,7 +248,7 @@ def profile(request):
     '''
     context = RequestContext(request)
     author = request.user.author
-    posts = Post.objects.filter(author=author)
+    posts = Post.objects.filter(author=author).order_by('-pubDate')
     return render_to_response('main/profile.html', {'posts' : posts}, context)
 
 @login_required
@@ -297,6 +299,91 @@ def profileEdit(request):
             messages.error(request, e.message)
 
     return render_to_response('main/profileEdit.html', {}, context)
+
+@login_required
+def postNew(request):
+    '''
+    This view is used to create a new post by the currently logged in user
+    '''
+    context = RequestContext(request)
+    
+    if request.method != "POST":
+        return redirect('notfound')
+
+    author = request.user.author
+    title = request.POST.get('title')
+    description = request.POST.get('description')
+    body = request.POST.get('body')
+    categories = request.POST.get('categories')
+    visibility = request.POST.get('visibility')
+    contentType = request.POST.get('contentType')
+    image = request.FILES.get('image')
+    error = False
+
+    if title is None or title == '':
+        # Set error
+        messages.error(request, 'Title is required.')
+        error = True
+
+    if body is None or body == '':
+        # Set error
+        messages.error(request, 'Body is required.')
+        error = True
+
+    if visibility is None or visibility not in [x[0] for x in Post.VISIBILITY_OPTIONS]:
+        # Set error
+        messages.error(request, 'Visibility option is required.')
+        error = True
+
+    if contentType is None or contentType not in [x[0] for x in Post.CONTENTTYPE_OPTIONS]:
+        # Set error
+        messages.error(request, 'Content Type option is required.')
+        error = True
+
+    if not error:
+        try:
+            # Create the post
+            post = Post()
+            post.author = author
+            post.title = title
+            post.contentType = contentType
+            post.description = description
+            post.content = body
+            post.pubDate = datetime.datetime.now()
+            post.visibility = visibility
+
+            # Save the Post
+            post.save()
+
+            if categories is not None and categories != '':
+                categories = map(lambda x: x.strip(), categories.split(","))
+
+                if len(categories) > 0:
+                    for category in categories:
+                        curcat = Category.objects.filter(name=category)
+                        
+                        if curcat and curcat.count() == 1:
+                            post.categories.add(curcat[0])
+                        else:
+                            curcat = Category(name=category)
+                            curcat.save()
+                            post.categories.add(curcat)
+
+            if image is not None:
+                post.image = image
+
+            # Save the Post
+            post.save()
+
+            # Add a success flash message
+            messages.info(request, "Post created successfully.")
+        except Exception, e:
+            # Add the generic error
+            raise
+            messages.error(request, e.message)
+
+    # Send the user to the profile screen
+    return redirect('profile')
 
 def notfound(request):
     context = RequestContext(request)

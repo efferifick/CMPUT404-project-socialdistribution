@@ -19,13 +19,20 @@ All text is licensed under the CC-BY-SA 4.0 http://creativecommons.org/licenses/
 Setup / Installation
 ========================
 
-DJANGO:
+Django:
 This application uses Django
 
 	pip install django
 
-DJANGO Extensions DB:
+Django Extensions DB:
 This is required for the UUIDField class
 
 	pip install django-extensions
+
+Pillow:
+This is required to handle image fields in models
+
+Note that Pillow also needs python-dev package (Ubuntu) to be installed.
+
+	pip install pillow
 

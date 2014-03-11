@@ -1,4 +1,4 @@
-<form role="form" action="#newpost" method="post">
+<form role="form" action="{% url 'postNew' %}" enctype="multipart/form-data" method="post">
 	{% csrf_token %}
 	<h2>Do you want to say something?</h2>
 	<div class="form-group">
@@ -12,6 +12,32 @@
 	<div class="form-group">
 		<label for="newpost-body" class="sr-only">Body</label>
 		<textarea class="form-control" id="newpost-body" name="body" placeholder="Body" maxlength="5000"></textarea>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-4">
+			<label for="newpost-categories" class="sr-only">Categories</label>
+			<input type="text" class="form-control" id="newpost-categories" name="categories" placeholder="Comma-separated categories" />
+	    </div>
+
+	    <div class="col-sm-4">
+		    <label for="newpost-visibility" class="sr-only">Visibility</label>
+		    <select class="form-control" id="newpost-visibility" name="visibility">
+		    	<option value="PUBLIC">Public</option>
+		    	<option value="FOAF">Friends-of-Friends</option>
+		    	<option value="FRIENDS">Friends</option>
+		    	<option value="PRIVATE">Private</option>
+		    	<option value="SERVERONLY">Server Only</option>
+		    </select>
+	    </div>
+
+	    <div class="col-sm-4">
+		    <label for="newpost-contenttype" class="sr-only">Content Type</label>
+		    <select class="form-control" id="newpost-contenttype" name="contentType">
+		    	<option value="text/plain">Text</option>
+		    	<option value="text/html">HTML</option>
+		    	<option value="text/markdown">Markdown</option>
+		    </select>
+	    </div>
 	</div>
 	<div class="form-group">
 	    <label for="newpost-file" class="sr-only">File input</label>
