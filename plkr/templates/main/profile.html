@@ -13,6 +13,10 @@
 		<p>Display Name: {{ user.author.displayname }}</p>
 	</div>
 
+	<div class="well">
+		{% include "main/postNew.html" %}
+	</div>
+
 	<div id="posts">
 		<h2>Stream</h2>
 		{% include "main/postList.html" with posts=posts %}

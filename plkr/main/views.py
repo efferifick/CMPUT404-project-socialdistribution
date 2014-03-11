@@ -240,7 +240,7 @@ def timeline(request):
 
 def profile(request):
     '''
-    This function returns the profile for the currently logged in user
+    This view displays the profile for the currently logged in user
     '''
     context = RequestContext(request)
     author = request.user.author
@@ -249,24 +249,52 @@ def profile(request):
 
 
 def editProfile(request):
+    '''
+    This view is used to edit the profile for the currently logged in user
+    '''
     context = RequestContext(request)
-    author = Author.objects.get(user = request.user)
-    authorid = author.id
-
+    
     if request.method == "POST":
-        #Its a post, so we should update the user
-        
-        author.displayname = request.POST.get('displayname')
+        author = request.user.author
+        displayname = request.POST.get('displayName')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
 
-        request.user.username = request.POST.get('username')
-        request.user.email = request.POST.get('email')
-        request.user.save()
-        author.save()
-    else:
-        #Its a get, we should return the information as a html page with a 'save' button
-        pass
+        if displayname is not None and displayname != '':
+            author.displayname = displayname
 
-    return render_to_response('main/editProfile.html', {'username' : request.user.username, 'email' : request.user.email, 'author' : author.json()}, context)
+        if username is not None and username != '':
+            request.user.username = username
+
+        if email is not None and email != '':
+            request.user.email = email
+
+        try:
+            # Save the User first
+            request.user.save()
+            # Save the Author last
+            author.save()
+
+            # Add a success flash message
+            messages.info(request, "Your profile was updated successfully.")
+
+            # Send the user to the profile screen
+            return redirect('profile')
+        except IntegrityError, e:
+            if "username" in e.message:
+                # Add the username error
+                messages.error(request, "Username is already taken.")
+            elif "email" in e.message:
+                # Add the email error
+                messages.error(request, "An account is associated to that email.")
+            else:
+                # Add the generic error
+                messages.error(request, e.message)
+        except Exception, e:
+            # Add the generic error
+            messages.error(request, e.message)
+
+    return render_to_response('main/profileEdit.html', {}, context)
 
 def notfound(request):
     context = RequestContext(request)

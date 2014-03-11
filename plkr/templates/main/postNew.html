@@ -1,0 +1,24 @@
+<form role="form" action="#newpost" method="post">
+	{% csrf_token %}
+	<h2>Do you want to say something?</h2>
+	<div class="form-group">
+		<label for="newpost-title" class="sr-only">Title</label>
+		<input type="text" class="form-control" id="newpost-title" name="title" placeholder="Title" maxlength="128" />
+	</div>
+	<div class="form-group">
+		<label for="newpost-description" class="sr-only">Description</label>
+		<input type="text" class="form-control" id="newpost-description" name="description" placeholder="Description" maxlength="148" />
+	</div>
+	<div class="form-group">
+		<label for="newpost-body" class="sr-only">Body</label>
+		<textarea class="form-control" id="newpost-body" name="body" placeholder="Body" maxlength="5000"></textarea>
+	</div>
+	<div class="form-group">
+	    <label for="newpost-file" class="sr-only">File input</label>
+	    <input type="file" id="newpost-file" name="image" />
+	    <p class="help-block">You can attach an image to your post.</p>
+  	</div>
+  	<div class="form-group">
+  		<button type="submit" class="btn btn-default">Post</button>
+  	</div>
+</form>
