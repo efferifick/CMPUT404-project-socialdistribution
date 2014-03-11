@@ -1,0 +1,10 @@
+{
+	"query": "friendrequest",
+	"author": 
+	{
+		"id":5db4815a-100f-4f19-a3dd-139bf380ca79,
+		"host": <host>,
+		"displayname": <displayname>,
+		"url": <url>
+	}
+}
