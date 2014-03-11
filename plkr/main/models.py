@@ -17,7 +17,6 @@ POST_CONTENT_MAX_SIZE = 5000
 POST_ID_MAX_SIZE = STR_MAX_SIZE 
 POST_DESCRIPTION_MAX_SIZE = 140 # Basing on twitter's standards.
 POST_TITLE_MAX_SIZE = STR_MAX_SIZE
-POST_CONTENTTYPE_MAX_SIZE = STR_MAX_SIZE
 
 # Comment constant
 COMMENT_ID_MAX_SIZE = STR_MAX_SIZE
@@ -90,10 +89,16 @@ class Post(models.Model):
     
     VISIBILITY_OPTIONS=(
         ("PUBLIC", "Public"),
-        ("FOAF","Friend of a Friend"),
-        ("FRIENDS","Friends"),
-        ("PRIVATE","Private"),
-        ("SERVERONLY","Server Only"),
+        ("FOAF", "Friend of a Friend"),
+        ("FRIENDS", "Friends"),
+        ("PRIVATE", "Private"),
+        ("SERVERONLY", "Server Only"),
+    )
+
+    CONTENTTYPE_OPTIONS=(
+        ("text/plain", "Text"),
+        ("text/html", "HTML"),
+        ("text/markdown", "Markdown"),
     )
 
     # TODO Change this to a UUID auto field
@@ -102,7 +107,7 @@ class Post(models.Model):
     author = models.ForeignKey(Author)
     source = models.URLField()
     origin = models.URLField()
-    contentType = models.CharField(max_length = POST_CONTENTTYPE_MAX_SIZE)
+    contentType = models.TextField(max_length = 13, choices = CONTENTTYPE_OPTIONS)
     description = models.CharField(max_length = POST_DESCRIPTION_MAX_SIZE)
     content = models.CharField(max_length = POST_CONTENT_MAX_SIZE)
     categories = models.ManyToManyField(Category)
