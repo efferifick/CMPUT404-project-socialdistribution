@@ -20,11 +20,12 @@ Setup / Installation
 ========================
 
 DJANGO:
+This application uses Django
+
 	pip install django
 
 DJANGO Extensions DB:
-	This is required for the UUIDField class
+This is required for the UUIDField class
 
 	pip install django-extensions
-
 
