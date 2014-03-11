@@ -40,7 +40,7 @@ def friends(request, user1_id, user2_id = None):
         if request.method == 'POST':
             try:
                 flist = json.loads(request.body)
-                flist = flist["friends"]
+                flist = flist["authors"]
                 friends = [f for f in flist if are_friends(user1_id, f)]
                 resp["friends"] = friends           
             except Exception, e:
@@ -237,12 +237,39 @@ def timeline(request):
     return render_to_response('main/timeline.html', {}, context)
 
 def profile(request):
+    '''
+    This function returns the profile for the currently logged in user
+ 
+    '''
     context = RequestContext(request)
-    return render_to_response('main/profile.html', {}, context)
+    author = Author.objects.get(user = request.user)
+    authorid = author.id
+    posts = []
+    user = author.json()
+    posts = [ p.json() for p in Post.objects.filter(author=authorid)]
+
+    return render_to_response('main/profile.html', {'user' : user, 'posts' : posts}, context)
+
 
 def editProfile(request):
     context = RequestContext(request)
-    return render_to_response('main/editProfile.html', {}, context)
+    author = Author.objects.get(user = request.user)
+    authorid = author.id
+
+    if request.method == "POST":
+        #Its a post, so we should update the user
+        
+        author.displayname = request.POST.get('displayname')
+
+        request.user.username = request.POST.get('username')
+        request.user.email = request.POST.get('email')
+        request.user.save()
+        author.save()
+    else:
+        #Its a get, we should return the information as a html page with a 'save' button
+        pass
+
+    return render_to_response('main/editProfile.html', {'username' : request.user.username, 'email' : request.user.email, 'author' : author.json()}, context)
 
 def notfound(request):
     context = RequestContext(request)
