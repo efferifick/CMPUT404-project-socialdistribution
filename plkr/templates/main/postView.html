@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ post.title|safe }}{% endblock %}
+
+{% block content %}
+	
+	<div id="post">
+		{% include "main/post.html" with post=post %}
+	</div>
+
+{% endblock %}

@@ -300,6 +300,12 @@ def profileEdit(request):
 
     return render_to_response('main/profileEdit.html', {}, context)
 
+def post(request, post_id):
+    context = RequestContext(request)
+    post = Post.objects.get(pk=post_id)
+    # TODO Check permissions
+    return render_to_response('main/postView.html', {'post': post, 'full': True}, context)
+
 @login_required
 def postNew(request):
     '''
