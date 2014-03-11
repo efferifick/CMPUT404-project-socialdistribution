@@ -36,7 +36,4 @@ urlpatterns = patterns('',
 		
 		# Posts - New
 		url(r'^site/posts/new$', 'main.views.postNew', name='postNew'),
-
-		# 404 Error
-		url(r'^.*$', 'main.views.notfound', name='notfound'),
 		)

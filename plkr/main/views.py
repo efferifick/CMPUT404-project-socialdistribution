@@ -384,7 +384,3 @@ def postNew(request):
 
     # Send the user to the profile screen
     return redirect('profile')
-
-def notfound(request):
-    context = RequestContext(request)
-    return render_to_response('404.html', {}, context)
