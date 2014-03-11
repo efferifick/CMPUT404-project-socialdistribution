@@ -79,7 +79,7 @@ def api_are_friends(user1_id, user2_id):
 
     return True
 
-def api_posts(request, post_id):
+def api_post(request, post_id):
     context = RequestContext(request)
     try:
         post = Post.objects.get(id=post_id)
