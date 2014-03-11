@@ -37,21 +37,16 @@ class Author(models.Model):
     user = models.OneToOneField(User)
     host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
     displayname = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
-    url = models.URLField()
-
-    @classmethod
-    def create(cls, user, displayName):
-        author = cls()
-        author.user = user
-        author.displayname = displayName
-        return author
     
+    def get_url(self):
+        return "%sauthor/%s" % (self.host, self.id)
+
     def json(self):
         user = {} 
         user["id"] = self.id
         user["host"] = self.host
         user["displayname"] = self.displayname
-        user["url"] = self.url
+        user["url"] = self.get_url()
         return user
 
     def __unicode__(self):
@@ -83,6 +78,9 @@ class Category(models.Model):
 
     def __unicode__(self):
         return unicode(self.name) or u''
+
+    class Meta:
+        verbose_name_plural = "categories"
 
 # Post Model
 class Post(models.Model):
@@ -150,6 +148,6 @@ class Comment(models.Model):
         comment = {}
         comment["author"] = self.author.json()
         comment["comment"] = self.comment
-        comment["pubDate"] = str(self.pubdate)
+        comment["pubDate"] = str(self.pubDate)
         comment["guid"] = self.id
         return comment

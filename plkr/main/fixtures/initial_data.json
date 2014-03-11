@@ -35,8 +35,7 @@
     "fields": {
       "user": 2,
       "host": "http://localhost:8000/",
-      "displayname": "dluces",
-      "url": "http://localhost:8000/author/108ded43-8520-4035-a262-547454d32022"
+      "displayname": "dluces"
     }
   },
 
@@ -61,8 +60,7 @@
     "fields": {
       "user": 3,
       "host": "http://localhost:8000/",
-      "displayname": "test1",
-      "url": "http://localhost:8000/author/108ded43-8520-4035-a262-547454d32023"
+      "displayname": "test1"
     }
   },
   {
@@ -85,8 +83,7 @@
     "fields": {
       "user": 4,
       "host": "http://localhost:8000/",
-      "displayname": "test2",
-      "url": "http://localhost:8000/author/108ded43-8520-4035-a262-547454d32024"
+      "displayname": "test2"
     }
   },
 

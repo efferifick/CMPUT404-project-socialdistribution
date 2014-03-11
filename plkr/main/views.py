@@ -207,7 +207,8 @@ def register(request):
                 user.is_active = False
 
                 # Create the Author and set the user and display name
-                author = Author.create(user, displayName)
+                author = Author(user=user, displayname=displayName)
+                author.host = 'http://localhost:8000/'
 
                 # Save the User first
                 user.save()
