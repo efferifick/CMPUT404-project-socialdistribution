@@ -1,6 +1,6 @@
 <article class="post well" id="post-{{ post.id }}">
 	<header class="post-header">
-		<h1><a href="#post-{{ post.id }}">{{ post.title }}</a></h1>
+		<h1><a href="{% url 'post' post_id=post.id %}">{{ post.title }}</a></h1>
 		<p>Posted by {{ post.author.displayname }} on {{ post.pubDate|date:"D, M d, Y" }}</p>
 	</header>
 	<section class="post-body">
@@ -14,12 +14,14 @@
 			{% endif %}
 		{% else %}
 			{{ post.description|safe }}
-			<p><a href="#post-{{ post.id }}">Read more</a></p>
+			<p><a href="{% url 'post' post_id=post.id %}">Read more</a></p>
 		{% endif %}
 
 		{% if post.image %}
 			<div class="post-image">
-				<img src="{{ post.image.url }}" alt="{{ post.image.name }}" />
+				<a href="{{ post.image.url }}">
+					<img src="{{ post.image.url }}" alt="{{ post.image.name }}" />
+				</a>
 			</div>
 		{% endif %}
 	</section>
