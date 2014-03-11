@@ -35,6 +35,7 @@
                     <ul class="nav navbar-nav">
                         {% if user.is_authenticated %}
                             <li><a href="{% url 'profile' %}">Profile</a></li>
+                            <li><a href="{% url 'friends' %}">Friends <span class="badge">3</span></a></li>
                             <li><a href="{% url 'profileEdit' %}">Settings</a></li>
                         {% else %}
                             <li><a href="{% url 'register' %}">Register</a></li>

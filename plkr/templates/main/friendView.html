@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}Friends{% endblock %}
+
+{% block content %}
+	
+	<h1>My Friends</h1>
+	
+	<div id="friendRequests">
+		<h2>Friend Requests</h2>
+		{% include "main/friendRequestList.html" %}
+	</div>
+
+	<div id="friends">
+		<h2>Friends</h2>
+		{% include "main/friendList.html" with friends=friends %}
+	</div>
+
+{% endblock %}

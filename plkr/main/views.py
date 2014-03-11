@@ -384,3 +384,9 @@ def postNew(request):
 
     # Send the user to the profile screen
     return redirect('profile')
+
+@login_required
+def friends(request):
+    context = RequestContext(request)
+    friends = None
+    return render_to_response('main/friendView.html', {'friends': friends}, context)

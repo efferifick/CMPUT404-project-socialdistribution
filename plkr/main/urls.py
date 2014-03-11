@@ -17,6 +17,8 @@ urlpatterns = patterns('',
 		# Friends - Send request
 		url(r'^friendrequest$', 'main.views.friendrequest', name='friendrequest'),
 		
+		# Site
+
 		# Posts - Specific one
 		url(r'^post/(?P<post_id>[a-zA-Z0-9\-]+)$', 'main.views.posts', name='posts'),
 		
@@ -33,6 +35,9 @@ urlpatterns = patterns('',
 		# Profile
 		url(r'^site/profile$', 'main.views.profile', name='profile'),
 		url(r'^site/profile/edit$', 'main.views.profileEdit', name='profileEdit'),
+
+		# Friends
+		url(r'^site/friends$', 'main.views.friends', name='friends'),
 		
 		# Posts - New
 		url(r'^site/posts/new$', 'main.views.postNew', name='postNew'),
