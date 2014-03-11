@@ -232,12 +232,14 @@ def register(request):
 
     return render_to_response('main/register.html', {}, context)
 
+@login_required
 def timeline(request):
     context = RequestContext(request)
     # TODO We have to build a function to get the user's stream
     posts = Post.objects.all()
     return render_to_response('main/timeline.html', {'posts': posts}, context)
 
+@login_required
 def profile(request):
     '''
     This view displays the profile for the currently logged in user
@@ -247,7 +249,7 @@ def profile(request):
     posts = Post.objects.filter(author=author)
     return render_to_response('main/profile.html', {'posts' : posts}, context)
 
-
+@login_required
 def profileEdit(request):
     '''
     This view is used to edit the profile for the currently logged in user
