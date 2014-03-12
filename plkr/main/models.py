@@ -133,6 +133,10 @@ class Post(models.Model):
     def __unicode__(self):
         return unicode(self.id) or u''
 
+    class Meta:
+        ordering = ["-pubDate"]
+        get_latest_by = "pubDate"
+
 # Comment Model
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)

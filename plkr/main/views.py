@@ -244,7 +244,7 @@ def register(request):
 def timeline(request):
     context = RequestContext(request)
     # TODO We have to build a function to get the user's stream
-    posts = Post.objects.all()
+    posts = Post.objects.order_by("-pubDate").select_related()
     return render_to_response('main/timeline.html', {'posts': posts}, context)
 
 @login_required
@@ -254,7 +254,7 @@ def profile(request):
     '''
     context = RequestContext(request)
     author = request.user.author
-    posts = Post.objects.filter(author=author).order_by('-pubDate')
+    posts = Post.objects.filter(author=author).order_by('-pubDate').select_related()
     return render_to_response('main/profile.html', {'posts' : posts}, context)
 
 @login_required
