@@ -46,10 +46,10 @@
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{% if request.GET.next %}{{ request.GET.next }}{% else %}{% url 'index' %}{% endif %}" />
                             <div class="form-group">
-                                <input type="text" name="username" placeholder="Username" class="form-control" />
+                                <input type="text" name="username" placeholder="Username" class="form-control" required />
                             </div>
                             <div class="form-group">
-                                <input type="password" name="password" placeholder="Password" class="form-control" />
+                                <input type="password" name="password" placeholder="Password" class="form-control" required />
                             </div>
                             <button type="submit" class="btn btn-success">Sign in</button>
                         </form>
