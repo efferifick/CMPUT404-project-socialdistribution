@@ -2,8 +2,6 @@ from django.conf.urls import patterns, include, url
 from main import views
 
 urlpatterns = patterns('',
-		url(r'^$', 'main.views.index', name='index'),
-
 		# API URLs
 		
 		# Author - Specific one
@@ -22,6 +20,9 @@ urlpatterns = patterns('',
 		
 		# Site
 		
+		# Homepage
+		url(r'^$', 'main.views.index', name='index'),
+
 		# Auth - Login
 		url(r'^login$', 'django.contrib.auth.views.login', {'template_name': 'main/login.html'}),
 		# Auth - Logout
