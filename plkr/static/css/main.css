@@ -28,3 +28,28 @@ body {
 #form-login {
 	max-width: 400px;
 }
+
+/* Posts */
+
+#posts .post {
+	border: 1px solid #ccc;
+	padding: 0.5em;
+	margin-bottom: 2em;
+	background-color: #f6f6f6;
+}
+
+#posts .post h1 {
+	font-size: 2em;
+}
+
+#posts .comment-body {
+	font-size: 1em;
+}
+
+#posts .comment-meta, #posts .post-meta {
+	font-size: 0.9em;
+}
+
+#posts .comment-meta {
+	margin-bottom: 0;
+}

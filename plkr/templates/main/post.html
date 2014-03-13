@@ -1,7 +1,7 @@
-<article class="post well" id="post-{{ post.id }}">
+<article class="post" id="post-{{ post.id }}">
 	<header class="post-header">
 		<h1><a href="{% url 'post' post_id=post.id %}">{{ post.title }}</a></h1>
-		<p>Posted by {{ post.author.displayname }} on {{ post.pubDate|date:"D, M d, Y" }}</p>
+		<p class="post-meta">Posted by <a href="#" title="{{ post.author.displayname }}" class="author-link">{{ post.author.displayname }}</a> on {{ post.pubDate|date:"D, M d, Y" }}</p>
 	</header>
 	<section class="post-body">
 		{% if full %}
@@ -13,8 +13,10 @@
 				{{ post.content|safe }}
 			{% endif %}
 		{% else %}
-			{{ post.description|safe }}
-			<p><a href="{% url 'post' post_id=post.id %}">Read more</a></p>
+			<p>
+				{{ post.description|safe }}
+				<a href="{% url 'post' post_id=post.id %}">Read more</a>
+			</p>
 		{% endif %}
 
 		{% if post.image %}
@@ -32,11 +34,9 @@
 			<div class="comment">
 			{% for comment in post.comment_set.all %}
 				<div class="comment">
+					<p class="comment-meta"><a href="#" title="{{ post.author.displayname }}" class="author-link">{{ comment.author.displayname }}</a> said on {{ comment.pubDate|date:"D, M d, Y" }}:</p>
 					<div class="comment-body">
 						<p>{{ comment.comment }}</p>
-					</div>
-					<div class="comment-meta">
-						<p>Posted by {{ comment.author.displayname }} on {{ comment.pubDate|date:"D, M d, Y" }}</p>
 					</div>
 				</div>
 			{% endfor %}
