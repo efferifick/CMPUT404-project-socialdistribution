@@ -40,8 +40,8 @@ urlpatterns = patterns('',
 		# Friends
 		url(r'^site/friends$', 'main.views.friends', name='friends'),
 		
-		# Posts - View
-		url(r'^site/posts/(?P<post_id>[a-zA-Z0-9\-]+)$', 'main.views.post', name='post'),
 		# Posts - New
 		url(r'^site/posts/new$', 'main.views.postNew', name='postNew'),
+		# Posts - View
+		url(r'^site/posts/(?P<post_id>[a-zA-Z0-9\-]+)$', 'main.views.post', name='post'),
 		)
