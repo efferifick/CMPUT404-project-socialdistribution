@@ -204,7 +204,7 @@ def register(request):
                 user.is_active = False
 
                 # Create the Author and set the user and display name
-                author = Author(user=user, displayname=displayName)
+                author = Author(user=user, displayName=displayName)
                 author.host = 'http://localhost:8000/'
 
                 # Save the User first
@@ -259,12 +259,12 @@ def profileEdit(request):
     
     if request.method == "POST":
         author = request.user.author
-        displayname = request.POST.get('displayName')
+        displayName = request.POST.get('displayName')
         username = request.POST.get('username')
         email = request.POST.get('email')
 
-        if displayname is not None and displayname != '':
-            author.displayname = displayname
+        if displayName is not None and displayName != '':
+            author.displayName = displayName
 
         if username is not None and username != '':
             request.user.username = username
@@ -413,5 +413,7 @@ def postNew(request):
 @login_required
 def friends(request):
     context = RequestContext(request)
-    friends = None
-    return render_to_response('main/friendView.html', {'friends': friends}, context)
+    author = request.user.author
+    friends = author.friends
+    requests = author.requests
+    return render_to_response('main/friendView.html', {'friends': friends, 'requests': requests}, context)

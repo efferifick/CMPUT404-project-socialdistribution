@@ -1,6 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import models
+from django.db.models import Q
 from django_extensions.db.fields import UUIDField
 
 # Create your models here.
@@ -35,7 +36,7 @@ class Author(models.Model):
     id = UUIDField(primary_key=True, auto=True)
     user = models.OneToOneField(User)
     host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
-    displayname = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
+    displayName = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
     
     def get_url(self):
         return "%sauthor/%s" % (self.host, self.id)
@@ -49,24 +50,32 @@ class Author(models.Model):
             return True
 
         try:
-            f = FriendRequest.objects.get(sender=author1_id, receiver = author2_id, accepted = True);
+            FriendRequest.objects.get(Q(sender=author1_id, receiver = author2_id) | Q(sender=author2_id, receiver = author1_id), accepted = True);
         except ObjectDoesNotExist,e:
-            try:
-                f = FriendRequest.objects.get(sender=author2_id, receiver = author1_id, accepted = True);
-            except ObjectDoesNotExist,e:
-                return False
+            return False
 
         return True
 
-    def list_of_follows(self):
-        # TODO fix, should return Authors not friend requests
-        return self.friend_requests_sent.get(accepted = False);
+    def friends(self):
+        # Get all the authors that sent/received a friend request to/from this author, that was accepted already
+        authors = Author.objects.filter(Q(friend_requests_sent__receiver=self.id, friend_requests_sent__accepted=True) | Q(friend_requests_received__sender=self.id, friend_requests_received__accepted=True))
+        return authors
+
+    def following(self):
+        # Get all the authors that received a friend request from this author and has not accepted it yet
+        authors = Author.objects.filter(friend_requests_received__sender=self.id, friend_requests_received__accepted=False)
+        return authors
+
+    def requests(self):
+        # Get all the friend requests sent to this author and that have not been accepted yet
+        requests = FriendRequest.objects.select_related('sender').filter(receiver=self.id, accepted=False)
+        return requests
 
     def json(self):
         user = {} 
         user["id"] = self.id
         user["host"] = self.host
-        user["displayname"] = self.displayname
+        user["displayname"] = self.displayName
         user["url"] = self.get_url()
         return user
 
@@ -79,6 +88,7 @@ class FriendRequest(models.Model):
     sender = models.ForeignKey(Author, related_name ='friend_requests_sent')
     receiver = models.ForeignKey(Author, related_name ='friend_requests_received')
     accepted = models.BooleanField()
+    date = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):
         return str(self.id)
@@ -121,7 +131,7 @@ class Post(models.Model):
     description = models.CharField(max_length = POST_DESCRIPTION_MAX_SIZE)
     content = models.CharField(max_length = POST_CONTENT_MAX_SIZE)
     categories = models.ManyToManyField(Category)
-    pubDate = models.DateField()
+    pubDate = models.DateTimeField(auto_now_add=True)
     visibility = models.TextField(max_length = 10, choices = VISIBILITY_OPTIONS)
     image = models.ImageField(upload_to='posts')
 
@@ -153,7 +163,7 @@ class Post(models.Model):
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)
     author = models.ForeignKey(Author)
-    pubDate = models.DateField()
+    pubDate = models.DateTimeField(auto_now_add=True)
     comment = models.CharField(max_length = COMMENT_MAX_SIZE)
     post = models.ForeignKey(Post)
 

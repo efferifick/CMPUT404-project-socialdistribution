@@ -4,13 +4,13 @@
 
 {% block content %}
 	
-	<h1>{{ user.author.displayname }}</h1>
+	<h1>{{ user.author.displayName }}</h1>
 	<p><a href="{% url 'profileEdit' %}">Edit Profile</a></p>
 	
 	<div class="form-group">
 		<p>Email: {{ user.email }}</p>
 		<p>Username: {{ user.username }}</p>
-		<p>Display Name: {{ user.author.displayname }}</p>
+		<p>Display Name: {{ user.author.displayName }}</p>
 	</div>
 
 	<div class="well">
