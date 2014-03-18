@@ -8,10 +8,10 @@ urlpatterns = patterns('',
 		url(r'^author/(?P<user_id>[a-zA-Z0-9\-]+)$', 'main.views.api_author', name='api_author'),
 		#url(r'^author/post/(?P<post_id>\w+)$', views.get_author_post, name='authors_posts'),
 		
-		# Friends - Of an author
-		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)$', 'main.views.api_friends', name='api_friends'),
+		# Friends - Author has this friends?
+		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)$', 'main.views.api_has_friends', name='api_has_friends'),
 		# Friends - Check friendship
-		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)/(?P<user2_id>[a-zA-Z0-9\-]+)$', 'main.views.api_friends', name='api_are_friends'),
+		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)/(?P<user2_id>[a-zA-Z0-9\-]+)$', 'main.views.api_are_friends', name='api_are_friends'),
 		# Friends - Send request
 		url(r'^friendrequest$', 'main.views.api_friendrequest', name='api_friendrequest'),
 

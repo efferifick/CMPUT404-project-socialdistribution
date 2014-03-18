@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django_extensions.db.fields import UUIDField
 
 # Create your models here.
@@ -31,8 +32,6 @@ CAT_NAME_MAX_SIZE = STR_MAX_SIZE
 
 # Author Model
 class Author(models.Model):
-    # max_length is based on the json given to us.
-    # TODO Change this to a UUID auto field
     id = UUIDField(primary_key=True, auto=True)
     user = models.OneToOneField(User)
     host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
@@ -40,6 +39,28 @@ class Author(models.Model):
     
     def get_url(self):
         return "%sauthor/%s" % (self.host, self.id)
+
+    def is_friends_with(self, author):
+        return Author.are_friends(self.id, author.id)
+
+    @classmethod
+    def are_friends(cls, author1_id, author2_id):
+        if author1_id == author2_id:
+            return True
+
+        try:
+            f = FriendRequest.objects.get(sender=author1_id, receiver = author2_id, accepted = True);
+        except ObjectDoesNotExist,e:
+            try:
+                f = FriendRequest.objects.get(sender=author2_id, receiver = author1_id, accepted = True);
+            except ObjectDoesNotExist,e:
+                return False
+
+        return True
+
+    def list_of_follows(self):
+        # TODO fix, should return Authors not friend requests
+        return self.friend_requests_sent.get(accepted = False);
 
     def json(self):
         user = {} 
@@ -52,24 +73,15 @@ class Author(models.Model):
     def __unicode__(self):
         return self.id
 
-
+# Friend
 class FriendRequest(models.Model):
     id = models.AutoField(primary_key=True)
-    user_who_sent_request = models.ForeignKey(Author, related_name ='user_who_sent_requested')
-    user_who_received_request = models.ForeignKey(Author, related_name ='user_who_received_requested')
+    sender = models.ForeignKey(Author, related_name ='friend_requests_sent')
+    receiver = models.ForeignKey(Author, related_name ='friend_requests_received')
     accepted = models.BooleanField()
     
     def __unicode__(self):
         return str(self.id)
-
-'''
-class SubscriptionList(models.Model):
-    
-    user_url = models.URLField(primary_key=True, unique=True)
-
-    def __unicode__(self):
-        return self.id
-'''
 
 # Category Model
 class Category(models.Model):

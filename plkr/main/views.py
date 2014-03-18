@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.http import Http404
 from django.shortcuts import *
@@ -13,92 +14,80 @@ import os.path
 
 our_host = "http://127.0.0.1:8000/"
 
-# Create your views here.
-def index(request):
-    # Request the context of the request.
-    # The context contains information such as the client's machine details, for example.
-    context = RequestContext(request)
-    if request.user.is_authenticated():
-        return redirect(timeline)
-    return render_to_response('main/index.html', {}, context)
-
 # API
+
+def api_send_json(obj):
+    '''
+    This function returns the http response to send a serialized object to the client, in json format
+    '''
+    return HttpResponse(json.dumps(obj), content_type="application/json")
+
+def api_send_error(message):
+    '''
+    This function returns the http response for errors (sending status 400 as it's always the user's fault)
+    '''
+    return HttpResponse(json.dumps(dict(error=True, message=message)), content_type="application/json", status=400)
 
 def api_author(request, user_id):
     # Get the author information
-    #
     context = RequestContext(request)
     author = Author.objects.get(id=user_id)
-    return HttpResponse(json.dumps(author.json()), content_type="application/json")
+    return api_send_json(author.json())
 
-def api_friends(request, user1_id, user2_id = None):
+def api_has_friends(request, user1_id):
     context = RequestContext(request)
-    resp = dict()
-    if(user2_id == None):
-            #Get the user1 friends
-        resp["query"] = "friends"
-        resp["author"] = user1_id
-        friends = []
-       
-        if request.method == 'POST':
-            try:
-                flist = json.loads(request.body)
-                flist = flist["authors"]
-                friends = [f for f in flist if api_are_friends(user1_id, f)]
-                resp["friends"] = friends           
-            except Exception, e:
-                resp["friends"] = []
 
-    else:
-        if api_are_friends(user1_id, user2_id):
+    if request.method != 'POST':
+        raise Http404
+
+    resp = dict()
+    
+    resp["query"] = "friends"
+    resp["author"] = user1_id
+    
+    try:
+        flist = json.loads(request.body)
+        flist = flist["authors"]
+        friends = [f for f in flist if Author.are_friends(user1_id, f)]
+        resp["friends"] = friends
+
+        return api_send_json(resp)
+    except Exception, e:
+        return api_send_error(e.message)
+
+def api_are_friends(request, user1_id, user2_id):
+    context = RequestContext(request)
+
+    if request.method != 'GET':
+        raise Http404
+
+    resp = dict()
+    resp["query"] = "friends"
+
+    try:
+        if Author.are_friends(user1_id, user2_id):
             resp["friends"] = "YES"
         else:
             resp["friends"] = "NO"
 
-        resp["query"] = "friends"
-        #resp["friends"] = [user1_id, user2_id] In the spec the key friends is used twice
+        return api_send_json(resp)
+    except Exception, e:
+        return api_send_error(e.message)
 
-    return HttpResponse(json.dumps(resp), content_type="application/json")
-
-def api_are_friends(user1_id, user2_id):
-        # Return if user1 and user2 are friends
-    # Check user1's list, if not in this list check on user2's list for 
-    # friendship relationship. This is because friendslist strores who 
-    # requested the friendship
-    
-    if user1_id == user2_id:
-        return True
-
-    try:
-            f = FriendRequest.objects.get(user_who_sent_request = user1_id, user_who_received_request = user2_id, accepted = True)
-    except Exception,e:
-        try:
-            f = FriendRequest.objects.get(user_who_sent_request = user2_id, user_who_received_request = user1_id, accepted = True)
-        except:
-            return False
-
-    return True
 
 def api_post(request, post_id):
     context = RequestContext(request)
+    
     try:
         post = Post.objects.get(id=post_id)
     except Exception, e:
-        print e
         post = {}
 
     if request.method == 'POST' or request.method == 'GET':
-        #return the post
-        #print(post.json())
-        return HttpResponse(json.dumps(post.json()), content_type="application/json")
+        return api_send_json(post.json())
     
     elif request.method == 'PUT':
         body = json.loads(request.body)
-
-        print 'body: '
-        print body
-        print 'type: '
-        print type(body)
 
         if post == {}:
             post = Post(id=post_id)
@@ -134,9 +123,9 @@ def api_post(request, post_id):
             
         post.save()
 
-        print post.origin
-
-    return None
+        return api_send_json(post.json())
+    else:
+        raise Http404
 
 def api_get_author_posts(request, user_id):
     # Get the all posts by the user
@@ -148,30 +137,34 @@ def api_get_author_posts(request, user_id):
 def api_friendrequest(request):
     context = RequestContext(request)
 
-    if request.method == 'POST':
-        try:
-            print (request.body)
-            frequest = json.loads(request.body)  
-
-            friend = frequest["friend"]
-            friend = friend["author"]
-            author = frequest["author"]
-
-            u_friend = Author.objects.get(id=friend["id"])
-
-            flist = FriendRequest(user_who_sent_request=author["id"], user_who_received_request=u_friend,accepted=False)
-            flist.save()
-
-        except Exception, e:
-            print(e)
-            frequest = {}
-    else:
+    if request.method != 'POST':
         raise Http404
 
-    return HttpResponse(json.dumps(frequest), content_type="application/json")
+    try:
+        frequest = json.loads(request.body)
+
+        friend_data = frequest["friend"]["author"]
+        author_data = frequest["author"]
+
+        friend = Author.objects.get(id=friend_data["id"])
+
+        flist = FriendRequest(sender=author["id"], receiver=friend["id"], accepted=False)
+        flist.save()
+
+        return HttpResponse(json.dumps(frequest), content_type="application/json")
+    except Exception, e:
+        return api_send_error(e.message)
 
 
 # Site
+
+def index(request):
+    # Request the context of the request.
+    # The context contains information such as the client's machine details, for example.
+    context = RequestContext(request)
+    if request.user.is_authenticated():
+        return redirect(timeline)
+    return render_to_response('main/index.html', {}, context)
 
 def register(request):
     context = RequestContext(request)
