@@ -89,6 +89,38 @@
 
 
   {
+    "model": "main.friendRequest",
+    "pk": 1,
+    "fields": {
+      "sender": "108ded43-8520-4035-a262-547454d32022",
+      "receiver": "108ded43-8520-4035-a262-547454d32023",
+      "accepted": true,
+      "date": "2014-03-10T21:57:01.829Z"
+    }
+  },
+  {
+    "model": "main.friendRequest",
+    "pk": 2,
+    "fields": {
+      "sender": "108ded43-8520-4035-a262-547454d32024",
+      "receiver": "108ded43-8520-4035-a262-547454d32022",
+      "accepted": false,
+      "date": "2014-03-10T21:57:01.829Z"
+    }
+  },
+  {
+    "model": "main.friendRequest",
+    "pk": 3,
+    "fields": {
+      "sender": "108ded43-8520-4035-a262-547454d32023",
+      "receiver": "108ded43-8520-4035-a262-547454d32024",
+      "accepted": false,
+      "date": "2014-03-10T21:57:01.829Z"
+    }
+  },
+
+
+  {
     "model": "main.category",
     "pk": 1,
     "fields": {
