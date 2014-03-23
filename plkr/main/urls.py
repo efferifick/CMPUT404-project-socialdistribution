@@ -5,19 +5,19 @@ urlpatterns = patterns('',
 		# API URLs
 		
 		# Author - Specific one
-		url(r'^author/(?P<user_id>[a-zA-Z0-9\-]+)$', 'main.views.api_author', name='api_author'),
+		url(r'^author/(?P<user_id>[a-zA-Z0-9\-]+)$', 'main.views.api_get_author', name='api_get_author'),
 		# Author - Posts by an author
 		#url(r'^author/(?P<post_id>\w+)/posts$', views.get_author_post, name='authors_posts'),
 		
 		# Friends - Author has these friends?
-		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)$', 'main.views.api_has_friends', name='api_has_friends'),
+		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)$', 'main.views.api_author_has_friends', name='api_author_has_friends'),
 		# Friends - Check friendship
-		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)/(?P<user2_id>[a-zA-Z0-9\-]+)$', 'main.views.api_are_friends', name='api_are_friends'),
+		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)/(?P<user2_id>[a-zA-Z0-9\-]+)$', 'main.views.api_authors_are_friends', name='api_authors_are_friends'),
 		# Friends - Send request
-		url(r'^friendrequest$', 'main.views.api_friendrequest', name='api_friendrequest'),
+		url(r'^friendrequest$', 'main.views.api_send_friendrequest', name='api_send_friendrequest'),
 
 		# Posts - Specific one
-		url(r'^post/(?P<post_id>[a-zA-Z0-9\-]+)$', 'main.views.api_post', name='api_post'),
+		url(r'^post/(?P<post_id>[a-zA-Z0-9\-]+)$', 'main.views.api_get_post', name='api_get_post'),
 		
 		# Site
 		
@@ -36,7 +36,7 @@ urlpatterns = patterns('',
 		
 		# Profile
 		url(r'^site/profile$', 'main.views.profile', name='profile'),
-		url(r'^site/profile/edit$', 'main.views.profileEdit', name='profileEdit'),
+		url(r'^site/profile/edit$', 'main.views.profile_edit', name='profile_edit'),
 
 		# Friends
 		url(r'^site/friends$', 'main.views.friends', name='friends'),
@@ -48,7 +48,7 @@ urlpatterns = patterns('',
 		url(r'^site/friends/new$', 'main.views.request_friendship', name='request_friendship'),
 		
 		# Posts - New
-		url(r'^site/posts/new$', 'main.views.postNew', name='postNew'),
+		url(r'^site/posts/new$', 'main.views.post_new', name='post_new'),
 		# Posts - View
 		url(r'^site/posts/(?P<post_id>[a-zA-Z0-9\-]+)$', 'main.views.post', name='post'),
 		)

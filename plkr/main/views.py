@@ -29,13 +29,13 @@ def api_send_error(message):
     '''
     return HttpResponse(json.dumps(dict(error=True, message=message)), content_type="application/json", status=400)
 
-def api_author(request, user_id):
+def api_get_author(request, user_id):
     # Get the author information
     context = RequestContext(request)
     author = Author.objects.get(id=user_id)
     return api_send_json(author.json())
 
-def api_has_friends(request, user1_id):
+def api_author_has_friends(request, user1_id):
     context = RequestContext(request)
 
     if request.method != 'POST':
@@ -56,7 +56,7 @@ def api_has_friends(request, user1_id):
     except Exception, e:
         return api_send_error(e.message)
 
-def api_are_friends(request, user1_id, user2_id):
+def api_authors_are_friends(request, user1_id, user2_id):
     context = RequestContext(request)
 
     if request.method != 'GET':
@@ -76,7 +76,7 @@ def api_are_friends(request, user1_id, user2_id):
         return api_send_error(e.message)
 
 
-def api_post(request, post_id):
+def api_get_post(request, post_id):
     context = RequestContext(request)
     
     try:
@@ -135,7 +135,7 @@ def api_get_author_posts(request, user_id):
     
     return None 
 
-def api_friendrequest(request):
+def api_send_friendrequest(request):
     context = RequestContext(request)
 
     if request.method != 'POST':
@@ -252,7 +252,7 @@ def profile(request):
     return render_to_response('main/profile.html', {'posts' : posts}, context)
 
 @login_required
-def profileEdit(request):
+def profile_edit(request):
     '''
     This view is used to edit the profile for the currently logged in user
     '''
@@ -327,7 +327,7 @@ def post(request, post_id):
     return render_to_response('main/postView.html', {'post': post, 'full': True}, context)
 
 @login_required
-def postNew(request):
+def post_new(request):
     '''
     This view is used to create a new post by the currently logged in user
     '''

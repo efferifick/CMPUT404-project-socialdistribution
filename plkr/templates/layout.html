@@ -40,7 +40,7 @@
                             <li><a href="{% url 'friends' %}">Friends {% if nrequests > 0 %}<span class="badge">{{ nrequests }}</span>{% endif %}</a></li>
                             {% endwith %}
                             
-                            <li><a href="{% url 'profileEdit' %}">Settings</a></li>
+                            <li><a href="{% url 'profile_edit' %}">Settings</a></li>
                         {% else %}
                             <li><a href="{% url 'register' %}">Register</a></li>
                         {% endif %}
