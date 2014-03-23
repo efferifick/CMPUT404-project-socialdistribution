@@ -81,6 +81,14 @@ USE_TZ = True
 
 LOGIN_URL = '/login'
 
+# API Urls
+
+API_GET_AUTHOR = 'author/:author_id'
+API_GET_AUTHOR_POSTS = 'author/:author_id/posts'
+API_GET_POST = 'post/:author_id'
+API_AUTHOR_HAS_FRIENDS = 'friends/:author_id'
+API_AUTHORS_ARE_FRIENDS = 'friends/:author_id1/:author_id2'
+API_SEND_FRIENDREQUEST = 'friendrequest'
 
 # Media files (uploaded)
 

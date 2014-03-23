@@ -6,9 +6,10 @@ urlpatterns = patterns('',
 		
 		# Author - Specific one
 		url(r'^author/(?P<user_id>[a-zA-Z0-9\-]+)$', 'main.views.api_author', name='api_author'),
-		#url(r'^author/post/(?P<post_id>\w+)$', views.get_author_post, name='authors_posts'),
+		# Author - Posts by an author
+		#url(r'^author/(?P<post_id>\w+)/posts$', views.get_author_post, name='authors_posts'),
 		
-		# Friends - Author has this friends?
+		# Friends - Author has these friends?
 		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)$', 'main.views.api_has_friends', name='api_has_friends'),
 		# Friends - Check friendship
 		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)/(?P<user2_id>[a-zA-Z0-9\-]+)$', 'main.views.api_are_friends', name='api_are_friends'),
