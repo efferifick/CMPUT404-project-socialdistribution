@@ -1,8 +1,19 @@
 {% for request in requests %}
 {% with friend=request.sender %}
-	<div class="friend" id="friend-{{ friend.id }}">
-		<a href="{{ friend.get_url }}">{{ friend.displayName }}</a>
-		<span class="request-meta">Requested on {{ request.date|date:"D, M d, Y \a\t H:i" }}</span>
+	<div class="friend row" id="friend-{{ friend.id }}">
+		<div class="col-md-1">
+			<a href="{{ friend.get_url }}">{{ friend.displayName }}</a>
+		</div>
+		<div class="col-md-4">
+			<span class="request-meta">Requested on {{ request.date|date:"D, M d, Y \a\t H:i" }}</span>
+		</div>
+		<div class="col-md-1">
+			<form action="{% url 'accept_friendship' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="request_id" value="{{ request.id }}" />
+				<button class="btn btn-success">Accept</button>
+			</form>
+		</div>
 	</div>
 {% endwith %}
 {% empty %}

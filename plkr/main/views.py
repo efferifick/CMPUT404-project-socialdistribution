@@ -404,7 +404,6 @@ def postNew(request):
             messages.info(request, "Post created successfully.")
         except Exception, e:
             # Add the generic error
-            raise
             messages.error(request, e.message)
 
     # Send the user to the profile screen
@@ -417,3 +416,35 @@ def friends(request):
     friends = author.friends
     requests = author.requests
     return render_to_response('main/friendView.html', {'friends': friends, 'requests': requests}, context)
+
+@login_required
+def request_friendship(request):
+    context = RequestContext(request)
+    # return render_to_response('main/friendView.html', {'friends': friends, 'requests': requests}, context)
+    pass
+
+@login_required
+def accept_friendship(request):
+    context = RequestContext(request)
+    request_id = request.POST.get('request_id')
+
+    if request_id is None:
+        messages.error(request, 'The friend request does not exist.')
+
+    try:
+        frequest = FriendRequest.objects.get(pk=request_id);
+
+        if frequest.accepted:
+            messages.error(request, 'The friend request has already been accepted.')
+        else:
+            frequest.accepted = True
+            frequest.save()
+
+            messages.info(request, 'The friend request has been accepted.')
+    except ObjectDoesNotExist,e:
+        messages.error(request, 'The friend request does not exist.')
+    except Exception, e:
+            # Add the generic error
+            messages.error(request, 'The friend request could not be accepted at the moment. Please try again later.')
+
+    return redirect('friends')

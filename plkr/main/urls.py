@@ -40,6 +40,10 @@ urlpatterns = patterns('',
 
 		# Friends
 		url(r'^site/friends$', 'main.views.friends', name='friends'),
+		# Friends - Accept friendship
+		url(r'^site/friends/accept$', 'main.views.accept_friendship', name='accept_friendship'),
+		# Friends - Request friendship
+		url(r'^site/friends/new$', 'main.views.request_friendship', name='request_friendship'),
 		
 		# Posts - New
 		url(r'^site/posts/new$', 'main.views.postNew', name='postNew'),
