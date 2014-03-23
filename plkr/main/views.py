@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import *
 import json
@@ -420,31 +421,68 @@ def friends(request):
 @login_required
 def request_friendship(request):
     context = RequestContext(request)
-    # return render_to_response('main/friendView.html', {'friends': friends, 'requests': requests}, context)
     pass
+
+@login_required
+def remove_friendship(request):
+    context = RequestContext(request)
+    author = request.user.author
+    friend_id = request.POST.get('friend_id')
+
+    # Validate the friend id
+    if friend_id is None and frien:
+        messages.error(request, 'The friendship does not exist.')
+
+    try:
+        # Get the friendship
+        frequest = author.friendships().get(Q(receiver=friend_id) | Q(sender=friend_id))
+
+        # Remove the friendship
+        frequest.delete()
+
+        # Set the success message for the user
+        messages.info(request, 'The friendship has been removed.')
+    except ObjectDoesNotExist,e:
+        # Set the error message
+        messages.error(request, 'The friendship does not exist.')
+    except Exception, e:
+        # Set the generic error message
+        messages.error(request, 'The friendship could not be removed at the moment. Please try again later.')
+
+    # Redirect to the friends view
+    return redirect('friends')
 
 @login_required
 def accept_friendship(request):
     context = RequestContext(request)
     request_id = request.POST.get('request_id')
 
+    # Validate the request id
     if request_id is None:
         messages.error(request, 'The friend request does not exist.')
 
     try:
+        # Get the friend request
         frequest = FriendRequest.objects.get(pk=request_id);
 
+        # Validate that it's not accepted
         if frequest.accepted:
             messages.error(request, 'The friend request has already been accepted.')
         else:
+            # Accept the friend request
             frequest.accepted = True
+
+            # Save the friend request
             frequest.save()
 
+            # Set the success message for the user
             messages.info(request, 'The friend request has been accepted.')
     except ObjectDoesNotExist,e:
+        # Set the error message
         messages.error(request, 'The friend request does not exist.')
     except Exception, e:
-            # Add the generic error
-            messages.error(request, 'The friend request could not be accepted at the moment. Please try again later.')
+        # Set the generic error message
+        messages.error(request, 'The friend request could not be accepted at the moment. Please try again later.')
 
+    # Redirect to the friends view
     return redirect('friends')

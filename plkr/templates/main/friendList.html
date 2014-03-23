@@ -1,6 +1,15 @@
 {% for friend in friends %}
-	<div class="friend" id="friend-{{ friend.id }}">
-		<a href="{{ friend.get_url }}">{{ friend.displayName }}</a>
+	<div class="friend row" id="friend-{{ friend.id }}">
+		<div class="col-md-1">
+			<a href="{{ friend.get_url }}">{{ friend.displayName }}</a>
+		</div>
+		<div class="col-md-1 col-md-offset-4">
+			<form action="{% url 'remove_friendship' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="friend_id" value="{{ friend.id }}" />
+				<button class="btn btn-danger">Remove</button>
+			</form>
+		</div>
 	</div>
 {% empty %}
 	<p class="well">Oops, there are no friends.</p>

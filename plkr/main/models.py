@@ -61,6 +61,11 @@ class Author(models.Model):
         authors = Author.objects.filter(Q(friend_requests_sent__receiver=self.id, friend_requests_sent__accepted=True) | Q(friend_requests_received__sender=self.id, friend_requests_received__accepted=True))
         return authors
 
+    def friendships(self):
+        # Get all the friend requests that were sent/received by this author, that were accepted already
+        requests = FriendRequest.objects.select_related('sender', 'receiver').filter(Q(receiver=self.id) | Q(sender=self.id), accepted=True)
+        return requests
+
     def following(self):
         # Get all the authors that received a friend request from this author and has not accepted it yet
         authors = Author.objects.filter(friend_requests_received__sender=self.id, friend_requests_received__accepted=False)
