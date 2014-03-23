@@ -2,7 +2,7 @@
 {% with friend=request.sender %}
 	<div class="friend" id="friend-{{ friend.id }}">
 		<a href="{{ friend.get_url }}">{{ friend.displayName }}</a>
-		<span class="request-meta">Request sent on {{ request|date:"D, M d, Y" }}</span>
+		<span class="request-meta">Requested on {{ request.date|date:"D, M d, Y \a\t H:i" }}</span>
 	</div>
 {% endwith %}
 {% empty %}
