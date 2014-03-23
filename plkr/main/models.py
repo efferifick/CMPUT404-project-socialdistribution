@@ -129,7 +129,7 @@ class Post(models.Model):
     # TODO Change this to a UUID auto field
     id = UUIDField(primary_key=True, auto=True)
     title = models.CharField(max_length= POST_TITLE_MAX_SIZE)
-    author = models.ForeignKey(Author)
+    author = models.ForeignKey(Author, related_name='posts')
     source = models.URLField()
     origin = models.URLField()
     contentType = models.TextField(max_length = 13, choices = CONTENTTYPE_OPTIONS)

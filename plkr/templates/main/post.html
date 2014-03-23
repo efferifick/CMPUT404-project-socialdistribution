@@ -1,7 +1,7 @@
 <article class="post" id="post-{{ post.id }}">
 	<header class="post-header">
 		<h1><a href="{% url 'post' post_id=post.id %}">{{ post.title }}</a></h1>
-		<p class="post-meta">Posted by <a href="#" title="{{ post.author.displayName }}" class="author-link">{{ post.author.displayName }}</a> on {{ post.pubDate|date:"D, M d, Y \a\t H:i" }}</p>
+		<p class="post-meta">Posted by <a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">{{ post.author.displayName }}</a> on {{ post.pubDate|date:"D, M d, Y \a\t H:i" }}</p>
 	</header>
 	<section class="post-body">
 		{% if full %}
@@ -34,7 +34,7 @@
 			<div class="comment">
 			{% for comment in post.comment_set.all %}
 				<div class="comment">
-					<p class="comment-meta"><a href="#" title="{{ post.author.displayName }}" class="author-link">{{ comment.author.displayName }}</a> said on {{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}:</p>
+					<p class="comment-meta"><a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">{{ comment.author.displayName }}</a> said on {{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}:</p>
 					<div class="comment-body">
 						<p>{{ comment.comment }}</p>
 					</div>

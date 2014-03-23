@@ -4,18 +4,22 @@
 
 {% block content %}
 	
-	<h1>{{ user.author.displayName }}</h1>
-	<p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
+	<h1>{{ puser.author.displayName }}</h1>
+	{% if puser == user %}
+		<p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
+	{% endif %}
 	
 	<div class="form-group">
-		<p>Email: {{ user.email }}</p>
-		<p>Username: {{ user.username }}</p>
-		<p>Display Name: {{ user.author.displayName }}</p>
+		<p>Email: {{ puser.email }}</p>
+		<p>Username: {{ puser.username }}</p>
+		<p>Display Name: {{ puser.author.displayName }}</p>
 	</div>
 
-	<div class="well">
-		{% include "main/postNew.html" %}
-	</div>
+	{% if puser == user %}
+		<div class="well">
+			{% include "main/postNew.html" %}
+		</div>
+	{% endif %}
 
 	<div id="posts">
 		<h2>Stream</h2>

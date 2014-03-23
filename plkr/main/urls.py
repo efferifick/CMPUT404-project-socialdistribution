@@ -34,9 +34,12 @@ urlpatterns = patterns('',
 		# Timeline
 		url(r'^site/$', 'main.views.timeline', name='timeline'),
 		
-		# Profile
+		# Profile - View
 		url(r'^site/profile$', 'main.views.profile', name='profile'),
+		# Profile - Edit
 		url(r'^site/profile/edit$', 'main.views.profile_edit', name='profile_edit'),
+		# Profile - Author profile
+		url(r'^site/profile/(?P<username>[a-zA-Z0-9]+)$', 'main.views.profile_author', name='profile_author'),
 
 		# Friends
 		url(r'^site/friends$', 'main.views.friends', name='friends'),

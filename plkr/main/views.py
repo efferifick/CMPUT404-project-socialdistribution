@@ -247,9 +247,24 @@ def profile(request):
     This view displays the profile for the currently logged in user
     '''
     context = RequestContext(request)
-    author = request.user.author
-    posts = Post.objects.filter(author=author).order_by('-pubDate').select_related()
-    return render_to_response('main/profile.html', {'posts' : posts}, context)
+    user = request.user
+    author = user.author
+    posts = author.posts.order_by('-pubDate').select_related()
+    return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
+
+def profile_author(request, username):
+    '''
+    This view displays the profile for a specific user
+    '''
+    context = RequestContext(request)
+
+    try:
+        user = User.objects.get(username=username)
+        author = user.author
+        posts = author.posts.order_by('-pubDate').select_related()
+        return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
+    except Exception, e:
+        raise Http404
 
 @login_required
 def profile_edit(request):
