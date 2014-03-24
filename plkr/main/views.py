@@ -436,7 +436,54 @@ def friends(request):
 @login_required
 def request_friendship(request):
     context = RequestContext(request)
-    pass
+    author = request.user.author
+    friend_id = request.POST.get('friend_id')
+    
+    # Validate the friend id
+    if friend_id is None:
+        messages.error(request, 'The user does not exist.')
+
+    try:
+        # Get the author to befriend
+        friend = Author.objects.select_related('user').get(pk=friend_id)
+
+        # Get the username of the author to befriend
+        username = friend.user.username
+
+        # Check if there's already a friend request between the two authors
+        if Author.are_friends(author.id, friend.id):
+            # Set the error message
+            messages.error(request, 'You are already friends with this user.')
+            # Redirect to the friend's profile view
+            return redirect('profile_author', username=username)
+
+        # Check if there's a pending friend request
+        count = FriendRequest.objects.filter(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted = False).count()
+        if count > 0:
+            # Set the error message
+            messages.error(request, 'There\'s already a pending friend request between you and this user.')
+            # Redirect to the friend's profile view
+            return redirect('profile_author', username=username)            
+
+        # Create the friend request
+        frequest = FriendRequest(sender=author, receiver=friend, accepted=False)
+
+        # Save the friend request
+        frequest.save()
+
+        # Set the success message for the user
+        messages.info(request, 'The friend request has been sent.')
+    except ObjectDoesNotExist,e:
+        # Set the error message
+        messages.error(request, 'The author to befriend does not exist.')
+        # Redirect to the friends view
+        return redirect('friends')
+    except Exception, e:
+        # Set the generic error message
+        messages.error(request, 'The friend request could not be sent at the moment. Please try again later.')
+
+    # Redirect to the friends view
+    return redirect('profile_author', username=username)
 
 @login_required
 def remove_friendship(request):
@@ -445,7 +492,7 @@ def remove_friendship(request):
     friend_id = request.POST.get('friend_id')
 
     # Validate the friend id
-    if friend_id is None and frien:
+    if friend_id is None:
         messages.error(request, 'The friendship does not exist.')
 
     try:

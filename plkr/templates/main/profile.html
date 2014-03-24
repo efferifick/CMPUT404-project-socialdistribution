@@ -19,6 +19,14 @@
 		<div class="well">
 			{% include "main/postNew.html" %}
 		</div>
+	{% else %}
+		<div>
+			<form action="{% url 'request_friendship' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="friend_id" value="{{ puser.author.id }}" />
+				<button class="btn btn-primary">Add Friend</button>
+			</form>
+		</div>
 	{% endif %}
 
 	<div id="posts">
