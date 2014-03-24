@@ -415,13 +415,42 @@ def post_new(request):
 
 @login_required
 def post_delete(request, post_id):
+    '''
+    This view is used to delete a specific post
+    '''
     # TODO
     pass
 
 @login_required
 def post_comment(request, post_id):
-    # TODO
-    pass
+    '''
+    This view is used to comment on a specific post
+    '''
+    context = RequestContext(request)
+    user = request.user
+    author = user.author
+    body = request.POST.get('comment')
+
+    try:
+        post = Post.objects.get(pk=post_id)
+    except ObjectDoesNotExist,e:
+        raise Http404
+
+    if not post.can_be_viewed_by(author):
+        raise Http404
+
+    # Validate the comment
+    if body is None:
+        return redirect('post', post_id=post_id)
+
+    # Create the comment
+    comment = Comment.objects.create(post=post, author=author, comment=body)
+
+    # Add a success flash message
+    messages.info(request, "Comment added successfully.")
+
+    # Redirect to the post view
+    return redirect('post', post_id=post_id)
 
 @login_required
 def friends(request):
