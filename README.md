@@ -36,3 +36,7 @@ Note that Pillow also needs python-dev package (Ubuntu) to be installed.
 
 	pip install pillow
 
+Markdown2:
+This is required to parse posts in markdown format
+
+	pip install django-markdown-deux
