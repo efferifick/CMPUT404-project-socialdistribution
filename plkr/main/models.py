@@ -140,6 +140,28 @@ class Post(models.Model):
     visibility = models.TextField(max_length = 10, choices = VISIBILITY_OPTIONS)
     image = models.ImageField(upload_to='posts')
 
+    def can_be_viewed_by(self, author):
+        if author is None:
+            if self.visibility != 'PUBLIC':
+                return False
+        else:
+            if self.visibility == 'FOAF':
+                # TODO If user is not a Friend or a FOAF, 
+                if False:
+                    return False
+            elif self.visibility == 'FRIENDS':
+                # TODO If user is not a Friend
+                if False:
+                    return False
+            elif self.visibility == 'PRIVATE':
+                if self.author != author:
+                    return False
+            elif self.visibility == 'SERVERONLY':
+                if self.author.host != author.host:
+                    return False
+
+        return True
+
     def json(self):
         post = {} 
         post["title"] = self.title

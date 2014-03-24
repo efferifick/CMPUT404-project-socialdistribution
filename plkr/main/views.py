@@ -322,25 +322,10 @@ def post(request, post_id):
     context = RequestContext(request)
     user = request.user
     post = Post.objects.get(pk=post_id)
+    viewer = user.author if user.is_authenticated() else None
 
-    if not user.is_authenticated():
-        if post.visibility != 'PUBLIC':
-            raise Http404
-    else:
-        if post.visibility == 'FOAF':
-            # TODO If user is not a Friend or a FOAF, 
-            if False:
-                raise Http404
-        elif post.visibility == 'FRIENDS':
-            # TODO If user is not a Friend
-            if False:
-                raise Http404
-        elif post.visibility == 'PRIVATE':
-            if not user.is_authenticated() or post.author.id != user.author.id:
-                raise Http404
-        elif post.visibility == 'SERVERONLY':
-            if not user.is_authenticated() or post.author.host != user.author.host:
-                raise Http404
+    if not post.can_be_viewed_by(viewer):
+        raise Http404
 
     return render_to_response('main/postView.html', {'post': post, 'full': True}, context)
 
