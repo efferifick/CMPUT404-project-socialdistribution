@@ -54,4 +54,8 @@ urlpatterns = patterns('',
 		url(r'^site/posts/new$', 'main.views.post_new', name='post_new'),
 		# Posts - View
 		url(r'^site/posts/(?P<post_id>[a-zA-Z0-9\-]+)$', 'main.views.post', name='post'),
+		# Posts - Delete
+		url(r'^site/posts/(?P<post_id>[a-zA-Z0-9\-]+)/delete$', 'main.views.post_delete', name='post_delete'),
+		# Posts - Comment
+		url(r'^site/posts/(?P<post_id>[a-zA-Z0-9\-]+)/comment$', 'main.views.post_comment', name='post_comment'),
 		)

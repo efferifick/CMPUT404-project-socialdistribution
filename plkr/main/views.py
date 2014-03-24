@@ -316,6 +316,9 @@ def profile_edit(request):
     return render_to_response('main/profileEdit.html', {}, context)
 
 def post(request, post_id):
+    '''
+    This view is used to view a specific post
+    '''
     context = RequestContext(request)
     user = request.user
     post = Post.objects.get(pk=post_id)
@@ -424,6 +427,16 @@ def post_new(request):
 
     # Send the user to the profile screen
     return redirect('profile')
+
+@login_required
+def post_delete(request, post_id):
+    # TODO
+    pass
+
+@login_required
+def post_comment(request, post_id):
+    # TODO
+    pass
 
 @login_required
 def friends(request):
