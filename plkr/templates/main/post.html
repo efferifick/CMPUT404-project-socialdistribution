@@ -6,7 +6,7 @@
 	<section class="post-body">
 		{% if full %}
 			{% if post.contentType == 'text/plain' %}
-			    {{ post.content|safe }}
+			    {{ post.content|safe|linebreaks }}
 			{% elif post.contentType == 'text/html' %}
 				{{ post.content|safe }}
 			{% elif post.contentType == 'text/markdown' %}
@@ -36,7 +36,7 @@
 				<div class="comment">
 					<p class="comment-meta"><a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">{{ comment.author.displayName }}</a> said on {{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}:</p>
 					<div class="comment-body">
-						<p>{{ comment.comment }}</p>
+						{{ comment.comment|safe|linebreaks }}
 					</div>
 				</div>
 			{% endfor %}
