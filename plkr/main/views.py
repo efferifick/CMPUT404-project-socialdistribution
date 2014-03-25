@@ -237,8 +237,20 @@ def register(request):
 @login_required
 def timeline(request):
     context = RequestContext(request)
+
+
     # TODO We have to build a function to get the user's stream
+    # Maybe this isn't the best way to build the user's stream
+    # but it filters out content we are not allowed to see.
+
     posts = Post.objects.order_by("-pubDate").select_related()
+    user = request.user
+    author = user.author
+
+    for post in posts:
+        if not post.can_be_viewed_by(author):
+            posts = posts.exclude(id=post.id)
+
     return render_to_response('main/timeline.html', {'posts': posts}, context)
 
 @login_required
@@ -343,6 +355,8 @@ def post_new(request):
     title = request.POST.get('title')
     description = request.POST.get('description')
     body = request.POST.get('body')
+    #TODO: Body should be escaped if it is plain text
+    #TODO: We should only allow a subset of html.
     categories = request.POST.get('categories')
     visibility = request.POST.get('visibility')
     contentType = request.POST.get('contentType')
