@@ -141,26 +141,39 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts')
 
     def can_be_viewed_by(self, author):
-        if author is None:
-            if self.visibility != 'PUBLIC':
-                return False
-        else:
-            if self.visibility == 'FOAF':
-                # TODO If user is not a Friend or a FOAF, 
-                if False:
-                    return False
-            elif self.visibility == 'FRIENDS':
-                # TODO If user is not a Friend
-                if False:
-                    return False
-            elif self.visibility == 'PRIVATE':
-                if self.author != author:
-                    return False
-            elif self.visibility == 'SERVERONLY':
-                if self.author.host != author.host:
-                    return False
 
-        return True
+        identity = self.author == author
+        in_server = self.author.host == author.host
+        are_friends = Author.are_friends(self.author.id, author.id)
+        #TODO:
+        are_friends_of_friends = False
+	if not are_friends:
+		all_friends = self.author.friends()
+		for friend in all_friends:
+			if Author.are_friends(friend.id, author.id):
+				are_friends_of_friends = True
+				break
+
+        if author is None:
+            if self.visibility == 'PUBLIC':
+                return True
+        else:
+            if self.visibility == 'PUBLIC':
+                return True
+            elif self.visibility == 'PRIVATE':
+                if identity:
+                    return True
+            elif self.visibility == 'SERVERONLY':
+                if identity or in_server:
+                    return True
+            elif self.visibility == 'FRIENDS':
+                if identity or are_friends:
+                    return True
+            elif self.visibility == 'FOAF':
+                if identity or are_friends or are_friends_of_friends:
+                    return True
+
+        return False
 
     def json(self):
         post = {} 
