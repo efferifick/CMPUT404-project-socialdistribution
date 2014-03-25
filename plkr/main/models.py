@@ -147,12 +147,12 @@ class Post(models.Model):
         are_friends = Author.are_friends(self.author.id, author.id)
         #TODO:
         are_friends_of_friends = False
-	if not are_friends:
-		all_friends = self.author.friends()
-		for friend in all_friends:
-			if Author.are_friends(friend.id, author.id):
-				are_friends_of_friends = True
-				break
+        if not are_friends:
+            all_friends = self.author.friends()
+                for friend in all_friends:
+                    if Author.are_friends(friend.id, author.id):
+                        are_friends_of_friends = True
+                        break
 
         if author is None:
             if self.visibility == 'PUBLIC':
