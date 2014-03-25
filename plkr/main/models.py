@@ -149,10 +149,10 @@ class Post(models.Model):
         are_friends_of_friends = False
         if not are_friends:
             all_friends = self.author.friends()
-                for friend in all_friends:
-                    if Author.are_friends(friend.id, author.id):
-                        are_friends_of_friends = True
-                        break
+            for friend in all_friends:
+                if Author.are_friends(friend.id, author.id):
+                    are_friends_of_friends = True
+                    break
 
         if author is None:
             if self.visibility == 'PUBLIC':
@@ -172,8 +172,8 @@ class Post(models.Model):
             elif self.visibility == 'FOAF':
                 if identity or are_friends or are_friends_of_friends:
                     return True
-
-        return False
+            else:
+                return False
 
     def json(self):
         post = {} 
