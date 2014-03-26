@@ -41,7 +41,7 @@ def api_author_has_friends(request, user1_id):
     context = RequestContext(request)
 
     if request.method != 'POST':
-        raise Http404
+        return api_send_error("Method not allowed.", 405)
 
     resp = dict()
     
@@ -62,7 +62,7 @@ def api_authors_are_friends(request, user1_id, user2_id):
     context = RequestContext(request)
 
     if request.method != 'GET':
-        raise Http404
+        return api_send_error("Method not allowed.", 405)
 
     resp = dict()
     resp["query"] = "friends"
@@ -83,21 +83,45 @@ def api_get_post(request, post_id):
     
     try:
         post = Post.objects.get(id=post_id)
+    except ObjectDoesNotExist, e:
+        post = None
     except Exception, e:
-        post = {}
+        return api_send_error(e.message, 500)
 
-    if request.method == 'POST' or request.method == 'GET':
-        return api_send_json(post.json())
-    
-    elif request.method == 'PUT':
+    try:
+        # If it's a GET or a POST, send the post
+        if request.method == 'POST' or request.method == 'GET':
+            # If the post was not found
+            if post is None:
+                # Return not found error
+                return api_send_error("Post does not exist.", 404)
+            else:
+                # Otherwise, return the post data
+                return api_send_json(post.json())
+        
+        # Only PUT is allowed from here on
+        if request.method != 'PUT':
+            return api_send_error("Method not allowed.", 405)
+
+        # Get the request body
         body = json.loads(request.body)
 
-        if post == {}:
+        # If the post was not found
+        if post is None:
+            # Create a new one
             post = Post(id=post_id)
 
+        # Validate the request body
+        if not "author" in body or not "id" in body["author"]:
+            return api_send_error("Missing author information.", 400)
+
+        # Get the author
         author = Author.objects.get(id=body["author"]["id"])
+
+        # Assign the post author
         post.author = author
 
+        # Update the post data
         for key, value in body.iteritems():
             if key == "title":
                 post.title = value
@@ -111,8 +135,6 @@ def api_get_post(request, post_id):
                 post.contentType = value
             elif key == "content":
                 post.content = value
-            #elif key == "author":
-                #post.author = value
             elif key == "categories":
                 post.categories = value
             elif key == "comments":
@@ -124,11 +146,13 @@ def api_get_post(request, post_id):
             elif key == "visibility":
                 post.visibility = value
             
+        # Save the post
         post.save()
 
+        # Send the post data
         return api_send_json(post.json())
-    else:
-        raise Http404
+    except Exception, e:
+        return api_send_error(e.message, 500)
 
 def api_get_author_posts(request, user_id):
     '''
