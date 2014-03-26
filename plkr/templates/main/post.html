@@ -2,7 +2,11 @@
 
 <article class="post" id="post-{{ post.id }}">
 	<header class="post-header">
-		<h1><a href="{% url 'post' post_id=post.id %}">{{ post.title }}</a></h1>
+		{% if post.gitHub %}
+			<h1><a href="{{ post.source }}">{{ post.title }}</a></h1>
+		{% else %}
+			<h1><a href="{% url 'post' post_id=post.id %}">{{ post.title }}</a></h1>
+		{% endif %}
 		<p class="post-meta">Posted by <a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">{{ post.author.displayName }}</a> on {{ post.pubDate|date:"D, M d, Y \a\t H:i" }}</p>
 	</header>
 	<section class="post-body">
@@ -17,7 +21,12 @@
 		{% else %}
 			<p>
 				{{ post.description|safe }}
+
+				{% if post.gitHub %}
+				<a href="{{ post.source }}">Read more</a>
+				{% else %}
 				<a href="{% url 'post' post_id=post.id %}">Read more</a>
+				{% endif %}
 			</p>
 		{% endif %}
 

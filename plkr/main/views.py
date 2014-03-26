@@ -711,6 +711,8 @@ def get_authors_github_posts(author):
     for p in data:
         # Create a post for each activity
         gpost = GitHubPost()
+        gpost.source = "http://github.com/" + author.github_name
+        gpost.gitHub = True
         gpost.title = "GitHub " + p["type"]
         gpost.author = author
         gpost.contentType = "text/plain"
@@ -719,13 +721,17 @@ def get_authors_github_posts(author):
 
         if p["type"] == "PushEvent":
             gpost.source = p["payload"]["commits"][0]["url"]
+            gpost.source = gpost.source.replace('api.github.com','github.com')
+            gpost.source = gpost.source.replace('/repos/','/')
+            gpost.source = gpost.source.replace('/commits/','/commit/')
+
             gpost.origin = p["payload"]["commits"][0]["url"]
-            gpost.content = p["payload"]["commits"][0]["message"]
+            gpost.description = p["payload"]["commits"][0]["message"]
 
         elif p["type"] == "ForkEvent":
             gpost.source = p["payload"]["forkee"]["git_url"]
             gpost.origin = p["repo"]["url"]
-            gpost.content = "Fork " + p["payload"]["forkee"]["name"] + " from " + p["repo"]["name"]
+            gpost.description = "Fork " + p["payload"]["forkee"]["name"] + " from " + p["repo"]["name"]
 
         # Add the post to the resulting list
         resp.append(gpost)
@@ -738,5 +744,4 @@ class GitHubPost(Post):
     '''
 
     def __init___(self):
-        self.source = "https://github.com/"
         self.origin = "https://github.com/"
