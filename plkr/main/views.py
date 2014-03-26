@@ -177,6 +177,7 @@ def register(request):
         username = request.POST['username']
         password = request.POST['password']
         displayName = request.POST['displayName']
+        github_name = request.POST['github_name']
         error = False
 
         if email is None or email == '':
@@ -208,6 +209,11 @@ def register(request):
 
                 # Create the Author and set the user and display name
                 author = Author(user=user, displayName=displayName)
+
+                # Update: also set the github account:
+                if github_name is not None and github_name != '':
+                    author.github_name = github_name
+
                 author.host = 'http://localhost:8000/'
 
                 # Save the User first
@@ -349,6 +355,7 @@ def profile_edit(request):
         displayName = request.POST.get('displayName')
         username = request.POST.get('username')
         email = request.POST.get('email')
+        github_name = request.POST['github_name']
 
         if displayName is not None and displayName != '':
             author.displayName = displayName
@@ -358,6 +365,10 @@ def profile_edit(request):
 
         if email is not None and email != '':
             request.user.email = email
+
+        # Update: also set the github account:
+        if github_name is not None and github_name != '':
+            author.github_name = github_name
 
         try:
             # Save the User first
