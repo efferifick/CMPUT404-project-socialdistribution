@@ -178,7 +178,15 @@ class Post(models.Model):
         return True
 
     def should_appear_on_stream_of(self, author):
-        return ( (self.author in author.following()) or author.is_friends_with(self.author))
+        '''
+        Determines if this post should appear on the specified author's stream
+        '''
+
+        can_view = self.can_be_viewed_by(author)
+        is_following = self.author in author.following()
+        are_friends = author.is_friends_with(self.author)
+
+        return (is_following or are_friends) and can_view
 
     def json(self):
         post = {} 
