@@ -292,6 +292,8 @@ def profile(request):
     posts = [post for post in posts if (post.can_be_viewed_by(author) or post.should_appear_on_stream_of(author))]
 
     #We need to include the Github posts here
+    #Here we retrieve the github posts from the current logged in user
+    #and display them on his profile.
     github_posts = get_authors_github_posts(author)
     if github_posts:
         posts = [post for post in posts]
@@ -320,7 +322,9 @@ def profile_author(request, username):
         # Filter the posts that can be viewed and that are supposed to be in the user's timeline
         posts = [post for post in posts if (post.can_be_viewed_by(viewer) or post.should_appear_on_stream_of(viewer))]
 
-        #Include the users github posts
+        #Here we retrieve the github posts from the user to 
+        #display his github activity on his profile
+        #So I, Paulo, agree with Diego that we should display it here
         github_posts = get_authors_github_posts(author)
         if github_posts:
             posts = [post for post in posts]
