@@ -13,6 +13,9 @@
 		<p>Email: {{ puser.email }}</p>
 		<p>Username: {{ puser.username }}</p>
 		<p>Display Name: {{ puser.author.displayName }}</p>
+		{% if puser.author.github_name != '' %}
+		<p>GitHub: <a href="http://github.com/{{ puser.author.github_name }}">{{ puser.author.github_name }}</a></p>
+		{% endif %}
 	</div>
 
 	{% if puser == user %}

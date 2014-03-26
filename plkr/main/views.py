@@ -365,7 +365,7 @@ def profile_edit(request):
             request.user.email = email
 
         # Update: also set the github account:
-        if github_name is not None and github_name != '':
+        if github_name is not None:
             author.github_name = github_name
 
         try:
