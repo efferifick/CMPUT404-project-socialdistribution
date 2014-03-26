@@ -301,9 +301,9 @@ def profile(request):
     # Filter the posts that can be viewed and that are supposed to be in the user's timeline
     posts = [post for post in posts if (post.can_be_viewed_by(author) and post.should_appear_on_stream_of(author))]
 
-    #We need to include the Github posts here
-    #Here we retrieve the github posts from the current logged in user
-    #and display them on his profile.
+    # We need to include the Github posts here
+    # Here we retrieve the github posts from the current logged in user
+    # and display them on his profile.
     github_posts = get_authors_github_posts(author)
     if github_posts:
         posts = [post for post in posts]
@@ -323,18 +323,21 @@ def profile_author(request, username):
     try:
         user = User.objects.get(username=username)
 
-        author = user.author #Author's profile
+        # Author's profile
+        author = user.author
 
-        viewer = request.user.author #Who wants to see this profile
+        # The author that wants to see this profile
+        viewer = request.user.author 
 
-        posts = Post.objects.order_by("-pubDate").select_related().filter(author=author) #Get all posts from this author
+        # Get all posts from this author
+        posts = Post.objects.order_by("-pubDate").select_related().filter(author=author)
 
         # Filter the posts that can be viewed and that are supposed to be in the user's timeline
         posts = [post for post in posts if (post.can_be_viewed_by(viewer) and post.should_appear_on_stream_of(viewer))]
 
-        #Here we retrieve the github posts from the user to 
-        #display his github activity on his profile
-        #So I, Paulo, agree with Diego that we should display it here
+        # Here we retrieve the github posts from the user to 
+        # display his github activity on his profile
+        # So I, Paulo, agree with Diego that we should display it here
         github_posts = get_authors_github_posts(author)
         if github_posts:
             posts = [post for post in posts]
@@ -435,7 +438,7 @@ def post_new(request):
     image = request.FILES.get('image')
     error = False
 
-    #escape html entities
+    # Escape html entities
     title = cgi.escape(title)
     description = cgi.escape(description)
 
