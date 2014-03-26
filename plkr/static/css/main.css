@@ -31,25 +31,34 @@ body {
 
 /* Posts */
 
-#posts .post {
+.post {
 	border: 1px solid #ccc;
 	padding: 0.5em;
 	margin-bottom: 2em;
 	background-color: #f6f6f6;
 }
 
-#posts .post h1 {
+.post h1 {
 	font-size: 2em;
 }
 
-#posts .comment-body {
+.post .post-body {
+	margin: 0.9em 0;
+}
+
+.post .post-footer {
+	border-top: 1px dotted #bbb;
+	padding-top: .9em;
+}
+
+.comment-body {
 	font-size: 1em;
 }
 
-#posts .comment-meta, #posts .post-meta {
+.comment-meta, #posts .post-meta {
 	font-size: 0.9em;
 }
 
-#posts .comment-meta {
+.comment-meta {
 	margin-bottom: 0;
 }

@@ -13,11 +13,16 @@
 				{{ post.author.displayName }}
 			</a>
 			on {{ post.pubDate|date:"D, M d, Y \a\t H:i" }}
-
-			{% if post.author == user.author %}
-				<span class="post-actions"><a href="{% url 'post' post_id=post.id %}">Delete</a></span>
-			{% endif %}
 		</p>
+
+		{% if not post.gitHub and post.author == user.author %}
+			<div class="post-actions">
+				<form class="form-inline" role="form" action="{% url 'post_delete' post_id=post.id %}" method="post">
+					Actions:
+					<button type="submit" class="btn btn-danger btn-xs">Delete</button>
+				</form>
+			</div>
+		{% endif %}
 	</header>
 	<section class="post-body">
 		{% if full %}
@@ -48,37 +53,35 @@
 			</div>
 		{% endif %}
 	</section>
-	<footer class="post-footer">
-
-		{% if not post.gitHub %}
-
-		<h2 class="sr-only">Comments</h2>
-		
-		{% if post.comment_set.all %}
-			<div class="comment">
-			{% for comment in post.comment_set.all %}
+	
+	{% if not post.gitHub %}
+		<footer class="post-footer">
+			<h2 class="sr-only">Comments</h2>
+			
+			{% if post.comment_set.all %}
 				<div class="comment">
-					<p class="comment-meta"><a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">{{ comment.author.displayName }}</a> said on {{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}:</p>
-					<div class="comment-body">
-						{{ comment.comment|escape|linebreaks }}
+				{% for comment in post.comment_set.all %}
+					<div class="comment">
+						<p class="comment-meta"><a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">{{ comment.author.displayName }}</a> said on {{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}:</p>
+						<div class="comment-body">
+							{{ comment.comment|escape|linebreaks }}
+						</div>
+					</div>
+				{% endfor %}
+				</div>
+			{% endif %}
+
+			<form class="form-horizontal" role="form" action="{% url 'post_comment' post_id=post.id %}" method="post">
+				{% csrf_token %}
+				<div class="form-group row">
+					<div class="col-sm-10">
+						<textarea class="form-control" id="post-{{ post.id }}-comment" name="comment" placeholder="Your comment goes here..."></textarea>
+					</div>
+					<div class="col-sm-2">
+						<button type="submit" class="btn btn-default">Post</button>
 					</div>
 				</div>
-			{% endfor %}
-			</div>
-		{% endif %}
-
-		<form class="form-horizontal" role="form" action="{% url 'post_comment' post_id=post.id %}" method="post">
-			{% csrf_token %}
-			<div class="form-group row">
-				<div class="col-sm-10">
-					<textarea class="form-control" id="post-{{ post.id }}-comment" name="comment" placeholder="Your comment goes here..."></textarea>
-				</div>
-				<div class="col-sm-2">
-					<button type="submit" class="btn btn-default">Post</button>
-				</div>
-			</div>
-		</form>
-
-		{% endif %}
-	</footer>
+			</form>
+		</footer>
+	{% endif %}
 </article>
