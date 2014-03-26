@@ -7,7 +7,7 @@ urlpatterns = patterns('',
 		# Author - Specific one
 		url(r'^author/(?P<user_id>[a-zA-Z0-9\-]+)$', 'main.views.api_get_author', name='api_get_author'),
 		# Author - Posts by an author
-		#url(r'^author/(?P<post_id>\w+)/posts$', views.get_author_post, name='authors_posts'),
+		url(r'^author/(?P<user_id>[a-zA-Z0-9\-]+)/posts$', 'main.views.api_get_author_posts', name='api_get_author_posts'),
 		
 		# Friends - Author has these friends?
 		url(r'^friends/(?P<user1_id>[a-zA-Z0-9\-]+)$', 'main.views.api_author_has_friends', name='api_author_has_friends'),
