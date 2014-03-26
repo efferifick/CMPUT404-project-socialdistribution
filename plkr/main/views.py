@@ -286,7 +286,10 @@ def profile(request):
     context = RequestContext(request)
     user = request.user
     author = user.author
-    posts = author.posts.order_by('-pubDate').select_related()
+
+    posts = Post.objects.order_by("-pubDate").select_related()
+    # Filter the posts that can be viewed and that are supposed to be in the user's timeline
+    posts = [post for post in posts if (post.can_be_viewed_by(author) or post.should_appear_on_stream_of(author))]
 
     #We need to include the Github posts here
     github_posts = get_authors_github_posts(author)
@@ -307,8 +310,15 @@ def profile_author(request, username):
 
     try:
         user = User.objects.get(username=username)
-        author = user.author
-        posts = author.posts.order_by('-pubDate').select_related()
+
+        author = user.author #Author's profile
+
+        viewer = request.user.author #Who wants to see this profile
+
+        posts = Post.objects.order_by("-pubDate").select_related().filter(author=author) #Get all posts from this author
+
+        # Filter the posts that can be viewed and that are supposed to be in the user's timeline
+        posts = [post for post in posts if (post.can_be_viewed_by(viewer) or post.should_appear_on_stream_of(viewer))]
 
         #Include the users github posts
         github_posts = get_authors_github_posts(author)
