@@ -458,52 +458,54 @@ def post_new(request):
         messages.error(request, 'Content Type option is required.')
         error = True
 
-    if not error:
-        try:
-            # Create the post
-            post = Post()
-            post.author = author
-            post.title = title
-            post.contentType = contentType
-	    if contentType != "text/html":
-		body = cgi.escape(body)
-	    else:
-		if validateHTML(body) == False:
-		    return HttpResponse("You can only use the following html tags: &lt;a&gt;, &lt;b&gt;, &lt;blockquote&gt;, &lt;code&gt;, &lt;del&gt;, &lt;dd&gt;, &lt;dl&gt;, &lt;dt&gt;, &lt;em&gt;, &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;i&gt;, &lt;img&gt;, &lt;kbd&gt;, &lt;li&gt;, &lt;ol&gt;, &lt;p&gt;, &lt;pre&gt;, &lt;s&gt;, &lt;sup&gt;, &lt;sub&gt;, &lt;strong&gt;, &lt;strike&gt;, &lt;ul&gt;, &lt;br&gt;, &lt;hr&gt;")
+    if error:
+        # Send the user to the profile screen
+        return redirect('profile')
 
-            post.description = description
-            post.content = body
-            post.pubDate = datetime.datetime.now()
-            post.visibility = visibility
+    try:
+        # Create the post
+        post = Post()
+        post.author = author
+        post.title = title
+        post.contentType = contentType
+        post.description = description
+        post.content = body
+        post.pubDate = datetime.datetime.now()
+        post.visibility = visibility
 
-            # Save the Post
-            post.save()
+        if post.contentType == 'text/html' and not validateHTML(body):
+            # Set error
+            messages.error(request, 'You can only use the following html tags: <a>, <b>, <blockquote>, <code>, <del>, <dd>, <dl>, <dt>, <em>, <h1>, <h2>, <h3>, <i>, <img>, <kbd>, <li>, <ol>, <p>, <pre>, <s>, <sup>, <sub>, <strong>, <strike>, <ul>, <br>, <hr>.')
+            # Send the user to the profile screen
+            return redirect('profile')
 
-            if categories is not None and categories != '':
-                categories = map(lambda x: x.strip(), categories.split(","))
+        # Save the Post
+        post.save()
 
-                if len(categories) > 0:
-                    for category in categories:
-                        curcat = Category.objects.filter(name=category)
-                        
-                        if curcat and curcat.count() == 1:
-                            post.categories.add(curcat[0])
-                        else:
-                            curcat = Category(name=category)
-                            curcat.save()
-                            post.categories.add(curcat)
+        if categories is not None and categories != '':
+            categories = map(lambda x: x.strip(), categories.split(","))
 
-            if image is not None:
-                post.image = image
+            for category in categories:
+                curcat = Category.objects.filter(name=category)
+                
+                if curcat and curcat.count() == 1:
+                    post.categories.add(curcat[0])
+                else:
+                    curcat = Category(name=category)
+                    curcat.save()
+                    post.categories.add(curcat)
 
-            # Save the Post
-            post.save()
+        if image is not None:
+            post.image = image
 
-            # Add a success flash message
-            messages.info(request, "Post created successfully.")
-        except Exception, e:
-            # Add the generic error
-            messages.error(request, e.message)
+        # Save the Post
+        post.save()
+
+        # Add a success flash message
+        messages.info(request, "Post created successfully.")
+    except Exception, e:
+        # Add the generic error
+        messages.error(request, e.message)
 
     # Send the user to the profile screen
     return redirect('profile')
@@ -538,10 +540,6 @@ def post_comment(request, post_id):
     if body is None:
         return redirect('post', post_id=post_id)
     
-    if validateHTML(body) == False:
-	return HttpResponse("You can only use the following html tags: &lt;a&gt;, &lt;b&gt;, &lt;blockquote&gt;, &lt;code&gt;, &lt;del&gt;, &lt;dd&gt;, &lt;dl&gt;, &lt;dt&gt;, &lt;em&gt;, &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;i&gt;, &lt;img&gt;, &lt;kbd&gt;, &lt;li&gt;, &lt;ol&gt;, &lt;p&gt;, &lt;pre&gt;, &lt;s&gt;, &lt;sup&gt;, &lt;sub&gt;, &lt;strong&gt;, &lt;strike&gt;, &lt;ul&gt;, &lt;br&gt;, &lt;hr&gt;")
-
-
     # Create the comment
     comment = Comment.objects.create(post=post, author=author, comment=body)
 
@@ -697,7 +695,7 @@ def get_authors_github_posts(author):
         return None
 
     resp = []
-    
+
     # Loop on all the activity
     for p in data:
         # Create a post for each activity
