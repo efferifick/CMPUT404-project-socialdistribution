@@ -722,9 +722,14 @@ def get_authors_github_posts(author):
             gpost.description = p["payload"]["commits"][0]["message"]
 
         elif p["type"] == "ForkEvent":
-            gpost.source = p["payload"]["forkee"]["git_url"]
+            gpost.source = p["payload"]["forkee"]["html_url"]
             gpost.origin = p["repo"]["url"]
             gpost.description = "Fork " + p["payload"]["forkee"]["name"] + " from " + p["repo"]["name"]
+
+        elif p["type"] == "CommitCommentEvent":
+            gpost.source = p["payload"]["comment"]["html_url"]
+            gpost.origin = p["payload"]["comment"]["url"]
+            gpost.description = p["payload"]["comment"]["body"]
 
         # Add the post to the resulting list
         resp.append(gpost)
