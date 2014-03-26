@@ -37,11 +37,8 @@ class Author(models.Model):
     user = models.OneToOneField(User)
     host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
     displayName = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
-
-    github_enabled = models.BooleanField(default=False)
     github_name = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE, blank=True)
     
-
     def get_url(self):
         return "%sauthor/%s" % (self.host, self.id)
 
