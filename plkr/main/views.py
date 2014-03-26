@@ -243,13 +243,22 @@ def timeline(request):
     # Maybe this isn't the best way to build the user's stream
     # but it filters out content we are not allowed to see.
 
+
+
     posts = Post.objects.order_by("-pubDate").select_related()
     user = request.user
     author = user.author
 
     for post in posts:
-        if not post.can_be_viewed_by(author):
+    
+        #Check if I can view this post
+        #Check if I should view the post
+        if not post.can_be_viewed_by(author) or not post.should_appear_on_stream_of(author):
+            print("aaa")
             posts = posts.exclude(id=post.id)
+
+    # TODO
+    # Add github posts
 
     return render_to_response('main/timeline.html', {'posts': posts}, context)
 
@@ -262,6 +271,9 @@ def profile(request):
     user = request.user
     author = user.author
     posts = author.posts.order_by('-pubDate').select_related()
+
+    #We need to include the Github posts here
+
     return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
 
 def profile_author(request, username):
@@ -274,6 +286,7 @@ def profile_author(request, username):
         user = User.objects.get(username=username)
         author = user.author
         posts = author.posts.order_by('-pubDate').select_related()
+
         return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
     except Exception, e:
         raise Http404
