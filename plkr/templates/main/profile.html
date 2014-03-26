@@ -11,10 +11,10 @@
 	
 	<div class="form-group">
 		<p>Email: {{ puser.email }}</p>
-		<p>Username: {{ puser.username }}</p>
-		<p>Display Name: {{ puser.author.displayName }}</p>
+		<p>Username: {{ puser.username|escape }}</p>
+		<p>Display Name: {{ puser.author.displayName|escape }}</p>
 		{% if puser.author.github_name != '' %}
-		<p>GitHub: <a href="http://github.com/{{ puser.author.github_name }}">{{ puser.author.github_name }}</a></p>
+		<p>GitHub: <a href="http://github.com/{{ puser.author.github_name|escape }}">{{ puser.author.github_name|escape }}</a></p>
 		{% endif %}
 	</div>
 

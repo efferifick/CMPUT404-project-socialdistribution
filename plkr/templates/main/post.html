@@ -7,12 +7,22 @@
 		{% else %}
 			<h1><a href="{% url 'post' post_id=post.id %}">{{ post.title }}</a></h1>
 		{% endif %}
-		<p class="post-meta">Posted by <a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">{{ post.author.displayName }}</a> on {{ post.pubDate|date:"D, M d, Y \a\t H:i" }}</p>
+		<p class="post-meta">
+			Posted by
+			<a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">
+				{{ post.author.displayName }}
+			</a>
+			on {{ post.pubDate|date:"D, M d, Y \a\t H:i" }}
+
+			{% if post.author == user.author %}
+				<span class="post-actions"><a href="{% url 'post' post_id=post.id %}">Delete</a></span>
+			{% endif %}
+		</p>
 	</header>
 	<section class="post-body">
 		{% if full %}
 			{% if post.contentType == 'text/plain' %}
-			    {{ post.content|safe|linebreaks }}
+			    {{ post.content|escape|linebreaks }}
 			{% elif post.contentType == 'text/html' %}
 				{{ post.content|safe }}
 			{% elif post.contentType == 'text/markdown' %}
@@ -20,7 +30,7 @@
 			{% endif %}
 		{% else %}
 			<p>
-				{{ post.description|safe }}
+				{{ post.description|escape }}
 
 				{% if post.gitHub %}
 				<a href="{{ post.source }}">Read more</a>
@@ -50,7 +60,7 @@
 				<div class="comment">
 					<p class="comment-meta"><a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">{{ comment.author.displayName }}</a> said on {{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}:</p>
 					<div class="comment-body">
-						{{ comment.comment|safe|linebreaks }}
+						{{ comment.comment|escape|linebreaks }}
 					</div>
 				</div>
 			{% endfor %}
