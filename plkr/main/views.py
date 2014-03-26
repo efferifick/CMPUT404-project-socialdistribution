@@ -208,11 +208,9 @@ def register(request):
                 user.is_active = False
 
                 # Create the Author and set the user and display name
-                author = Author(user=user, displayName=displayName)
-
                 # Update: also set the github account:
-                if github_name is not None and github_name != '':
-                    author.github_name = github_name
+
+                author = Author(user=user, displayName=displayName, github_name = github_name)
 
                 author.host = 'http://localhost:8000/'
 
