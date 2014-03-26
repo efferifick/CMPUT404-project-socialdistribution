@@ -177,6 +177,9 @@ class Post(models.Model):
             
         return True
 
+    def should_appear_on_stream_of(self, author):
+        return ( (self.author in author.following()) or author.is_friends_with(self.author))
+
     def json(self):
         post = {} 
         post["title"] = self.title
