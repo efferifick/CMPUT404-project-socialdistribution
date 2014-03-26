@@ -297,19 +297,15 @@ def profile(request):
     user = request.user
     author = user.author
 
-    posts = Post.objects.order_by("-pubDate").select_related()
-    # Filter the posts that can be viewed and that are supposed to be in the user's timeline
-    posts = [post for post in posts if (post.can_be_viewed_by(author) and post.should_appear_on_stream_of(author))]
+    # Get the authors's posts ordered by date
+    posts = author.posts.order_by("-pubDate").select_related()
 
     # We need to include the Github posts here
-    # Here we retrieve the github posts from the current logged in user
-    # and display them on his profile.
+    # Here we retrieve the github posts from the current logged in user and display them on his profile.
     github_posts = get_authors_github_posts(author)
     if github_posts:
         posts = [post for post in posts]
-
         posts += github_posts
-        
         posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
     return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
@@ -684,11 +680,9 @@ def get_authors_github_posts(author):
     '''
     This function returns a list of the author's github posts (if any)
     '''
-    resp = []
-
     # Validate that the author has a github username specified
     if author.github_name is None or author.github_name == "":
-        return resp
+        return None
 
     # Github user activity url
     url = "https://api.github.com/users/" + author.github_name + "/events/public"
@@ -699,10 +693,11 @@ def get_authors_github_posts(author):
     # Parse the response
     data = json.loads(response.read())
 
-
     if ('message' in data and (data['message'] == 'Not Found' or 'API rate limit exceeded' in data['message'] )):
-        return resp
+        return None
 
+    resp = []
+    
     # Loop on all the activity
     for p in data:
         # Create a post for each activity
