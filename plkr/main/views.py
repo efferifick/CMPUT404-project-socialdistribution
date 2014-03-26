@@ -144,28 +144,29 @@ def api_get_author_posts(request, user_id):
         # Get the author whose posts are being requested
         author = Author.objects.get(id=user_id)
 
-        # Get the viewer from the post body
-        if "id" in request.GET.keys():
-            viewer_id = request.GET["id"]
-        else:
-            viewer_id = None
-
         # Check if viewer data was supplied
-        if viewer_id is not None:
+        if "id" in request.GET.keys():
+            # Get the viewer id
+            viewer_id = request.GET["id"]
+
             try:
                 # TODO (diego) I saw that the other team's used UUID's without the hyphens, maybe we would need to correct the format here
 
                 # Check if the viewer exists in our database
                 viewer = Author.objects.get(pk=viewer_id)
             except ObjectDoesNotExist, e:
+                # Assuming no viewer
                 viewer = None
         else:
+            # Assuming no viewer
             viewer = None
 
         # Only return posts that the user can 
         posts = [post.json() for post in author.posts.all() if post.can_be_viewed_by(viewer)]
 
+        # Send the response
         return api_send_json(dict(posts=posts))
+
     except ObjectDoesNotExist, e:
         return api_send_error("Author not found.", 404)
     except Exception, e:
