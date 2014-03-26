@@ -289,6 +289,8 @@ def profile(request):
     posts = author.posts.order_by('-pubDate').select_related()
 
     #We need to include the Github posts here
+    #Here we retrieve the github posts from the current logged in user
+    #and display them on his profile.
     github_posts = get_authors_github_posts(author)
     if github_posts:
         posts = [post for post in posts]
@@ -310,7 +312,9 @@ def profile_author(request, username):
         author = user.author
         posts = author.posts.order_by('-pubDate').select_related()
 
-        #Include the users github posts
+        #Here we retrieve the github posts from the user to 
+        #display his github activity on his profile
+        #So I, Paulo, agree with Diego that we should display it here
         github_posts = get_authors_github_posts(author)
         if github_posts:
             posts = [post for post in posts]
