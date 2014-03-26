@@ -9,7 +9,7 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import *
-import json
+import json, urllib, dateutil.parser
 from main.models import *
 import os.path
 
@@ -249,6 +249,7 @@ def timeline(request):
     user = request.user
     author = user.author
 
+    """
     for post in posts:
     
         #Check if I can view this post
@@ -256,9 +257,27 @@ def timeline(request):
         if not post.can_be_viewed_by(author) or not post.should_appear_on_stream_of(author):
             print("aaa")
             posts = posts.exclude(id=post.id)
+    """
+
+    posts = [post for post in posts if (post.can_be_viewed_by(author) or post.should_appear_on_stream_of(author))]
 
     # TODO
-    # Add github posts
+    # Add github posts ( from all my friends and followers )
+    for aut in author.friends():
+        github_posts = get_authors_github_posts(aut)
+        if github_posts:
+            posts += github_posts
+
+    for aut in author.following():
+        github_posts = get_authors_github_posts(aut)
+        if github_posts:
+            posts += github_posts
+
+    github_posts = get_authors_github_posts(author)
+    if github_posts:
+        posts += github_posts
+
+    posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
     return render_to_response('main/timeline.html', {'posts': posts}, context)
 
@@ -273,6 +292,13 @@ def profile(request):
     posts = author.posts.order_by('-pubDate').select_related()
 
     #We need to include the Github posts here
+    github_posts = get_authors_github_posts(author)
+    if github_posts:
+        posts = [post for post in posts]
+
+        posts += github_posts
+        
+        posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
     return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
 
@@ -286,6 +312,15 @@ def profile_author(request, username):
         user = User.objects.get(username=username)
         author = user.author
         posts = author.posts.order_by('-pubDate').select_related()
+
+        #Include the users github posts
+        github_posts = get_authors_github_posts(author)
+        if github_posts:
+            posts = [post for post in posts]
+
+            posts += github_posts
+            
+            posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
         return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
     except Exception, e:
@@ -602,3 +637,40 @@ def accept_friendship(request):
 
     # Redirect to the friends view
     return redirect('friends')
+
+
+def get_authors_github_posts(author):
+    resp = []
+
+    if author.github_enabled:
+        url = "https://api.github.com/users/" + author.github_name + "/events/public"
+        response = urllib.urlopen(url);
+        data = json.loads(response.read())
+        if not ('message' in data and data['message'] == 'Not Found'):
+            for p in data:
+                gpost = GitHubPost()
+                gpost.title = "GitHub " + p["type"]
+                gpost.author = author
+                gpost.contentType = "text/plain"
+                gpost.pubDate = dateutil.parser.parse(p["created_at"])
+                gpost.visibility = "PUBLIC"
+
+                if p["type"] == "PushEvent":
+                    gpost.source = p["payload"]["commits"][0]["url"]
+                    gpost.origin = p["payload"]["commits"][0]["url"]
+                    gpost.content = p["payload"]["commits"][0]["message"]
+
+                elif p["type"] == "ForkEvent":
+                    gpost.source = p["payload"]["forkee"]["git_url"]
+                    gpost.origin = p["repo"]["url"]
+                    gpost.content = "Fork " + p["payload"]["forkee"]["name"] + " from " + p["repo"]["name"]
+
+                resp.append(gpost)
+
+    return resp
+
+
+class GitHubPost(Post):
+    def __init___(self):
+        gpost.source = "https://github.com/"
+        gpost.origin = "https://github.com/"
