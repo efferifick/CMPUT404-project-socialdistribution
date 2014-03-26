@@ -29,6 +29,11 @@ This is required for the UUIDField class
 
 	pip install django-extensions
 
+Dateutil:
+This is required to parse dates from imported GitHub posts
+
+	pip install python-dateutil
+
 Pillow:
 This is required to handle image fields in models
 
