@@ -141,13 +141,17 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts')
 
     def can_be_viewed_by(self, author):
+        '''
+        Determines if this post can be viewed by the specified author
+        '''
 
         identity = self.author == author
-        in_server = self.author.host == author.host
-        are_friends = Author.are_friends(self.author.id, author.id)
-        #TODO:
-        are_friends_of_friends = False
-        if not are_friends:
+        in_server = author is not None and self.author.host == author.host
+        are_friends = author is not None and Author.are_friends(self.author.id, author.id)
+        are_friends_of_friends = identity or are_friends
+        
+        #TODO: Determine if user is FOAF
+        if author is not None and not are_friends:
             all_friends = self.author.friends()
             for friend in all_friends:
                 if Author.are_friends(friend.id, author.id):
@@ -155,25 +159,23 @@ class Post(models.Model):
                     break
 
         if author is None:
-            if self.visibility == 'PUBLIC':
-                return True
-        else:
-            if self.visibility == 'PUBLIC':
-                return True
-            elif self.visibility == 'PRIVATE':
-                if identity:
-                    return True
-            elif self.visibility == 'SERVERONLY':
-                if identity or in_server:
-                    return True
-            elif self.visibility == 'FRIENDS':
-                if identity or are_friends:
-                    return True
-            elif self.visibility == 'FOAF':
-                if identity or are_friends or are_friends_of_friends:
-                    return True
-            else:
+            if self.visibility != 'PUBLIC':
                 return False
+        else:
+            if self.visibility == 'PRIVATE':
+                if not identity:
+                    return False
+            elif self.visibility == 'SERVERONLY':
+                if not in_server:
+                    return False
+            elif self.visibility == 'FRIENDS':
+                if not are_friends:
+                    return False
+            elif self.visibility == 'FOAF':
+                if not are_friends_of_friends:
+                    return False
+            
+        return True
 
     def json(self):
         post = {} 
