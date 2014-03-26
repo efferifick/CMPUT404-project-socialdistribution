@@ -463,10 +463,9 @@ def post_new(request):
 	    if contentType != "text/html":
 		body = cgi.escape(body)
 	    else:
-		parser = validateHTML()
-		parser.feed(body)
-		if parser.flag == False:
-		   return HttpResponse("You can only use the following html tags: &lt;a&gt;, &lt;b&gt;, &lt;blockquote&gt;, &lt;code&gt;, &lt;del&gt;, &lt;dd&gt;, &lt;dl&gt;, &lt;dt&gt;, &lt;em&gt;, &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;i&gt;, &lt;img&gt;, &lt;kbd&gt;, &lt;li&gt;, &lt;ol&gt;, &lt;p&gt;, &lt;pre&gt;, &lt;s&gt;, &lt;sup&gt;, &lt;sub&gt;, &lt;strong&gt;, &lt;strike&gt;, &lt;ul&gt;, &lt;br&gt;, &lt;hr&gt;")
+		if validateHTML(body) == False:
+		    return HttpResponse("You can only use the following html tags: &lt;a&gt;, &lt;b&gt;, &lt;blockquote&gt;, &lt;code&gt;, &lt;del&gt;, &lt;dd&gt;, &lt;dl&gt;, &lt;dt&gt;, &lt;em&gt;, &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;i&gt;, &lt;img&gt;, &lt;kbd&gt;, &lt;li&gt;, &lt;ol&gt;, &lt;p&gt;, &lt;pre&gt;, &lt;s&gt;, &lt;sup&gt;, &lt;sub&gt;, &lt;strong&gt;, &lt;strike&gt;, &lt;ul&gt;, &lt;br&gt;, &lt;hr&gt;")
+
             post.description = description
             post.content = body
             post.pubDate = datetime.datetime.now()
@@ -504,22 +503,6 @@ def post_new(request):
     # Send the user to the profile screen
     return redirect('profile')
 
-class validateHTML(HTMLParser):
-    validTags = ["a", "b", "blockquote", "code", "del", "dd", "dl", "dt", "em", "h1", "h2", "h3", "i", "img", "kbd", "li", "ol", "p", "pre", "s", "sup", "sub", "strong", "strike", "ul", "br", "hr"]
-    flag = True
-    
-    def handle_starttag(self, tag, attrs):
-        if tag not in self.validTags:
-	    self.flag = False
-
-    def handle_endtag(self, tag):
-        if tag not in self.validTags:
-	    self.flag = False
-    
-    def handle_startendtag(self, tag, attrs):
-	if tag not in self.validTags:
-	    self.flag = False
-
 @login_required
 def post_delete(request, post_id):
     '''
@@ -549,6 +532,10 @@ def post_comment(request, post_id):
     # Validate the comment
     if body is None:
         return redirect('post', post_id=post_id)
+    
+    if validateHTML(body) == False:
+	return HttpResponse("You can only use the following html tags: &lt;a&gt;, &lt;b&gt;, &lt;blockquote&gt;, &lt;code&gt;, &lt;del&gt;, &lt;dd&gt;, &lt;dl&gt;, &lt;dt&gt;, &lt;em&gt;, &lt;h1&gt;, &lt;h2&gt;, &lt;h3&gt;, &lt;i&gt;, &lt;img&gt;, &lt;kbd&gt;, &lt;li&gt;, &lt;ol&gt;, &lt;p&gt;, &lt;pre&gt;, &lt;s&gt;, &lt;sup&gt;, &lt;sub&gt;, &lt;strong&gt;, &lt;strike&gt;, &lt;ul&gt;, &lt;br&gt;, &lt;hr&gt;")
+
 
     # Create the comment
     comment = Comment.objects.create(post=post, author=author, comment=body)
@@ -745,3 +732,24 @@ class GitHubPost(Post):
 
     def __init___(self):
         self.origin = "https://github.com/"
+
+def validateHTML(body):
+    parser = StackExchangeSite()
+    parser.feed(body)#This is not the most efficient method, I couldn't find a way to stop the tag search once an invalid HTML tag is found. That is, the body is always iterated until the last bit of information. However, it is certainly safe.
+    return parser.flag
+
+class StackExchangeSite(HTMLParser):
+    validTags = ["a", "b", "blockquote", "code", "del", "dd", "dl", "dt", "em", "h1", "h2", "h3", "i", "img", "kbd", "li", "ol", "p", "pre", "s", "sup", "sub", "strong", "strike", "ul", "br", "hr"]
+    flag = True
+    
+    def handle_starttag(self, tag, attrs):
+        if tag not in self.validTags:
+	    self.flag = False
+
+    def handle_endtag(self, tag):
+        if tag not in self.validTags:
+	    self.flag = False
+    
+    def handle_startendtag(self, tag, attrs):
+	if tag not in self.validTags:
+	    self.flag = False
