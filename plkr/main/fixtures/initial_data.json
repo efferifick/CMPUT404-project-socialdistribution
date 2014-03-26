@@ -35,7 +35,8 @@
     "fields": {
       "user": 2,
       "host": "http://localhost:8000/",
-      "displayName": "dluces"
+      "displayName": "dluces",
+      "github_name": "dluces"
     }
   },
 
