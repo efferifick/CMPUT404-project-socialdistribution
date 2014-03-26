@@ -32,10 +32,7 @@ body {
 /* Posts */
 
 .post {
-	border: 1px solid #ccc;
-	padding: 0.5em;
-	margin-bottom: 2em;
-	background-color: #f6f6f6;
+	
 }
 
 .post h1 {
