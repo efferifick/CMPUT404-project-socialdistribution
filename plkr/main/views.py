@@ -248,7 +248,7 @@ def timeline(request):
     posts = Post.objects.order_by("-pubDate").select_related()
     
     # Filter the posts that can be viewed and that are supposed to be in the user's timeline
-    posts = [post for post in posts if (post.can_be_viewed_by(author) or post.should_appear_on_stream_of(author))]
+    posts = [post for post in posts if (post.can_be_viewed_by(author) and post.should_appear_on_stream_of(author))]
 
     # TODO This might need to change. This is showing github posts for friends/following in the author's timeline.
     # I (diego) think that the requirement is that my github activity is imported as my public activity.
@@ -289,7 +289,7 @@ def profile(request):
 
     posts = Post.objects.order_by("-pubDate").select_related()
     # Filter the posts that can be viewed and that are supposed to be in the user's timeline
-    posts = [post for post in posts if (post.can_be_viewed_by(author) or post.should_appear_on_stream_of(author))]
+    posts = [post for post in posts if (post.can_be_viewed_by(author) and post.should_appear_on_stream_of(author))]
 
     #We need to include the Github posts here
     #Here we retrieve the github posts from the current logged in user
@@ -320,7 +320,7 @@ def profile_author(request, username):
         posts = Post.objects.order_by("-pubDate").select_related().filter(author=author) #Get all posts from this author
 
         # Filter the posts that can be viewed and that are supposed to be in the user's timeline
-        posts = [post for post in posts if (post.can_be_viewed_by(viewer) or post.should_appear_on_stream_of(viewer))]
+        posts = [post for post in posts if (post.can_be_viewed_by(viewer) and post.should_appear_on_stream_of(viewer))]
 
         #Here we retrieve the github posts from the user to 
         #display his github activity on his profile
