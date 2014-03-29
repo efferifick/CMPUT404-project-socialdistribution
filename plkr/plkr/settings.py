@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'markdown_deux',
     'main',
+    'dajaxice',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -107,6 +108,12 @@ STATICFILES_DIRS = (
     STATIC_PATH,
 )
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'dajaxice.finders.DajaxiceFinder',
+)
+
 # Templates
 TEMPLATE_PATH = os.path.abspath(os.path.join(BASE_DIR, 'templates'))
 TEMPLATE_DIRS = (
@@ -121,4 +128,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     "django.core.context_processors.request" 
+)
+
+TEMPLATE_LOADERS = (
+    'django.template.loaders.filesystem.Loader',
+    'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.eggs.Loader',
 )

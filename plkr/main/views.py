@@ -243,6 +243,12 @@ def register(request):
 @login_required
 def timeline(request):
     context = RequestContext(request)
+    posts = timeline_posts(request)
+
+    # Render the timeline
+    return render_to_response('main/timeline.html', {'posts': posts}, context)
+
+def timeline_posts(request):
     user = request.user
     author = user.author
 
@@ -279,8 +285,8 @@ def timeline(request):
     # Sort the posts by publication date
     posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
-    # Render the timeline
-    return render_to_response('main/timeline.html', {'posts': posts}, context)
+    return posts
+
 
 @login_required
 def profile(request):
@@ -691,7 +697,7 @@ def get_authors_github_posts(author):
     data = json.loads(response.read())
 
 
-    if ('message' in data and data['message'] == 'Not Found'):
+    if ('message' in data and (data['message'] == 'Not Found' or 'API rate limit exceeded' in data['message'] )):
         return resp
 
     # Loop on all the activity

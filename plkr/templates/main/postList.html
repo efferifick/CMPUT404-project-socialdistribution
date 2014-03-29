@@ -3,3 +3,39 @@
 {% empty %}
 	<p class="bg-warning">Oops, no posts on your stream just yet.</p>
 {% endfor %}
+<script>
+try {
+	var date = new Date().toISOString();
+	var call_dajaxice = function() {
+		Dajaxice.main.get_new_posts(callback, {"date":date});
+	};
+	
+	setInterval(call_dajaxice, 20000);
+}
+catch(e) {
+	alert('Error: ' + e.message);
+}
+
+function callback(data) {
+	var postStart = document.getElementById("posts");
+	var start = postStart.children[1];
+	var newPost;
+	var nPosts = data.length;
+	
+	if (nPosts != 0)
+	{
+	    date = new Date().toISOString();
+	}
+
+	for (var i = 0; i < nPosts; ++i)
+	{
+	   newPost = document.createElement("div");
+	   newPost.innerHTML = data[i];
+	   postStart.insertBefore(newPost, start);	
+	}
+}
+
+function getLasDate(){
+}
+
+</script>    

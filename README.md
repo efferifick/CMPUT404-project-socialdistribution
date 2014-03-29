@@ -29,6 +29,11 @@ This is required for the UUIDField class
 
 	pip install django-extensions
 
+Django Dajaxice:
+This is required for using ajax
+
+	pip install django-dajaxice
+
 Dateutil:
 This is required to parse dates from imported GitHub posts
 
