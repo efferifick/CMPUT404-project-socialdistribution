@@ -275,7 +275,6 @@ def api_get_author_all_posts(request):
     # If the request client is invalid
     if not valid[0]:
         # Return the error
-        print "invalid"
         return valid[1]
     else:
         # Otherwise, get the host making the request
@@ -284,10 +283,8 @@ def api_get_author_all_posts(request):
     try:
         # Check if viewer data was supplied
         if "id" in request.GET.keys():
-            print "id in keys"
             # Get the viewer id
             viewer_id = request.GET["id"]
-            print viewer_id
             try:
                 # TODO (diego) I saw that the other team's used UUID's without the hyphens, maybe we would need to correct the format here
 
