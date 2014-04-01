@@ -54,15 +54,9 @@ class Host(models.Model):
 class Author(models.Model):
     id = UUIDField(primary_key=True, auto=True)
     user = models.OneToOneField(User, null=True)
-    host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
+    host = models.ForeignKey(Host, related_name ='authors')
     displayName = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
     github_name = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE, blank=True)
-
-    def get_url(self):
-        return "%sauthor/%s" % (self.host, self.id)
-
-    def is_friends_with(self, author):
-        return Author.are_friends(self.id, author.id)
 
     @classmethod
     def are_friends(cls, author1_id, author2_id):
@@ -75,6 +69,12 @@ class Author(models.Model):
             return False
 
         return True
+
+    def get_url(self):
+        return "%sauthor/%s" % (self.host, self.id)
+
+    def is_friends_with(self, author):
+        return Author.are_friends(self.id, author.id)
 
     def friends(self):
         # Get all the authors that sent/received a friend request to/from this author, that was accepted already
@@ -98,7 +98,7 @@ class Author(models.Model):
 
     def is_local(self):
         # Determines if the current author is local to this server
-        return self.host == 'http://localhost:8000/'
+        return self.host.is_local
 
     def json(self):
         user = {} 
