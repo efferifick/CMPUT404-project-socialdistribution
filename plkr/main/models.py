@@ -103,7 +103,7 @@ class Author(models.Model):
     def json(self):
         user = {} 
         user["id"] = self.id
-        user["host"] = self.host
+        user["host"] = self.host.get_url()
         user["displayname"] = self.displayName
         user["url"] = self.get_url()
         return user
