@@ -71,7 +71,7 @@ class Author(models.Model):
         return True
 
     def get_url(self):
-        return "%sauthor/%s" % (self.host, self.id)
+        return "%sauthor/%s" % (self.host.get_url(), self.id)
 
     def is_friends_with(self, author):
         return Author.are_friends(self.id, author.id)
