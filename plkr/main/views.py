@@ -42,7 +42,7 @@ def api_validate_client(request):
         return (False, response)
     else:
         try:
-            client = Host.objects.get(ip_address=remote_host_address)
+            client = Host.objects.get(ip_address=client_address)
 
             return (True, client)
         except ObjectDoesNotExist, e:
