@@ -259,6 +259,60 @@ def api_get_post(request, post_id):
         return api_send_error(e.message, 500)
 
 @csrf_exempt
+def api_get_author_all_posts(request):
+    '''
+    This view handles api requests to view all posts accessible to the logged in
+    user
+    '''
+    
+    # Validate that it's a GET request
+    if request.method != 'GET':
+        return api_send_error("Method not allowed.", 405)
+
+    # Validate the request client
+    valid = api_validate_client(request)
+
+    # If the request client is invalid
+    if not valid[0]:
+        # Return the error
+        print "invalid"
+        return valid[1]
+    else:
+        # Otherwise, get the host making the request
+        remote_host = valid[1]
+
+    try:
+        # Check if viewer data was supplied
+        if "id" in request.GET.keys():
+            print "id in keys"
+            # Get the viewer id
+            viewer_id = request.GET["id"]
+            print viewer_id
+            try:
+                # TODO (diego) I saw that the other team's used UUID's without the hyphens, maybe we would need to correct the format here
+
+                # Check if the viewer exists in our database
+                viewer = Author.objects.get(pk=viewer_id)
+            except ObjectDoesNotExist, e:
+                # Assuming no viewer
+                viewer = None
+        else:
+            # Assuming no viewer
+            viewer = None
+
+        posts = Post.objects.order_by("-pubDate").select_related()
+        # Only return posts that the user can 
+        posts = [post.json() for post in posts if post.can_be_viewed_by(viewer)]
+
+        # Send the response
+        return api_send_json(dict(posts=posts))
+
+    except ObjectDoesNotExist, e:
+        return api_send_error("Author not found.", 404)
+    except Exception, e:
+        return api_send_error(e.message)
+
+@csrf_exempt
 def api_get_author_posts(request, user_id):
     '''
     This view handles api requests for an author's posts
