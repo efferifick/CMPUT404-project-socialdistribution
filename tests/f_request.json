@@ -2,9 +2,19 @@
 	"query": "friendrequest",
 	"author": 
 	{
-		"id":5db4815a-100f-4f19-a3dd-139bf380ca79,
-		"host": <host>,
-		"displayname": <displayname>,
-		"url": <url>
+		"id": "5db4815a-100f-4f19-a3dd-139bf380ca79",
+		"host": "www.example.com",
+		"displayname": "Grace Host",
+		"url": "www.example.com/author/ghost"
+	},
+	"friend": 
+	{
+		"author":
+		{
+			"id": "108ded43-8520-4035-a262-547454d32022",
+			"host":	"http://localhost:8000",
+			"displayname": "dluces",
+			"url": "127.0.0.1:8000/site/profile/dluces"
+		}
 	}
 }
