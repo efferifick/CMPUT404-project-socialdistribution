@@ -34,7 +34,7 @@ CAT_NAME_MAX_SIZE = STR_MAX_SIZE
 # Author Model
 class Author(models.Model):
     id = UUIDField(primary_key=True, auto=True)
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, null=True)
     host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
     displayName = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
     github_name = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE, blank=True)
