@@ -1,5 +1,3 @@
-import datetime
-import cgi
 from HTMLParser import HTMLParser
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -11,9 +9,10 @@ from django.db import IntegrityError
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import *
-import json, urllib, dateutil.parser
+from django.views.decorators.csrf import csrf_exempt
+from ipware.ip import get_ip
 from main.models import *
-import os.path
+import cgi, datetime, json, urllib, dateutil.parser, os.path
 
 our_host = "http://127.0.0.1:8000/"
 
@@ -31,39 +30,77 @@ def api_send_error(message, status=400):
     '''
     return HttpResponse(json.dumps(dict(error=True, message=message)), content_type="application/json", status=status)
 
+@csrf_exempt
 def api_get_author(request, user_id):
-    # Get the author information
-    context = RequestContext(request)
-    author = Author.objects.get(id=user_id)
-    return api_send_json(author.json())
+    '''
+    This view handles api requests for author data
+    '''
+    
+    # Validate the request method
+    if request.method != 'GET':
+        return api_send_error("Method not allowed.", 405)
 
+    try:
+        # Get the author information
+        author = Author.objects.get(id=user_id)
+
+        # Send the author data
+        return api_send_json(author.json())
+
+    except ObjectDoesNotExist, e:
+        return api_send_error("Author does not exist.", 404)
+    except Exception, e:
+        return api_send_error(e.message, 500)
+
+@csrf_exempt
 def api_author_has_friends(request, user1_id):
-    context = RequestContext(request)
-
+    '''
+    This view handles api requests for author friendships
+    '''
+    
+    # Validate the request method
     if request.method != 'POST':
         return api_send_error("Method not allowed.", 405)
 
+    # Prepare the response
     resp = dict()
-    
     resp["query"] = "friends"
     resp["author"] = user1_id
     
     try:
+        # Load request data
         flist = json.loads(request.body)
+
+        # Validate request
+        if "authors" in flist:
+            return api_send_error("Missing authors data in request.", 400)
+
+        # Get the authors
         flist = flist["authors"]
+
+        # Filter only those that are friends with the author
         friends = [f for f in flist if Author.are_friends(user1_id, f)]
+
+        # Add the friends to the response
         resp["friends"] = friends
 
+        # Send the response
         return api_send_json(resp)
+
     except Exception, e:
-        return api_send_error(e.message)
+        return api_send_error("Missing authors data in request.", 400)
 
+@csrf_exempt
 def api_authors_are_friends(request, user1_id, user2_id):
-    context = RequestContext(request)
-
+    '''
+    This view handles api requests for friendships
+    '''
+    
+    # Validate the request method
     if request.method != 'GET':
         return api_send_error("Method not allowed.", 405)
 
+    # Prepare the response
     resp = dict()
     resp["query"] = "friends"
 
@@ -73,13 +110,16 @@ def api_authors_are_friends(request, user1_id, user2_id):
         else:
             resp["friends"] = "NO"
 
+        # Send the response
         return api_send_json(resp)
     except Exception, e:
-        return api_send_error(e.message)
+        return api_send_error(e.message, 500)
 
-
+@csrf_exempt
 def api_get_post(request, post_id):
-    context = RequestContext(request)
+    '''
+    This view handles api requests for post data
+    '''
     
     try:
         post = Post.objects.get(id=post_id)
@@ -154,12 +194,12 @@ def api_get_post(request, post_id):
     except Exception, e:
         return api_send_error(e.message, 500)
 
+@csrf_exempt
 def api_get_author_posts(request, user_id):
     '''
-    Get the all posts by the user
+    This view handles api requests for an author's posts
     '''
-    context = RequestContext(request)
-
+    
     # Validate that it's a GET request
     if request.method != 'GET':
         return api_send_error("Method not allowed.", 405)
@@ -194,29 +234,100 @@ def api_get_author_posts(request, user_id):
     except ObjectDoesNotExist, e:
         return api_send_error("Author not found.", 404)
     except Exception, e:
-        raise e
         return api_send_error(e.message)
 
+@csrf_exempt
 def api_send_friendrequest(request):
-    context = RequestContext(request)
-
+    '''
+    This view handles api requests for an author's posts
+    '''
+    
+    # Validate the request method
     if request.method != 'POST':
-        raise Http404
+        return api_send_error("Method not allowed.", 405)
 
     try:
+        # Determine the remote host address
+        remote_host = get_ip(request)
+
+        # Validate the remote host address
+        if remote_host is None:
+            return api_send_error("Could not determine the client IP address.", 400)
+        else:
+            # TODO Check that it's whitelisted
+            pass
+
+        # Load request data
         frequest = json.loads(request.body)
 
+        # Validate request (friend)
+        if not "friend" in frequest or not "author" in frequest["friend"] or not "id" in frequest["friend"]["author"]:
+            return api_send_error("Missing friend data in request.", 400)
+
+        # Validate request (author)
+        if not "author" in frequest or not "id" in frequest["author"]:
+            return api_send_error("Missing author data in request.", 400)
+
+        # Get the friend and author data
         friend_data = frequest["friend"]["author"]
         author_data = frequest["author"]
 
-        friend = Author.objects.get(id=friend_data["id"])
+        try:
+            friend = Author.objects.get(id=friend_data["id"])
 
-        flist = FriendRequest(sender=author["id"], receiver=friend["id"], accepted=False)
-        flist.save()
+            # Validate that the friend is a local author
+            if not friend.is_local():
+                return api_send_error("Friend does not exist locally.", 404)
+        except ObjectDoesNotExist, e:
+            # Friend should be a local author
+            return api_send_error("Friend does not exist locally.", 404)
 
-        return HttpResponse(json.dumps(frequest), content_type="application/json")
+        try:
+            author = Author.objects.get(id=author_data["id"])
+
+            # Validate that the author is NOT a local author
+            if author.is_local():
+                return api_send_error("The author is a local to this server and a remote server may not submit a friend request on its behalf.", 400)
+
+            # Validate that the author host is the one making the request
+            if author.host != remote_host:
+                return api_send_error("The author is not local to the server making the request and thus the server should not submit a friend request on its behalf.", 400)
+
+            # Check if they are already friends
+            if author.is_friends_with(friend):
+                return api_send_json(frequest)
+
+            # Check if the friend request already exists
+            friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted=False);
+
+            # If it's just an attempt to resend a friend request
+            if friendship.sender == author:
+                return api_send_json(frequest)
+
+            # Otherwise, it means that the author accepted a previously sent friend request
+            friendship.accepted = True
+            friendship.save()
+
+        except Author.DoesNotExist, e:
+            # Validate more request data (author)
+            if not "displayname" in author_data:
+                return api_send_error("Missing author data in request.", 400)
+
+            # Create the author
+            author = Author.objects.create(id=author_data["id"], displayName=author_data["displayname"], host=remote_host)
+
+            # Create friend request
+            friendship = FriendRequest.objects.create(sender=author, receiver=friend, accepted=False);
+
+        except FriendRequest.DoesNotExist, e:
+            # Create friend request
+            friendship = FriendRequest.objects.create(sender=author, receiver=friend, accepted=False);
+
+        # Send the original request
+        return api_send_json(frequest)
+
     except Exception, e:
-        return api_send_error(e.message)
+        return api_send_error("Missing data in request.", 400)
 
 
 # Site
