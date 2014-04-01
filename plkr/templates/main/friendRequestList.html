@@ -2,7 +2,7 @@
 {% with friend=request.sender %}
 	<div class="friend row" id="friend-{{ friend.id }}">
 		<div class="col-md-1">
-			{% if friend.user.is_local %}
+			{% if friend.is_local %}
 				<a href="{% url 'profile_author' username=friend.user.username %}">{{ friend.displayName }}</a>
 			{% else %}
 				<a href="#friend-{{ friend.id }}" title="Remote User: {{ friend.displayName }}">{{ friend.displayName }}</a>
