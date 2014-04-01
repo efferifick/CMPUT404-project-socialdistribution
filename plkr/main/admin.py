@@ -1,6 +1,7 @@
 from django.contrib import admin
-from main.models import Author, Post, Comment, FriendRequest, Category
+from main.models import Host, Author, Post, Comment, FriendRequest, Category
 
+admin.site.register(Host)
 admin.site.register(Author)
 admin.site.register(Post)
 admin.site.register(Comment)

@@ -31,6 +31,21 @@ FLIST_ID_MAX_SIZE = STR_MAX_SIZE
 CAT_NAME_MAX_SIZE = STR_MAX_SIZE
 
 
+# Host Model
+class Host(models.Model):
+    id = models.AutoField(primary_key=True)
+    ip_address = models.GenericIPAddressField(unpack_ipv4=True,unique=True)
+    port = models.PositiveIntegerField()
+    prefix = models.CharField(max_length=20, default='/')
+    is_local = models.BooleanField(default=False)
+    
+    def get_url(self):
+        # Gets the base url for the host
+        return "http://%s:%d%s" % (self.ip_address, self.port, self.prefix)
+
+    def __unicode__(self):
+        return str(self.ip_address)
+
 # Author Model
 class Author(models.Model):
     id = UUIDField(primary_key=True, auto=True)
