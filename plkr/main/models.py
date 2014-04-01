@@ -38,7 +38,7 @@ class Author(models.Model):
     host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
     displayName = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
     github_name = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE, blank=True)
-    
+
     def get_url(self):
         return "%sauthor/%s" % (self.host, self.id)
 
@@ -76,6 +76,10 @@ class Author(models.Model):
         # Get all the friend requests sent to this author and that have not been accepted yet
         requests = FriendRequest.objects.select_related('sender').filter(receiver=self.id, accepted=False)
         return requests
+
+    def is_local(self):
+        # Determines if the current author is local to this server
+        return self.host == 'http://localhost:8000/'
 
     def json(self):
         user = {} 
