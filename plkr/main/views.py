@@ -30,6 +30,26 @@ def api_send_error(message, status=400):
     '''
     return HttpResponse(json.dumps(dict(error=True, message=message)), content_type="application/json", status=status)
 
+def api_validate_client(request):
+    # Determine the remote client address
+    client_address = get_ip(request)
+
+    # Create the error response
+    response = api_send_error("Client is not authorized to use this API.", 403)
+
+    # Validate the remote client address
+    if client_address is None:
+        return (False, response)
+    else:
+        try:
+            client = Host.objects.get(ip_address=remote_host_address)
+
+            return (True, client)
+        except ObjectDoesNotExist, e:
+            return (False, response)
+        except Exception, e:
+            return (False, response)
+
 @csrf_exempt
 def api_get_author(request, user_id):
     '''
@@ -39,6 +59,17 @@ def api_get_author(request, user_id):
     # Validate the request method
     if request.method != 'GET':
         return api_send_error("Method not allowed.", 405)
+
+    # Validate the request client
+    valid = api_validate_client(request)
+
+    # If the request client is invalid
+    if not valid[0]:
+        # Return the error
+        return valid[1]
+    else:
+        # Otherwise, get the host making the request
+        remote_host = valid[1]
 
     try:
         # Get the author information
@@ -61,6 +92,17 @@ def api_author_has_friends(request, user1_id):
     # Validate the request method
     if request.method != 'POST':
         return api_send_error("Method not allowed.", 405)
+
+    # Validate the request client
+    valid = api_validate_client(request)
+
+    # If the request client is invalid
+    if not valid[0]:
+        # Return the error
+        return valid[1]
+    else:
+        # Otherwise, get the host making the request
+        remote_host = valid[1]
 
     # Prepare the response
     resp = dict()
@@ -100,6 +142,17 @@ def api_authors_are_friends(request, user1_id, user2_id):
     if request.method != 'GET':
         return api_send_error("Method not allowed.", 405)
 
+    # Validate the request client
+    valid = api_validate_client(request)
+
+    # If the request client is invalid
+    if not valid[0]:
+        # Return the error
+        return valid[1]
+    else:
+        # Otherwise, get the host making the request
+        remote_host = valid[1]
+
     # Prepare the response
     resp = dict()
     resp["query"] = "friends"
@@ -121,6 +174,17 @@ def api_get_post(request, post_id):
     This view handles api requests for post data
     '''
     
+    # Validate the request client
+    valid = api_validate_client(request)
+
+    # If the request client is invalid
+    if not valid[0]:
+        # Return the error
+        return valid[1]
+    else:
+        # Otherwise, get the host making the request
+        remote_host = valid[1]
+
     try:
         post = Post.objects.get(id=post_id)
     except ObjectDoesNotExist, e:
@@ -204,6 +268,17 @@ def api_get_author_posts(request, user_id):
     if request.method != 'GET':
         return api_send_error("Method not allowed.", 405)
 
+    # Validate the request client
+    valid = api_validate_client(request)
+
+    # If the request client is invalid
+    if not valid[0]:
+        # Return the error
+        return valid[1]
+    else:
+        # Otherwise, get the host making the request
+        remote_host = valid[1]
+
     try:
         # Get the author whose posts are being requested
         author = Author.objects.get(id=user_id)
@@ -246,17 +321,18 @@ def api_send_friendrequest(request):
     if request.method != 'POST':
         return api_send_error("Method not allowed.", 405)
 
+    # Validate the request client
+    valid = api_validate_client(request)
+
+    # If the request client is invalid
+    if not valid[0]:
+        # Return the error
+        return valid[1]
+    else:
+        # Otherwise, get the host making the request
+        remote_host = valid[1]
+
     try:
-        # Determine the remote host address
-        remote_host = get_ip(request)
-
-        # Validate the remote host address
-        if remote_host is None:
-            return api_send_error("Could not determine the client IP address.", 400)
-        else:
-            # TODO Check that it's whitelisted
-            pass
-
         # Load request data
         frequest = json.loads(request.body)
 
@@ -383,7 +459,8 @@ def register(request):
 
                 author = Author(user=user, displayName=displayName, github_name = github_name)
 
-                author.host = 'http://localhost:8000/'
+                # Assign the local host to the author
+                author.host = Host.get_local_host()
 
                 # Save the User first
                 user.save()
