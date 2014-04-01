@@ -72,7 +72,7 @@ def api_author_has_friends(request, user1_id):
         flist = json.loads(request.body)
 
         # Validate request
-        if "authors" in flist:
+        if "authors" not in flist:
             return api_send_error("Missing authors data in request.", 400)
 
         # Get the authors
