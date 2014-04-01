@@ -38,6 +38,10 @@ class Host(models.Model):
     port = models.PositiveIntegerField()
     prefix = models.CharField(max_length=20, default='/')
     is_local = models.BooleanField(default=False)
+
+    @classmethod
+    def get_local_host(cls):
+        return Host.objects.get(pk=1, is_local=True)
     
     def get_url(self):
         # Gets the base url for the host
