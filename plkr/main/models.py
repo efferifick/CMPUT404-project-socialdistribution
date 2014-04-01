@@ -54,7 +54,7 @@ class Host(models.Model):
 class Author(models.Model):
     id = UUIDField(primary_key=True, auto=True)
     user = models.OneToOneField(User, null=True)
-    host = models.CharField(max_length = AUTHOR_HOST_MAX_SIZE)
+    host = models.ForeignKey(Host, related_name ='authors')
     displayName = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE)
     github_name = models.CharField(max_length = AUTHOR_DISPLAYNAME_MAX_SIZE, blank=True)
 
