@@ -12,7 +12,7 @@ from django.shortcuts import *
 from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
-import cgi, datetime, json, urllib, dateutil.parser, os.path, requests
+import cgi, datetime, json, dateutil.parser, os.path, requests
 
 our_host = "http://127.0.0.1:8000/"
 
@@ -1049,10 +1049,10 @@ def get_authors_github_posts(author):
     url = "https://api.github.com/users/" + author.github_name + "/events/public"
 
     # Get the user's github activity
-    response = urllib.urlopen(url);
+    response = requests.get(url);
 
     # Parse the response
-    data = json.loads(response.read())
+    data = response.json()
 
     if ('message' in data and (data['message'] == 'Not Found' or 'API rate limit exceeded' in data['message'] )):
         return None
