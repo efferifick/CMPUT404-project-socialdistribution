@@ -22,7 +22,7 @@
 		<div class="well">
 			{% include "main/postNew.html" %}
 		</div>
-	{% else %}
+	{% elif user.is_authenticated %}
 		{% if friends %}
 			<form action="{% url 'remove_friendship' %}" method="post">
 				{% csrf_token %}
