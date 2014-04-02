@@ -74,6 +74,9 @@ class Author(models.Model):
         return "%sauthor/%s" % (self.host.get_url(), self.id)
 
     def is_friends_with(self, author):
+        if author is None:
+            return False
+            
         return Author.are_friends(self.id, author.id)
 
     def friends(self):
