@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+	<h1>Search Results for "{{ query }}"</h1>
+
+	<section id="search-results">
+
+		{% if friendships|length > 0 %}
+			<div id="users">
+				<h2>Users</h2>
+
+				{% for author, friends in friendships %}
+					<div class="author row" id="author-{{ author.id }}">
+						<div class="col-md-2">
+							{% if author.is_local %}
+								<a href="{% url 'profile_author' username=author.user.username %}">{{ author.displayName }}</a>
+							{% else %}
+								<a href="#author-{{ author.id }}" title="Remote User: {{ author.displayName }}">{{ author.displayName }}</a>
+							{% endif %}
+						</div>
+						<div class="col-md-1">
+							{% if not friends %}
+								<form action="{% url 'request_friendship' %}" method="post">
+									{% csrf_token %}
+									<input type="hidden" name="friend_id" value="{{ author.id }}" />
+									<input type="hidden" name="host_id" value="{{ author.host.id }}" />
+									<button class="btn btn-primary">Add Friend</button>
+								</form>
+							{% else %}
+								<form action="{% url 'remove_friendship' %}" method="post">
+									{% csrf_token %}
+									<input type="hidden" name="friend_id" value="{{ author.id }}" />
+									<button class="btn btn-danger">Unfriend</button>
+								</form>
+							{% endif %}
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% endif %}
+
+		{% if posts|length > 0 %}
+			<div id="posts">
+				<h2>Posts</h2>
+				{% include "main/postList.html" with posts=posts %}
+			</div>
+		{% endif %}
+
+		{% if friendships|length == 0 and posts|length == 0 %}
+			<p class="well">Oops, there are no search results.</p>
+		{% endif %}
+	</section>
+
+{% endblock %}

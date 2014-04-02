@@ -587,6 +587,38 @@ def timeline_posts(request):
     return posts
 
 
+def search(request):
+    '''
+    This view handles searches on the site
+    '''
+    context = RequestContext(request)
+    user = request.user
+    author = None
+
+    if user.is_authenticated:
+        author = user.author
+
+    query = request.GET.get('query', None)
+    posts = []
+    hosts = Host.objects.filter(is_local=False)
+    local_authors = Author.objects.filter(displayName__contains=query)
+    authors = []
+    friendships = []
+
+    # TODO Query remote hosts
+    for host in hosts:
+        try:
+            pass
+        except Exception, e:
+            raise e
+
+    # Determine the friendships
+    for matched_author in local_authors:
+        friendships.append((matched_author, matched_author.is_friends_with(author)))
+
+    return render_to_response('main/search.html', {'query': query, 'posts' : posts, 'friendships': friendships}, context)
+
+
 @login_required
 def profile(request):
     '''

@@ -14,7 +14,7 @@
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
         <link rel="stylesheet" href="{% static 'css/main.css' %}" />
-	{% dajaxice_js_import %}
+        {% dajaxice_js_import %}
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -59,7 +59,7 @@
                             <button type="submit" class="btn btn-success">Sign in</button>
                         </form>
                     {% else %}
-                    <form class="navbar-form navbar-left" role="form" action="{% url 'index' %}" method="get">
+                    <form class="navbar-form navbar-left" role="form" action="{% url 'search' %}" method="get">
                         <div class="form-group">
                             <input type="text" name="query" placeholder="Search on PLKR" class="form-control" />
                         </div>

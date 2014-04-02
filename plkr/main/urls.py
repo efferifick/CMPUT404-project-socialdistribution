@@ -35,6 +35,9 @@ urlpatterns = patterns('',
 
 		# Timeline
 		url(r'^site/$', 'main.views.timeline', name='timeline'),
+
+		# Search
+		url(r'^site/search$', 'main.views.search', name='search'),
 		
 		# Profile - View
 		url(r'^site/profile$', 'main.views.profile', name='profile'),
