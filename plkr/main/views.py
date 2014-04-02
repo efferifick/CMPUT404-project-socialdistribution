@@ -663,6 +663,8 @@ def profile_author(request, username):
         if author != viewer and not are_friends:
             # Determine if the viewer has sent a friend request to the author
             sent_request = author.friend_requests_received.filter(sender=viewer, accepted=False).count() > 0
+        else:
+            sent_request = False
 
         # Get all posts from this author
         posts = Post.objects.order_by("-pubDate").select_related().filter(author=author)
