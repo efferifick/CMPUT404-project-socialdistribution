@@ -654,15 +654,15 @@ def profile_author(request, username):
         author = user.author
 
         # The author that wants to see this profile
-        viewer = request.user.author
+        viewer = request.user.author if request.user.is_authenticated() else None
 
         # Determine if the viewer and the profile owner are friends
-        are_friends = viewer.is_friends_with(author)
+        are_friends = False if viewer is None else viewer.is_friends_with(author)
 
         # If the authors are not friends
         if author != viewer and not are_friends:
             # Determine if the viewer has sent a friend request to the author
-            sent_request = viewer.friend_requests_sent.filter(receiver=author, accepted=False).count() > 0
+            sent_request = author.friend_requests_received.filter(sender=viewer, accepted=False).count() > 0
 
         # Get all posts from this author
         posts = Post.objects.order_by("-pubDate").select_related().filter(author=author)
@@ -682,8 +682,11 @@ def profile_author(request, username):
             posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
         return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request}, context)
-    except Exception, e:
+    except ObjectDoesNotExist, e:
         raise Http404
+    except Exception, e:
+        messages.error(request, "An error occured.")
+        return redirect('index')
 
 @login_required
 def profile_edit(request):
