@@ -55,3 +55,8 @@ This is required to handle image fields in models
 Note that Pillow also needs python-dev package (Ubuntu) to be installed.
 
 	pip install pillow
+
+Requests:
+This is required to send requests to other server
+
+	pip install requests

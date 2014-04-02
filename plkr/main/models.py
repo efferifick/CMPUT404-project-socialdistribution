@@ -46,6 +46,10 @@ class Host(models.Model):
     def get_url(self):
         # Gets the base url for the host
         return "http://%s:%d%s" % (self.ip_address, self.port, self.prefix)
+    
+    def get_search_url(self):
+        # Gets the search url for the host
+        return "%sapi/search" % self.get_url()
 
     def __unicode__(self):
         return str(self.ip_address)
@@ -76,7 +80,7 @@ class Author(models.Model):
     def is_friends_with(self, author):
         if author is None:
             return False
-            
+
         return Author.are_friends(self.id, author.id)
 
     def friends(self):

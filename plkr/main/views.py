@@ -12,7 +12,7 @@ from django.shortcuts import *
 from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
-import cgi, datetime, json, urllib, dateutil.parser, os.path
+import cgi, datetime, json, urllib, dateutil.parser, os.path, requests
 
 our_host = "http://127.0.0.1:8000/"
 
@@ -605,15 +605,34 @@ def search(request):
     authors = []
     friendships = []
 
-    # TODO Query remote hosts
+    # Query remote hosts
+    # TODO Test this
     for host in hosts:
         try:
-            pass
+            # Get the user's github activity
+            response = requests.get(host.get_search_url(), params=dict(query=query), timeout=0.01)
+
+            # Parse the response
+            data = response.json()
+
+            # Add the author to the result list
+            for author_data in data:
+                remote_author = Author()
+                remote_author.id = author_data['id']
+                remote_author.host = host
+                remote_author.displayName = author_data['displayname']
+                authors.append(remote_author)
+
         except Exception, e:
-            raise e
+            # If there's an exception, just catch it
+            print('Querying %s failed, query: %s' % (host.get_search_url(), query))
+            pass
+
+    # Add the local authors to the result list
+    authors.extend(local_authors)
 
     # Determine the friendships
-    for matched_author in local_authors:
+    for matched_author in authors:
         friendships.append((matched_author, matched_author.is_friends_with(author)))
 
     return render_to_response('main/search.html', {'query': query, 'posts' : posts, 'friendships': friendships}, context)
