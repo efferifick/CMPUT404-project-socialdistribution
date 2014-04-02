@@ -11,7 +11,7 @@
 			<form action="{% url 'remove_friendship' %}" method="post">
 				{% csrf_token %}
 				<input type="hidden" name="friend_id" value="{{ friend.id }}" />
-				<button class="btn btn-danger">Remove</button>
+				<button class="btn btn-danger">Unfriend</button>
 			</form>
 		</div>
 	</div>

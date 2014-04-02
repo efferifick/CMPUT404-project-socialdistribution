@@ -654,13 +654,21 @@ def profile_author(request, username):
         author = user.author
 
         # The author that wants to see this profile
-        viewer = request.user.author 
+        viewer = request.user.author
+
+        # Determine if the viewer and the profile owner are friends
+        are_friends = viewer.is_friends_with(author)
+
+        # If the authors are not friends
+        if author != viewer and not are_friends:
+            # Determine if the viewer has sent a friend request to the author
+            sent_request = viewer.friend_requests_sent.filter(receiver=author, accepted=False).count() > 0
 
         # Get all posts from this author
         posts = Post.objects.order_by("-pubDate").select_related().filter(author=author)
 
         # Filter the posts that can be viewed and that are supposed to be in the user's timeline
-        posts = [post for post in posts if (post.can_be_viewed_by(viewer) and post.should_appear_on_stream_of(viewer))]
+        posts = [post for post in posts if post.can_be_viewed_by(viewer)]
 
         # Here we retrieve the github posts from the user to 
         # display his github activity on his profile
@@ -673,7 +681,7 @@ def profile_author(request, username):
             
             posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
-        return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
+        return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request}, context)
     except Exception, e:
         raise Http404
 

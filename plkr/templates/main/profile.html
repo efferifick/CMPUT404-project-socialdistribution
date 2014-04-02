@@ -23,13 +23,27 @@
 			{% include "main/postNew.html" %}
 		</div>
 	{% else %}
-		<div>
-			<form action="{% url 'request_friendship' %}" method="post">
+		{% if friends %}
+			<form action="{% url 'remove_friendship' %}" method="post">
 				{% csrf_token %}
 				<input type="hidden" name="friend_id" value="{{ puser.author.id }}" />
-				<button class="btn btn-primary">Add Friend</button>
+				<button class="btn btn-danger">Unfriend</button>
 			</form>
-		</div>
+		{% elif not sent_request %}
+			<div>
+				<form action="{% url 'request_friendship' %}" method="post">
+					{% csrf_token %}
+					<input type="hidden" name="friend_id" value="{{ puser.author.id }}" />
+					<button class="btn btn-primary">Add Friend</button>
+				</form>
+			</div>
+		{% else %}
+			<form action="{% url 'remove_friendship' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="friend_id" value="{{ puser.author.id }}" />
+				<button class="btn btn-warning">Cancel Friend Request</button>
+			</form>
+		{% endif %}
 	{% endif %}
 
 	<div id="posts">
