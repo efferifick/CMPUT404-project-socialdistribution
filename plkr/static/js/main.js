@@ -1,8 +1,12 @@
 (function(undefined){
   var interval, timeout;
 
-  if (!post_reload)
-  {
+  try {
+    if (!post_reload)
+    {
+      return;
+    }
+  } catch(e) {
     return;
   }
 
