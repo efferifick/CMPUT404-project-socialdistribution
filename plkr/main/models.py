@@ -52,7 +52,7 @@ class Host(models.Model):
         return "%sapi/search" % self.get_url()
 
     def __unicode__(self):
-        return str(self.ip_address)
+        return "%s:%d" % (self.ip_address, self.port)
 
 # Author Model
 class Author(models.Model):
@@ -116,7 +116,7 @@ class Author(models.Model):
         return user
 
     def __unicode__(self):
-        return self.id
+        return self.displayName
 
 # Friend
 class FriendRequest(models.Model):
@@ -127,7 +127,7 @@ class FriendRequest(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     
     def __unicode__(self):
-        return str(self.id)
+        return "%s, %s: %d" % (self.sender.displayName, self.receiver.displayName, self.accepted)
 
 # Category Model
 class Category(models.Model):
@@ -237,7 +237,7 @@ class Post(models.Model):
         return post
 
     def __unicode__(self):
-        return unicode(self.id) or u''
+        return unicode(self.title) or u''
 
     class Meta:
         ordering = ["-pubDate"]
@@ -252,7 +252,7 @@ class Comment(models.Model):
     post = models.ForeignKey(Post)
 
     def __unicode__(self):
-        return self.id
+        return "%s: %s..." % (self.author, self.comment[0:min(len(self.comment), 50)])
 
     def json(self):
         comment = {}
