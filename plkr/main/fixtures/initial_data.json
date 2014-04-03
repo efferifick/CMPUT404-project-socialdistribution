@@ -50,6 +50,16 @@
     "pk": 4,
     "fields": {
       "ip_address": "127.0.0.1",
+      "port": 8000,
+      "prefix": "/",
+      "is_local": false
+    }
+  },
+  {
+    "model": "main.host",
+    "pk": 5,
+    "fields": {
+      "ip_address": "129.128.41.238",
       "port": 8080,
       "prefix": "/",
       "is_local": false
