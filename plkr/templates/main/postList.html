@@ -4,34 +4,4 @@
 	<p class="well">Oops, there are no posts.</p>
 {% endfor %}
 
-<script>
-(function(){
-	function call_dajaxice() {
-		var date = new Date().toISOString();
-		Dajaxice.main.get_new_posts(callback, {"date":date});
-	}
-
-	function callback(data) {
-		try {
-			var postStart = document.getElementById("posts");
-			var start = postStart.children[1];
-			var newPost;
-			var nPosts = data.length;
-			
-			if (nPosts != 0)
-			{
-			    date = new Date().toISOString();
-			}
-
-			for (var i = 0; i < nPosts; ++i)
-			{
-			   newPost = document.createElement("div");
-			   newPost.innerHTML = data[i];
-			   postStart.insertBefore(newPost, start);	
-			}
-		} catch(e) { ; }
-	}
-
-	setInterval(call_dajaxice, 5000);
-})();
-</script>
+<script>post_reload=true;</script>
