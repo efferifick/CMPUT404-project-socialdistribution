@@ -963,52 +963,78 @@ def request_friendship(request):
     context = RequestContext(request)
     author = request.user.author
     friend_id = request.POST.get('friend_id')
+    host_id = request.POST.get('host_id')
+    displayName = request.POST.get('displayName')
     
     # Validate the friend id
     if friend_id is None:
         messages.error(request, 'The user does not exist.')
 
     try:
-        # Get the author to befriend
-        friend = Author.objects.select_related('user').get(pk=friend_id)
+        # If a host was specified
+        if host_id is not None:
+            # Get the host
+            host = Host.objects.get(pk=host_id)
+        else:
+            # Otherwise, assume the host of the author (this host)
+            host = author.host
 
-        # Get the username of the author to befriend
-        username = friend.user.username
+        try:
+            # Get the author to befriend
+            friend = Author.objects.select_related('user').get(pk=friend_id)
+        except ObjectDoesNotExist, e:
+            # If the author to befriend was supposed to be local
+            if host.is_local:
+                # Raise the error if it does not exist
+                raise
 
-        # Check if there's already a friend request between the two authors
+            # Otherwise, create the remote author
+            friend = Author.objects.create(id=friend_id, host=host, displayName=displayName)
+
+        # Check if the two authors are already friends
         if Author.are_friends(author.id, friend.id):
             # Set the error message
             messages.error(request, 'You are already friends with this user.')
-            # Redirect to the friend's profile view
-            return redirect('profile_author', username=username)
 
-        # Check if there's a pending friend request
-        count = FriendRequest.objects.filter(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted = False).count()
-        if count > 0:
+        # Otherwise, check if there's a pending friend request
+        elif FriendRequest.objects.filter(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted = False).count() > 0:
             # Set the error message
             messages.error(request, 'There\'s already a pending friend request between you and this user.')
+
+        # Otherwise, send the friend request
+        else:
+            # Create the friend request
+            frequest = FriendRequest(sender=author, receiver=friend, accepted=False)
+
+            # Save the friend request
+            frequest.save()
+
+            # If friend is remote
+            if not friend.is_local():
+                # TODO Send friend request to the remote server
+                pass
+
+            # Set the success message for the user
+            messages.info(request, 'The friend request has been sent.')
+
+        # If the friend is local
+        if friend.is_local():
             # Redirect to the friend's profile view
-            return redirect('profile_author', username=username)            
+            return redirect('profile_author', username=friend.user.username)
+        else:
+            # Otherwise, redirect to the list of friends
+            return redirect('friends')
 
-        # Create the friend request
-        frequest = FriendRequest(sender=author, receiver=friend, accepted=False)
-
-        # Save the friend request
-        frequest.save()
-
-        # Set the success message for the user
-        messages.info(request, 'The friend request has been sent.')
     except ObjectDoesNotExist,e:
         # Set the error message
         messages.error(request, 'The author to befriend does not exist.')
-        # Redirect to the friends view
-        return redirect('friends')
+
     except Exception, e:
         # Set the generic error message
         messages.error(request, 'The friend request could not be sent at the moment. Please try again later.')
 
     # Redirect to the friends view
-    return redirect('profile_author', username=username)
+    return redirect('friends')
 
 @login_required
 def remove_friendship(request):

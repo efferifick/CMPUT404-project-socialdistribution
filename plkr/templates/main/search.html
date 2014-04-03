@@ -26,6 +26,7 @@
 									{% csrf_token %}
 									<input type="hidden" name="friend_id" value="{{ author.id }}" />
 									<input type="hidden" name="host_id" value="{{ author.host.id }}" />
+									<input type="hidden" name="displayName" value="{{ author.displayName }}" />
 									<button class="btn btn-primary">Add Friend</button>
 								</form>
 							{% else %}
