@@ -639,7 +639,7 @@ def search(request):
     query = request.GET.get('query', None)
     posts = []
     hosts = Host.objects.filter(is_local=False)
-    local_authors = Author.objects.filter(displayName__contains=query)
+    local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True)
     authors = []
     friendships = []
 
