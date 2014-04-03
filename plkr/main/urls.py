@@ -20,6 +20,9 @@ urlpatterns = patterns('',
 
 		# Posts - Specific one
 		url(r'^post/(?P<post_id>[a-zA-Z0-9\-]+)$', 'main.views.api_get_post', name='api_get_post'),
+
+		# Search - API Search
+		url(r'^api/search$', 'main.views.api_search', name='api_search'),
 		
 		# Site
 		

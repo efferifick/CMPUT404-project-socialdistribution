@@ -456,6 +456,44 @@ def api_send_friendrequest(request):
     except Exception, e:
         return api_send_error("Missing data in request.", 400)
 
+@csrf_exempt
+def api_search(request):
+    '''
+    This view handles api requests for searches
+    '''
+    
+    # Validate the request method
+    if request.method != 'GET':
+        return api_send_error("Method not allowed.", 405)
+
+    # Validate the request client
+    valid = api_validate_client(request)
+
+    # If the request client is invalid
+    if not valid[0]:
+        # Return the error
+        return valid[1]
+    else:
+        # Otherwise, get the host making the request
+        remote_host = valid[1]
+
+    try:
+        # Get the query term
+        query = request.GET.get('query', None)
+        local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True)
+        authors = []
+
+        # Looping local authors to add the json version to the results
+        for author in local_authors:
+            authors.append(author.json())
+
+        # Send the json version of the results
+        return api_send_json(authors)
+
+    except Exception, e:
+        return api_send_error("Missing data in request.", 400)
+
+
 
 # Site
 
