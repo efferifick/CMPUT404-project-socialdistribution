@@ -648,7 +648,7 @@ def search(request):
     for host in hosts:
         try:
             # Get the user's github activity
-            response = requests.get(host.get_search_url(), params=dict(query=query), timeout=0.01)
+            response = requests.get(host.get_search_url(), params=dict(query=query), timeout=0.3)
 
             # Parse the response
             data = response.json()
@@ -663,8 +663,7 @@ def search(request):
 
         except Exception, e:
             # If there's an exception, just catch it
-            print('Querying %s failed, query: %s' % (host.get_search_url(), query))
-            pass
+            print('Querying %s failed, query: "%s"' % (host.get_search_url(), query))
 
     # Add the local authors to the result list
     authors.extend(local_authors)
@@ -1113,7 +1112,7 @@ def get_authors_github_posts(author):
     url = "https://api.github.com/users/" + author.github_name + "/events/public"
 
     # Get the user's github activity
-    response = requests.get(url);
+    response = requests.get(url, timeout=0.3);
 
     # Parse the response
     data = response.json()
