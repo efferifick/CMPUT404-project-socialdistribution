@@ -1,9 +1,9 @@
 ### Gravatar code
-#
-# This code was provided by gravatar at https://en.gravatar.com/site/implement/images/django/
-#
-# This is reponsible for getting the url from the user's email addres on gravatar.com and geting 
-# his avatar image url, and then this url will be used on the profile.html page.
+###
+### This code was provided by gravatar at https://en.gravatar.com/site/implement/images/django/
+### 
+###  This is reponsible for getting the url from the user's email addres on gravatar.com and geting 
+###  his avatar image url, and then this url will be used on the profile.html page.
 
 ### gravatar.py ###############
 ### place inside a 'templatetags' directory inside the top level of a Django app (not project, must be inside an app)

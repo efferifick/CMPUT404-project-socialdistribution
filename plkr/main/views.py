@@ -12,7 +12,7 @@ from django.shortcuts import *
 from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
-import cgi, datetime, json, dateutil.parser, os.path, requests
+import cgi, datetime, json, dateutil.parser, os.path, requests, urllib, hashlib
 
 our_host = "http://127.0.0.1:8000/"
 
@@ -1168,12 +1168,19 @@ def get_authors_github_posts(author):
 ###  This is reponsible for getting the url from the user's email addres on gravatar.com and geting 
 ###  his avatar image url, and then this url will be used on the profile.html page.
 
-def gravatar_link(email):
+def gravatar_link(email=None):
+
     default = "http:///static/img/default_user.png"
-    size = 40
+
+    if email:
+        size = 40
  
-    gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
-    gravatar_url += urllib.urlencode({'d':default, 's':str(size)})
+        gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
+        gravatar_url += urllib.urlencode({'d':default, 's':str(size)})
+
+    else:
+        gravatar_url = default
+
 
     return gravatar_url
 
