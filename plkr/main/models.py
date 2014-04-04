@@ -264,7 +264,7 @@ class Post(models.Model):
         post["content"] = self.content
         post["author"] = self.author.json()
         post["categories"] = [c.name for c in self.categories.all()]
-        post["comments"] = [com.json() for com in Comment.objects.filter(post=self.id)]
+        post["comments"] = [com.json() for com in self.comments.all()]
         post["pubDate"] = str(self.pubDate)
         post["guid"] = self.id
         post["visibility"] = self.visibility 
@@ -284,7 +284,7 @@ class Comment(models.Model):
     author = models.ForeignKey(Author)
     pubDate = models.DateTimeField(auto_now_add=True)
     comment = models.CharField(max_length = COMMENT_MAX_SIZE)
-    post = models.ForeignKey(Post)
+    post = models.ForeignKey(Post, related_name='comments')
 
     def __unicode__(self):
         return "%s: %s..." % (self.author, self.comment[0:min(len(self.comment), 50)])
