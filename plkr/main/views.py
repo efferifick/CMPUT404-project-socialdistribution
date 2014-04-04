@@ -259,10 +259,9 @@ def api_get_post(request, post_id):
         return api_send_error(e.message, 500)
 
 @csrf_exempt
-def api_get_author_all_posts(request):
+def api_get_posts_for_user(request):
     '''
-    This view handles api requests to view all posts accessible to the logged in
-    user
+    This view handles api requests to posts that should appear on a viewer's stream
     '''
     
     # Validate that it's a GET request
@@ -285,9 +284,8 @@ def api_get_author_all_posts(request):
         if "id" in request.GET.keys():
             # Get the viewer id
             viewer_id = request.GET["id"]
+            
             try:
-                # TODO (diego) I saw that the other team's used UUID's without the hyphens, maybe we would need to correct the format here
-
                 # Check if the viewer exists in our database
                 viewer = Author.objects.get(pk=viewer_id)
             except ObjectDoesNotExist, e:
@@ -297,9 +295,11 @@ def api_get_author_all_posts(request):
             # Assuming no viewer
             viewer = None
 
+        # Get all the posts
         posts = Post.objects.order_by("-pubDate").select_related()
+        
         # Only return posts that the user can 
-        posts = [post.json() for post in posts if post.can_be_viewed_by(viewer)]
+        posts = [post.json() for post in posts if post.should_appear_on_stream_of(viewer)]
 
         # Send the response
         return api_send_json(dict(posts=posts))
