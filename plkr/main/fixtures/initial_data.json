@@ -30,7 +30,7 @@
     "pk": 2,
     "fields": {
       "ip_address": "10.4.10.1",
-      "port": 8080,
+      "port": 80,
       "prefix": "/",
       "is_local": false
     }
