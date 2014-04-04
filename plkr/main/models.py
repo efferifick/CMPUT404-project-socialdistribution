@@ -111,7 +111,7 @@ class Author(models.Model):
         # Determine if the author is a friend-of-a-friend of another author
         if author is None:
             return False
-            
+
         # TODO implement
         return False
 
@@ -188,37 +188,49 @@ class Post(models.Model):
         Determines if this post can be viewed by the specified author
         '''
 
-        identity = self.author == author
-        in_server = author is not None and self.author.host == author.host
-        are_friends = author is not None and Author.are_friends(self.author.id, author.id)
-        are_friends_of_friends = identity or are_friends
-        
-        #TODO: Determine if user is FOAF
-        if author is not None and not are_friends:
-            all_friends = self.author.friends()
-            for friend in all_friends:
-                if Author.are_friends(friend.id, author.id):
-                    are_friends_of_friends = True
-                    break
+        # If the post is public
+        if self.visibility == 'PUBLIC':
+            # It can be viewed
+            return True
 
+        # If the author is not logged in and the post is not public
         if author is None:
-            if self.visibility != 'PUBLIC':
-                return False
+            # The post cannot be viewed
+            return False
+
+        # Check if it's the same user
+        identity = self.author == author
+
+        # Check if the viewer is in the same host as the post author
+        in_server = identity or self.author.host == author.host
+
+        # Only if it will be useful
+        if self.visibility in ('FRIENDS', 'FOAF'):
+            # Check if the viewer is friends with the post author
+            are_friends = identity or Author.are_friends(self.author.id, author.id)
         else:
-            if self.visibility == 'PRIVATE':
-                if not identity:
-                    return False
-            elif self.visibility == 'SERVERONLY':
-                if not in_server:
-                    return False
-            elif self.visibility == 'FRIENDS':
-                if not are_friends:
-                    return False
-            elif self.visibility == 'FOAF':
-                if not are_friends_of_friends:
-                    return False
-            
-        return True
+            are_friends = False
+
+        # Initialize the check for foaf relationship
+        are_friends_of_friends = are_friends
+
+        # Only if it will be useful
+        if self.visibility == 'FOAF' and not are_friends_of_friends:
+            # Check if the viewer is a foaf of the post author
+            are_friends_of_friends = author.is_foaf_of(self.author)
+
+        # Return the appropriate value depending on the visibility of the post
+        if self.visibility == 'PRIVATE':
+            return identity
+        elif self.visibility == 'SERVERONLY':
+            return in_server
+        elif self.visibility == 'FRIENDS':
+            return are_friends
+        elif self.visibility == 'FOAF':
+            return are_friends_of_friends
+        else:
+            # Fallback should never get hit
+            return False
 
     def should_appear_on_stream_of(self, author):
         '''
@@ -250,7 +262,7 @@ class Post(models.Model):
         post["description"] = self.description
         post["content-type"] = self.contentType
         post["content"] = self.content
-        post["author"] = Author.objects.get(id=self.author).json()
+        post["author"] = self.author.json()
         post["categories"] = [c.name for c in self.categories.all()]
         post["comments"] = [com.json() for com in Comment.objects.filter(post=self.id)]
         post["pubDate"] = str(self.pubDate)
