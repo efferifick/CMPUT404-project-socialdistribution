@@ -98,10 +98,22 @@ class Author(models.Model):
         authors = Author.objects.filter(friend_requests_received__sender=self.id, friend_requests_received__accepted=False)
         return authors
 
+    def follows(self, author):
+        # Determines if the author follows another author
+        return self.following().filter(pk=author.id).count() > 0
+
     def requests(self):
         # Get all the friend requests sent to this author and that have not been accepted yet
         requests = FriendRequest.objects.select_related('sender').filter(receiver=self.id, accepted=False)
         return requests
+
+    def is_foaf_of(self, author):
+        # Determine if the author is a friend-of-a-friend of another author
+        if author is None:
+            return False
+            
+        # TODO implement
+        return False
 
     def is_local(self):
         # Determines if the current author is local to this server
@@ -213,11 +225,22 @@ class Post(models.Model):
         Determines if this post should appear on the specified author's stream
         '''
 
+        # If the author is None
+        if author is None:
+            # This post should not appear in a public stream
+            return False
+
+        # The author must be able to see the post
         can_view = self.can_be_viewed_by(author)
-        is_following = self.author in author.following()
+
+        # If the author and the post's author are friends, should be on stream
         are_friends = author.is_friends_with(self.author)
 
-        return (is_following or are_friends) and can_view
+        # If the author is following the post's author, should be on stream
+        is_following = are_friends or author.follows(self.author)
+
+        # Return if the author is following the post's author and it can view the post
+        return is_following and can_view
 
     def json(self):
         post = {} 
