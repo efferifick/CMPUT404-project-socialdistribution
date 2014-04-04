@@ -14,8 +14,6 @@ from ipware.ip import get_ip
 from main.models import *
 import cgi, datetime, json, dateutil.parser, os.path, requests
 
-our_host = "http://127.0.0.1:8000/"
-
 # API
 
 def api_send_json(obj):
