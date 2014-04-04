@@ -302,20 +302,8 @@ def api_get_posts_for_user(request):
         remote_host = valid[1]
 
     try:
-        # Check if viewer data was supplied
-        if "id" in request.GET.keys():
-            # Get the viewer id
-            viewer_id = request.GET["id"]
-            
-            try:
-                # Check if the viewer exists in our database
-                viewer = Author.objects.get(pk=viewer_id)
-            except ObjectDoesNotExist, e:
-                # Assuming no viewer
-                viewer = None
-        else:
-            # Assuming no viewer
-            viewer = None
+        # Get the viewer
+        viewer = api_get_viewer(request)
 
         # Get all the posts
         posts = Post.objects.order_by("-pubDate").select_related()
@@ -356,20 +344,8 @@ def api_get_author_posts(request, user_id):
         # Get the author whose posts are being requested
         author = Author.objects.get(pk=user_id)
 
-        # Check if viewer data was supplied
-        if "id" in request.GET.keys():
-            # Get the viewer id
-            viewer_id = request.GET["id"]
-
-            try:
-                # Check if the viewer exists in our database
-                viewer = Author.objects.get(pk=viewer_id)
-            except ObjectDoesNotExist, e:
-                # Assuming no viewer
-                viewer = None
-        else:
-            # Assuming no viewer
-            viewer = None
+        # Get the viewer
+        viewer = api_get_viewer(request)
 
         # Only return posts that the user can 
         posts = [post.json() for post in author.posts.select_related().all() if post.can_be_viewed_by(viewer)]
