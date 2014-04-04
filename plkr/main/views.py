@@ -383,6 +383,13 @@ def api_send_friendrequest(request):
         # Load request data
         frequest = json.loads(request.body)
 
+        # Get the action
+        action = frequest.get("query", "friendrequest")
+
+        # Validate the action
+        if not action in ("friendrequest", "unfriend"):
+            return api_send_error("Wrong query parameter.", 400)
+
         # Validate request (friend)
         if not "friend" in frequest or not "author" in frequest["friend"] or not "id" in frequest["friend"]["author"]:
             return api_send_error("Missing friend data in request.", 400)
@@ -416,22 +423,35 @@ def api_send_friendrequest(request):
             if author.host != remote_host:
                 return api_send_error("The author is not local to the server making the request and thus the server should not submit a friend request on its behalf.", 400)
 
-            # Check if they are already friends
-            if author.is_friends_with(friend):
-                return api_send_json(frequest)
+            # If the action is to send a friend request
+            if action == "friendrequest":
+                # Check if they are already friends
+                if author.is_friends_with(friend):
+                    return api_send_json(frequest)
 
-            # Check if the friend request already exists
-            friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted=False);
+                # Check if the friend request already exists
+                friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted=False);
 
-            # If it's just an attempt to resend a friend request
-            if friendship.sender == author:
-                return api_send_json(frequest)
+                # If it's just an attempt to resend a friend request
+                if friendship.sender == author:
+                    # Just return success
+                    return api_send_json(frequest)
 
-            # Otherwise, it means that the author accepted a previously sent friend request
-            friendship.accepted = True
-            friendship.save()
+                # Otherwise, it means that the author is trying to accept a previously sent friend request
+                friendship.accepted = True
+                friendship.save()
+            else:
+                # Check if the friend request already exists
+                friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted=True);
+
+                # Delete the friendship
+                friendship.delete()
 
         except Author.DoesNotExist, e:
+            # If it's an unfriend request
+            if action == "unfriend":
+                return api_send_error("The friendship does not exist in the host.", 400)
+
             # Validate more request data (author)
             if not "displayname" in author_data:
                 return api_send_error("Missing author data in request.", 400)
@@ -443,6 +463,10 @@ def api_send_friendrequest(request):
             friendship = FriendRequest.objects.create(sender=author, receiver=friend, accepted=False);
 
         except FriendRequest.DoesNotExist, e:
+            # If it's an unfriend request
+            if action == "unfriend":
+                return api_send_error("The friendship does not exist in the host.", 400)
+
             # Create friend request
             friendship = FriendRequest.objects.create(sender=author, receiver=friend, accepted=False);
 
