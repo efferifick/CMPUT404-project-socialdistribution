@@ -48,6 +48,22 @@ def api_validate_client(request):
         except Exception, e:
             return (False, response)
 
+def api_get_viewer(request):
+    # Check if viewer data was supplied
+    if "id" in request.GET.keys():
+        # Get the viewer id
+        viewer_id = request.GET["id"]
+        
+        try:
+            # Check if the viewer exists in our database
+            return Author.objects.get(pk=viewer_id)
+        except ObjectDoesNotExist, e:
+            # Assuming no viewer
+            return None
+    else:
+        # Assuming no viewer
+        return None
+
 @csrf_exempt
 def api_get_author(request, user_id):
     '''
@@ -198,8 +214,16 @@ def api_get_post(request, post_id):
                 # Return not found error
                 return api_send_error("Post does not exist.", 404)
             else:
-                # Otherwise, return the post data
-                return api_send_json(post.json())
+                # Get the viewer
+                viewer = api_get_viewer(request)
+
+                # If the post can be viewed by the viewer
+                if post.can_be_viewed_by(viewer):
+                    # Return the post data
+                    return api_send_json(post.json())
+                else:
+                    # Otherwise, return the error (unauthorized)
+                    return api_send_error("Unauthorized to view this post.", 401)
         
         # Only PUT is allowed from here on
         if request.method != 'PUT':
