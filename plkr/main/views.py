@@ -350,7 +350,7 @@ def api_get_author_posts(request, user_id):
             viewer = None
 
         # Only return posts that the user can 
-        posts = [post.json() for post in author.posts.select_related('author').all() if post.can_be_viewed_by(viewer)]
+        posts = [post.json() for post in author.posts.select_related().all() if post.can_be_viewed_by(viewer)]
 
         # Send the response
         return api_send_json(dict(posts=posts))
@@ -631,7 +631,7 @@ def search(request):
     user = request.user
     author = None
 
-    if user.is_authenticated:
+    if user.is_authenticated():
         author = user.author
 
     query = request.GET.get('query', None)
