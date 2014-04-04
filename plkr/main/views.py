@@ -22,7 +22,7 @@ def api_send_json(obj):
     '''
     This function returns the http response to send a serialized object to the client, in json format
     '''
-    return HttpResponse(json.dumps(obj), content_type="application/json")
+    return HttpResponse(json.dumps(obj, indent=4), content_type="application/json")
 
 def api_send_error(message, status=400):
     '''
@@ -332,7 +332,7 @@ def api_get_author_posts(request, user_id):
 
     try:
         # Get the author whose posts are being requested
-        author = Author.objects.get(id=user_id)
+        author = Author.objects.get(pk=user_id)
 
         # Check if viewer data was supplied
         if "id" in request.GET.keys():
@@ -340,8 +340,6 @@ def api_get_author_posts(request, user_id):
             viewer_id = request.GET["id"]
 
             try:
-                # TODO (diego) I saw that the other team's used UUID's without the hyphens, maybe we would need to correct the format here
-
                 # Check if the viewer exists in our database
                 viewer = Author.objects.get(pk=viewer_id)
             except ObjectDoesNotExist, e:
@@ -352,12 +350,12 @@ def api_get_author_posts(request, user_id):
             viewer = None
 
         # Only return posts that the user can 
-        posts = [post.json() for post in author.posts.all() if post.can_be_viewed_by(viewer)]
+        posts = [post.json() for post in author.posts.select_related('author').all() if post.can_be_viewed_by(viewer)]
 
         # Send the response
         return api_send_json(dict(posts=posts))
 
-    except ObjectDoesNotExist, e:
+    except Author.DoesNotExist, e:
         return api_send_error("Author not found.", 404)
     except Exception, e:
         return api_send_error(e.message)
