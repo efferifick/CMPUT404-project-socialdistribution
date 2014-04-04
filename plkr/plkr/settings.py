@@ -39,6 +39,8 @@ INSTALLED_APPS = (
     'markdown_deux',
     'main',
     'dajaxice',
+    'plkr',
+
 )
 
 MIDDLEWARE_CLASSES = (
