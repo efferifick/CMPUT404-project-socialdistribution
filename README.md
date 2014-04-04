@@ -24,8 +24,9 @@ All text is licensed under the CC-BY-SA 4.0 http://creativecommons.org/licenses/
 
 Setup / Installation
 ========================
-Python Developer:
-	sudo apt-get install python-dev
+SimpleGravatar:
+
+	pip install django-simplegravatar
 
 Dateutil:
 This is required to parse dates from imported GitHub posts
