@@ -1,10 +1,13 @@
+
+{% load gravatar %}
+
 {% extends "layout.html" %}
 
 {% block title %}Profile{% endblock %}
 
 {% block content %}
 	
-	<h1>{{ puser.author.displayName }}</h1>
+	<h1> <img src="{% gravatar_url 'paulomorenoo@gmail.com'%}"> {{ puser.author.displayName }}</h1>
 	{% if puser == user %}
 		<p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
 	{% endif %}
