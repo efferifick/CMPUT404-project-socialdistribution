@@ -646,19 +646,14 @@ def timeline_posts(request):
     user = request.user
     author = user.author
 
-    # TODO We have to build a function to get the user's stream
+    # Nice2Have. We have to build a function to get the user's stream
     # Maybe this isn't the best way to build the user's stream
     # but it filters out content we are not allowed to see.
     posts = Post.objects.order_by("-pubDate").select_related()
     
     # Filter the posts that can be viewed and that are supposed to be in the user's timeline
-    posts = [post for post in posts if (post.can_be_viewed_by(author) and post.should_appear_on_stream_of(author))]
+    posts = [post for post in posts if post.should_appear_on_stream_of(author)]
 
-    # TODO This might need to change. This is showing github posts for friends/following in the author's timeline.
-    # I (diego) think that the requirement is that my github activity is imported as my public activity.
-    # Therefore, it should show up in my friends/followers timeline, as well as on my profile.
-    # If that's true, we would just need to add this logic into profile (next function) as well.
-    
     # Add github posts from all the author's friends
     for friend in author.friends():
         github_posts = get_authors_github_posts(friend)
@@ -701,7 +696,6 @@ def search(request):
     friendships = []
 
     # Query remote hosts
-    # TODO Test this
     for host in hosts:
         try:
             # Search the remote host

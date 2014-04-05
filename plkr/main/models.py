@@ -169,7 +169,6 @@ class Post(models.Model):
         ("text/markdown", "Markdown"),
     )
 
-    # TODO Change this to a UUID auto field
     id = UUIDField(primary_key=True, auto=True)
     title = models.CharField(max_length= POST_TITLE_MAX_SIZE)
     author = models.ForeignKey(Author, related_name='posts')
