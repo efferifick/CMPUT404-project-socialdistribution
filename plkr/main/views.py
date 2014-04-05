@@ -1170,12 +1170,12 @@ def get_authors_github_posts(author):
 
 def gravatar_link(email=None):
 
-    default = "http:///static/img/default_user.png"
+    default = "http://www.freeimages.com/assets/183416/1834158954/business-man-avatar-vector-1431598-m.jpg"
 
     if email:
-        size = 40
+        size = 400
  
-        gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
+        gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?" 
         gravatar_url += urllib.urlencode({'d':default, 's':str(size)})
 
     else:

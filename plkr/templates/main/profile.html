@@ -3,20 +3,34 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
+
+		<style type="text/css">
+			.top-buffer { margin-top:40px; }
+		</style>
 	
-	<h1> <img src="{{ gravatar }}"> {{ puser.author.displayName }}</h1>
-	{% if puser == user %}
-		<p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
-	{% endif %}
-	
-	<div class="form-group">
-		<p>Email: {{ puser.email }}</p>
-		<p>Username: {{ puser.username|escape }}</p>
-		<p>Display Name: {{ puser.author.displayName|escape }}</p>
-		{% if puser.author.github_name != '' %}
-		<p>GitHub: <a href="http://github.com/{{ puser.author.github_name|escape }}">{{ puser.author.github_name|escape }}</a></p>
-		{% endif %}
-	</div>
+
+		<div class="row">
+			<div class="row top-buffer"></div>
+			<div class="col-md-8">
+				<div class="form-group">
+				 	<h1>{{ puser.author.displayName }}</h1>
+				 	{% if puser == user %}
+						<p><a href="{% url 'profile_edit' %}">Edit Profile</a></p>
+					{% endif %}
+					<p>Email: {{ puser.email }}</p>
+					<p>Username: {{ puser.username|escape }}</p>
+					<p>Display Name: {{ puser.author.displayName|escape }}</p>
+					{% if puser.author.github_name != '' %}
+					<p>GitHub: <a href="http://github.com/{{ puser.author.github_name|escape }}">{{ puser.author.github_name|escape }}</a></p>
+					{% endif %}
+				</div>
+			</div>
+			<div class="col-md-4">
+				<img class="img-thumbnail" width=250; heigth=250; style="float:right;" src="{{ gravatar }}"/>
+			</div>
+			
+		</div>
+		<div class="row top-buffer"></div>
 
 	{% if puser == user %}
 		<div class="well">
