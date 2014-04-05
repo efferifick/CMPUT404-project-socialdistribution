@@ -67,7 +67,7 @@
                     </form>
 
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="{% url 'profile' %}">{{ user.username }}</a></li>
+                        <li><a href="{% url 'profile' %}"><img class="" width=20; heigth=20; style="margin-right:10px;" src="{{ gravatar }}"/>{{ user.username }}</a></li>
                         <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
                     </ul>
                     {% endif %}

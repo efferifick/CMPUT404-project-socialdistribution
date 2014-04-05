@@ -4,20 +4,11 @@
 ### 
 ###  This is reponsible for getting the url from the user's email addres on gravatar.com and geting 
 ###  his avatar image url, and then this url will be used on the profile.html page.
-
-### gravatar.py ###############
-### place inside a 'templatetags' directory inside the top level of a Django app (not project, must be inside an app)
-### at the top of your page template include this:
-### {% load gravatar %}
-### and to use the url do this:
-### <img src="{% gravatar_url 'someone@somewhere.com' %}">
-### or
-### <img src="{% gravatar_url sometemplatevariable %}">
-### just make sure to update the "default" image path below
 from django import template
 import urllib, hashlib
 
 register = template.Library()
+
 
 class GravatarUrlNode(template.Node):
     def __init__(self, email):
@@ -29,8 +20,8 @@ class GravatarUrlNode(template.Node):
         except template.VariableDoesNotExist:
             return ''
  
-        default = "http:///static/images/defaultavatar.jpg"
-        size = 40
+        default = "http://www.freeimages.com/assets/183416/1834158954/business-man-avatar-vector-1431598-m.jpg"
+        size = 250
  
         gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?"
         gravatar_url += urllib.urlencode({'d':default, 's':str(size)})
