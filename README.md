@@ -10,24 +10,25 @@ Contributors / Licensing
 ========================
 
 Project authors:
-	-Diego Luces
-	-Paulo Henrique Moreno
-	-Marcus Vinicius Alves da Silva
-	-Erick Ochoa
-	-Brandon Hayduk
+	- Diego Luces
+	- Paulo Henrique Moreno
+	- Marcus Vinicius Alves da Silva
+	- Erick Ochoa
+	- Brandon Hayduk
 
 Generally everything is LICENSE'D under the Apache 2 license by Abram Hindle.
 
 All text is licensed under the CC-BY-SA 4.0 http://creativecommons.org/licenses/by-sa/4.0/deed.en_US
 
+Contributors:
+
+    - Olexiy Berjanskii
+    - Erin Torbiak
+    - Abram Hindle
 
 
 Setup / Installation
 ========================
-SimpleGravatar:
-
-	pip install django-simplegravatar
-
 Dateutil:
 This is required to parse dates from imported GitHub posts
 
@@ -69,3 +70,8 @@ Requests:
 This is required to send requests to other server
 
 	pip install requests
+
+SimpleGravatar:
+
+	pip install django-simplegravatar
+
