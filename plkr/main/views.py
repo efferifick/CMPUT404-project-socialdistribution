@@ -527,9 +527,17 @@ def api_search(request):
         remote_host = valid[1]
 
     try:
-        # Get the query term
-        query = request.GET.get('query', None)
-        local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True)
+        # If there's a query
+        if "query" in request.GET:
+            # Get the query term
+            query = request.GET.get('query', None)
+
+            # Retrieve the local authors
+            local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True)
+        else:
+            # Retrieve the local authors
+            local_authors = Author.objects.filter(host__is_local=True)
+
         authors = []
 
         # Looping local authors to add the json version to the results
