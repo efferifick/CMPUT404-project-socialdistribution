@@ -71,7 +71,7 @@ This is required to send requests to other server
 
 	pip install requests
 
-SimpleGravatar:
+Simple Gravatar:
 
-	pip install django-simplegravatar
+	pip install django-simple-gravatar
 
