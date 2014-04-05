@@ -220,7 +220,7 @@ def api_get_post(request, post_id):
                 # If the post can be viewed by the viewer
                 if post.can_be_viewed_by(viewer):
                     # Return the post data
-                    return api_send_json(post.json())
+                    return api_send_json(dict(posts=[post.json()]))
                 else:
                     # Otherwise, return the error (unauthorized)
                     return api_send_error("Unauthorized to view this post.", 401)
