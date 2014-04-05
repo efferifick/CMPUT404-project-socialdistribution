@@ -281,6 +281,34 @@ def api_get_post(request, post_id):
         return api_send_error(e.message, 500)
 
 @csrf_exempt
+def api_get_public_posts(request):
+    '''
+    This view handles api requests for public post data
+    '''
+    
+    # Validate the request client
+    valid = api_validate_client(request)
+
+    # If the request client is invalid
+    if not valid[0]:
+        # Return the error
+        return valid[1]
+    else:
+        # Otherwise, get the host making the request
+        remote_host = valid[1]
+
+    try:
+        # Get all public posts
+        posts = [post.json() for post in Post.objects.select_related().filter(visibility='PUBLIC')]
+
+        # Send the response
+        return api_send_json(dict(posts=posts))
+    except ObjectDoesNotExist, e:
+        post = None
+    except Exception, e:
+        return api_send_error(e.message, 500)
+
+@csrf_exempt
 def api_get_posts_for_user(request):
     '''
     This view handles api requests to posts that should appear on a viewer's stream

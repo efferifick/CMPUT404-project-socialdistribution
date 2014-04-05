@@ -18,6 +18,8 @@ urlpatterns = patterns('',
 		# Friends - Send request
 		url(r'^friendrequest$', 'main.views.api_send_friendrequest', name='api_send_friendrequest'),
 
+		# Posts - All public posts
+		url(r'^posts$', 'main.views.api_get_public_posts', name='api_get_public_posts'),
 		# Posts - Specific one
 		url(r'^post/(?P<post_id>[a-zA-Z0-9\-]+)$', 'main.views.api_get_post', name='api_get_post'),
 
