@@ -18,6 +18,7 @@
 		{% if not post.gitHub and post.author == user.author %}
 			<div class="post-actions">
 				<form class="form-inline" role="form" action="{% url 'post_delete' post_id=post.id %}" method="post">
+					{% csrf_token %}
 					Actions:
 					<button type="submit" class="btn btn-danger btn-xs">Delete</button>
 				</form>

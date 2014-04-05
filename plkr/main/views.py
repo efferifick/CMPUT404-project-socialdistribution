@@ -963,8 +963,31 @@ def post_delete(request, post_id):
     '''
     This view is used to delete a specific post
     '''
-    # TODO
-    pass
+    context = RequestContext(request)
+    user = request.user
+    author = user.author
+    
+    # Validate the request method
+    if request.method != "POST":
+        raise Http404
+
+    try:
+        post = Post.objects.get(pk=post_id)
+    except ObjectDoesNotExist,e:
+        raise Http404
+
+    # Validate that the author is trying to delete the post
+    if post.author != author:
+        messages.error(request, "You don't have permissions to delete this post.")
+    else:
+        # Otherwise, go ahead and delete the post
+        post.delete()
+
+        # Add a success flash message
+        messages.info(request, "Post deleted successfully.")
+
+    # Redirect to the post view
+    return redirect('profile')
 
 @login_required
 def post_comment(request, post_id):
