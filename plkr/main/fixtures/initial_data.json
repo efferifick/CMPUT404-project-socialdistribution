@@ -39,7 +39,7 @@
     "model": "main.host",
     "pk": 3,
     "fields": {
-      "ip_address": "10.4.10.8",
+      "ip_address": "10.4.10.2",
       "port": 8080,
       "prefix": "/",
       "is_local": false
