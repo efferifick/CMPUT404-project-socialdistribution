@@ -1,5 +1,6 @@
 {% load static %}
 {% load dajaxice_templatetags %}
+{% load simplegravatar %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -67,7 +68,8 @@
                     </form>
 
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a href="{% url 'profile' %}"><img class="" width=20; heigth=20; style="margin-right:10px;" src="{{ gravatar }}"/>{{ user.username }}</a></li>
+		        <li>{% show_gravatar puser.email 35  %}
+                        <li><a href="{% url 'profile' %}">{{ user.username }}</a></li>
                         <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
                     </ul>
                     {% endif %}
