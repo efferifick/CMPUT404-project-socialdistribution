@@ -265,7 +265,7 @@ class Post(models.Model):
         post["author"] = self.author.json()
         post["categories"] = [c.name for c in self.categories.all()]
         post["comments"] = [com.json() for com in self.comments.all()]
-        post["pubDate"] = str(self.pubDate)
+        post["pubDate"] = format_date(self.pubDate)
         post["guid"] = self.id
         post["visibility"] = self.visibility 
 
@@ -293,6 +293,14 @@ class Comment(models.Model):
         comment = {}
         comment["author"] = self.author.json()
         comment["comment"] = self.comment
-        comment["pubDate"] = str(self.pubDate)
+        comment["pubDate"] = format_date(self.pubDate)
         comment["guid"] = self.id
         return comment
+
+
+def format_date(date):
+    '''
+    Formats a given date in the format specified in the API requirements
+    '''
+    fDate = date.ctime()
+    return fDate[:-4] + "UTC " + str(date.year)
