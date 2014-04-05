@@ -39,10 +39,10 @@ INSTALLED_APPS = (
     'markdown_deux',
     'main',
     'dajaxice',
-    'simplegravatar',
+    'django_gravatar',
 )
 
-SIMPLEGRAVATAR_DEFAULT = 'http://simpleicon.com/wp-content/uploads/user1.png'
+GRAVATAR_DEFAULT_URL = 'http://simpleicon.com/wp-content/uploads/user1.png'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

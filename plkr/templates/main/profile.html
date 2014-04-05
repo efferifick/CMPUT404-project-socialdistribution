@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% load simplegravatar %}
+{% load gravatar %}
 {% block title %}Profile{% endblock %}
 
 {% block content %}
@@ -26,7 +26,7 @@
 				</div>
 			</div>
 			<div class="col-md-4">
-				{% show_gravatar puser.email 200 %}
+				<img class="img-thumbnail" width=250; heigth=250; style="float:right;" src="{% gravatar_url user.email 250 %}"/>
 			</div>
 			
 		</div>
