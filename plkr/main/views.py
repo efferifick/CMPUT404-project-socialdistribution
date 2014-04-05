@@ -695,10 +695,7 @@ def profile(request):
         posts += github_posts
         posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
-    #Get user's gravatar link
-    gravatar = gravatar_link(user.email)
-
-    return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'gravatar': gravatar}, context)
+    return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
 
 def profile_author(request, username):
     '''
@@ -1160,29 +1157,6 @@ def get_authors_github_posts(author):
         resp.append(gpost)
 
     return resp
-
-### Gravatar code
-###
-### This code was provided by gravatar at https://en.gravatar.com/site/implement/images/django/
-### 
-###  This is reponsible for getting the url from the user's email addres on gravatar.com and geting 
-###  his avatar image url, and then this url will be used on the profile.html page.
-
-def gravatar_link(email=None):
-
-    default = "http://www.freeimages.com/assets/183416/1834158954/business-man-avatar-vector-1431598-m.jpg"
-
-    if email:
-        size = 400
- 
-        gravatar_url = "http://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest() + "?" 
-        gravatar_url += urllib.urlencode({'d':default, 's':str(size)})
-
-    else:
-        gravatar_url = default
-
-
-    return gravatar_url
 
 
 class GitHubPost(Post):
