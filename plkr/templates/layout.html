@@ -73,7 +73,7 @@
 
                     <ul class="nav navbar-nav navbar-right">
 		        <li>    
-                        <li><a href="{% url 'profile' %}"><img class="bar_picture" src="{% gravatar_url user.email 40 %}"/></a></li>
+                        <li><a href="{% url 'profile' %}">{% gravatar user.email 40 'class="bar_picture"' %}</a></li>
                         <li><a href="{% url 'profile' %}">{{ user.username }}</a></li>
                         <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
                     </ul>

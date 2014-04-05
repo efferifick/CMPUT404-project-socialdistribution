@@ -6,6 +6,7 @@
 
 		<style type="text/css">
 			.top-buffer { margin-top:40px; }
+			.float_right {float: right;}
 		</style>
 	
 
@@ -26,7 +27,7 @@
 				</div>
 			</div>
 			<div class="col-md-4">
-				<img class="img-thumbnail" width=250; heigth=250; style="float:right;" src="{% gravatar_url user.email 250 %}"/>
+				{% gravatar user.email 250 'class="img-thumbnail float_right"' %}
 			</div>
 			
 		</div>
