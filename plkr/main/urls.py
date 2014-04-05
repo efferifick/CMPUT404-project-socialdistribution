@@ -48,7 +48,9 @@ urlpatterns = patterns('',
 		url(r'^site/profile$', 'main.views.profile', name='profile'),
 		# Profile - Edit
 		url(r'^site/profile/edit$', 'main.views.profile_edit', name='profile_edit'),
-		# Profile - Author profile
+		# Profile - Remote author profile
+		url(r'^site/profile/h(?P<host_id>[0-9]+)/(?P<author_id>[a-zA-Z0-9\-]+)$', 'main.views.profile_author_remote', name='profile_author_remote'),
+		# Profile - Local author profile
 		url(r'^site/profile/(?P<username>[a-zA-Z0-9]+)$', 'main.views.profile_author', name='profile_author'),
 
 		# Friends

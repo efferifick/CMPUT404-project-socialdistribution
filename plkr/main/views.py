@@ -12,6 +12,7 @@ from django.shortcuts import *
 from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
+from main.remote import RemoteApi
 import cgi, datetime, json, dateutil.parser, os.path, requests
 
 # API
@@ -695,7 +696,7 @@ def search(request):
     # TODO Test this
     for host in hosts:
         try:
-            # Get the user's github activity
+            # Search the remote host
             response = requests.get(host.get_search_url(), params=dict(query=query), timeout=0.3)
 
             # Parse the response
@@ -744,6 +745,49 @@ def profile(request):
         posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
     return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
+
+def profile_author_remote(request, host_id, author_id):
+    '''
+    This view displays the profile for a specific remote author
+    '''
+    context = RequestContext(request)
+
+    try:
+        # Get the host and author
+        host, author = RemoteApi.get_author(host_id, author_id)
+
+        # Validate the host and author
+        if host is None or author is None:
+            raise Http404
+
+        # Create a user just to be able to display some fields
+        user = User(username='N/A', email='N/A', author=author)
+
+        # The author that wants to see this profile
+        viewer = request.user.author if request.user.is_authenticated() else None
+
+        # Determine if the viewer and the profile owner are friends
+        are_friends = False if viewer is None else viewer.is_friends_with(author)
+
+        # If the authors are not friends
+        if author != viewer and not are_friends:
+            # Determine if the viewer has sent a friend request to the author
+            sent_request = author.friend_requests_received.filter(sender=viewer, accepted=False).count() > 0
+        else:
+            sent_request = False
+
+        # Get all posts from this author
+        posts = RemoteApi.get_author_posts(author, viewer)
+
+        # Sort the posts
+        posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
+
+        # Render the profile template
+        return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request}, context)
+
+    except Exception, e:
+        messages.error(request, "An error occured.")
+        return redirect('index')
 
 def profile_author(request, username):
     '''
