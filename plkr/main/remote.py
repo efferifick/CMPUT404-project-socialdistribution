@@ -183,5 +183,23 @@ class RemoteApi:
 		Determine if an author is friends with a group of authors
 		'''
 
-		# TODO Implement this
+		# TODO test this
 		
+		try:
+			# Determine the params of the request
+			params = dict(query='friends', author=author.id, authors=[friend.id for friend in friends])
+
+			# Query the remote host
+			response = requests.post(cls.author_has_friends_url(author.host, author.id), params=params, headers=cls.HEADERS, timeout=cls.TIMEOUT)
+
+			# Parse the response
+			data = response.json()
+
+			# If the result has at least one friend
+			return len(data["friends"]) > 0
+
+		except Exception, e:
+			pass
+
+		# Return False by default or in error
+		return False
