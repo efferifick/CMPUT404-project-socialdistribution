@@ -12,7 +12,7 @@
 
   function call_dajaxice() {
     var date = new Date().toISOString();
-    Dajaxice.main.get_new_posts(callback, {"date":date});
+    Dajaxice.author.get_new_posts(callback, {date: date, author_id: post_reload_id});
   }
 
   function callback(data) {
