@@ -39,7 +39,7 @@
 			    {{ post.content|escape|linebreaks }}
 			{% elif post.contentType == 'text/html' %}
 				{{ post.content|safe }}
-			{% elif post.contentType == 'text/markdown' %}
+			{% elif post.contentType == 'text/x-markdown' %}
 				{{ post.content|markdown }}
 			{% endif %}
 		{% else %}

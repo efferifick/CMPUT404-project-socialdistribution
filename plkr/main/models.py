@@ -162,7 +162,7 @@ class Post(models.Model):
     CONTENTTYPE_OPTIONS=(
         ("text/plain", "Text"),
         ("text/html", "HTML"),
-        ("text/markdown", "Markdown"),
+        ("text/x-markdown", "Markdown"),
     )
 
     id = UUIDField(primary_key=True, auto=True)
