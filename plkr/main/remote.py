@@ -98,11 +98,14 @@ class RemoteApi:
 		# Generate the URL
 		url = "%sauthor/%s/posts" % (author.host.get_url(), author.id)
 
+		# Generate the viewer id parameter
+		viewer_id = viewer.id if viewer is not None else None
+
 		# TODO Test this
 
 		try:
 			# Query the URL
-			response = requests.get(url, headers=cls.HEADERS, timeout=cls.TIMEOUT)
+			response = requests.get(url, params=dict(id=viewer_id), headers=cls.HEADERS, timeout=cls.TIMEOUT)
 			
 			# Parse the response
 			data = response.json()
