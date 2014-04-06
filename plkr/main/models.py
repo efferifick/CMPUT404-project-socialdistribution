@@ -46,10 +46,6 @@ class Host(models.Model):
     def get_url(self):
         # Gets the base url for the host
         return "http://%s:%d%s" % (self.ip_address, self.port, self.prefix)
-    
-    def get_search_url(self):
-        # Gets the search url for the host
-        return "%sapi/search" % self.get_url()
 
     def __unicode__(self):
         return "%s:%d" % (self.ip_address, self.port)

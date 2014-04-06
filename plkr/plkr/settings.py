@@ -85,12 +85,15 @@ LOGIN_URL = '/login'
 
 # API Urls
 
-API_GET_AUTHOR = 'author/:author_id'
-API_GET_AUTHOR_POSTS = 'author/:author_id/posts'
-API_GET_POST = 'post/:author_id'
-API_AUTHOR_HAS_FRIENDS = 'friends/:author_id'
-API_AUTHORS_ARE_FRIENDS = 'friends/:author_id1/:author_id2'
-API_SEND_FRIENDREQUEST = 'friendrequest'
+API_PREFIX = 'api/'
+API_GET_AUTHOR = API_PREFIX + 'author/%(author_id)s'
+API_GET_AUTHOR_POSTS = API_PREFIX + 'author/%(author_id)s/posts'
+API_GET_PUBLIC_POSTS = API_PREFIX + 'posts'
+API_GET_POST = API_PREFIX + 'post/%(post_id)s'
+API_AUTHOR_HAS_FRIENDS = API_PREFIX + 'friends/%(author_id)s'
+API_AUTHORS_ARE_FRIENDS = API_PREFIX + 'friends/%(author_id)s/%(friend_id)s'
+API_SEND_FRIENDREQUEST = API_PREFIX + 'friendrequest'
+API_SEARCH = API_PREFIX + 'search'
 
 # Media files (uploaded)
 

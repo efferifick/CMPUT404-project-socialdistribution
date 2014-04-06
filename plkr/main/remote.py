@@ -8,28 +8,32 @@ class RemoteApi:
 	HEADERS = {"accept": "application/json"}
 	
 	@classmethod
-	def get_author_url(cls):
-		return settings.API_GET_AUTHOR
+	def get_author_url(cls, host, author_id):
+		return host.get_url() + settings.API_GET_AUTHOR % {'author_id':author_id}
 
 	@classmethod
-	def get_author_posts_url(cls):
-		return settings.API_GET_AUTHOR_POSTS
+	def get_author_posts_url(cls, host, author_id):
+		return host.get_url() + settings.API_GET_AUTHOR_POSTS % {'author_id':author_id}
 
 	@classmethod
-	def get_post_url(cls):
-		return settings.API_GET_POST
+	def get_post_url(cls, host, post_id):
+		return host.get_url() + settings.API_GET_POST % {'post_id':post_id}
 
 	@classmethod
-	def author_has_friends_url(cls):
-		return settings.API_AUTHOR_HAS_FRIENDS
+	def author_has_friends_url(cls, host, author_id):
+		return host.get_url() + settings.API_AUTHOR_HAS_FRIENDS % {'author_id':author_id}
 
 	@classmethod
-	def authors_are_friends_url(cls):
-		return settings.API_AUTHORS_ARE_FRIENDS
+	def authors_are_friends_url(cls, host, author_id, friend_id):
+		return host.get_url() + settings.API_AUTHORS_ARE_FRIENDS % {'author_id':author_id, 'friend_id':friend_id}
 
 	@classmethod
-	def send_friend_request_url(cls):
-		return settings.API_SEND_FRIENDREQUEST
+	def send_friend_request_url(cls, host):
+		return host.get_url() + settings.API_SEND_FRIENDREQUEST
+
+	@classmethod
+	def search_url(cls, host):
+		return host.get_url() + settings.API_SEARCH
 
 	@classmethod
 	def get_author(cls, host_id, author_id):
@@ -69,7 +73,7 @@ class RemoteApi:
 
 		try:
 			# Generate the URL
-			url = "%sauthor/%s" % (host.get_url(), author_id)
+			url = cls.get_author_url(host, author_id)
 
 			# Query the URL
 			response = requests.get(url, headers=cls.HEADERS, timeout=cls.TIMEOUT)
@@ -96,7 +100,7 @@ class RemoteApi:
 		posts = []
 
 		# Generate the URL
-		url = "%sauthor/%s/posts" % (author.host.get_url(), author.id)
+		url = cls.get_author_posts_url(author.host, author.id)
 
 		# Generate the viewer id parameter
 		viewer_id = viewer.id if viewer is not None else None
@@ -152,7 +156,7 @@ class RemoteApi:
 		for host in hosts:
 		    try:
 		        # Search the remote host
-		        response = requests.get(host.get_search_url(), params=dict(query=query), headers=cls.HEADERS, timeout=cls.TIMEOUT)
+		        response = requests.get(cls.search_url(host), params=dict(query=query), headers=cls.HEADERS, timeout=cls.TIMEOUT)
 
 		        # Parse the response
 		        data = response.json()
@@ -167,7 +171,7 @@ class RemoteApi:
 
 		    except Exception, e:
 		        # If there's an exception, just catch it
-		        print('Querying %s failed, query: "%s"' % (host.get_search_url(), query))
+		        print('Querying %s failed, query: "%s"' % (cls.search_url(host), query))
 
 		# Return the search results
 		return authors
