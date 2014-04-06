@@ -903,10 +903,19 @@ def post(request, post_id):
     '''
     context = RequestContext(request)
     user = request.user
-    post = Post.objects.get(pk=post_id)
-    viewer = user.author if user.is_authenticated() else None
 
-    if not post.can_be_viewed_by(viewer):
+    try:
+        # Get the post
+        post = Post.objects.get(pk=post_id)
+
+        # Get the viewer
+        viewer = user.author if user.is_authenticated() else None
+
+        # If the post can't be viewed by the viwerd
+        if not post.can_be_viewed_by(viewer):
+            # Pretend it does not exist, don't send an unathorized message
+            raise Http404
+    except ObjectDoesNotExist, e:
         raise Http404
 
     return render_to_response('main/postView.html', {'post': post, 'full': True}, context)
@@ -1021,6 +1030,7 @@ def post_delete(request, post_id):
         raise Http404
 
     try:
+        # Get the post
         post = Post.objects.get(pk=post_id)
     except ObjectDoesNotExist,e:
         raise Http404
@@ -1049,6 +1059,7 @@ def post_comment(request, post_id):
     body = request.POST.get('comment')
 
     try:
+        # Get the post
         post = Post.objects.get(pk=post_id)
     except ObjectDoesNotExist,e:
         raise Http404
