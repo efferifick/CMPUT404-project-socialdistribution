@@ -21,20 +21,22 @@
 							{% endif %}
 						</div>
 						<div class="col-md-1">
-							{% if not friends %}
-								<form action="{% url 'request_friendship' %}" method="post">
-									{% csrf_token %}
-									<input type="hidden" name="friend_id" value="{{ author.id }}" />
-									<input type="hidden" name="host_id" value="{{ author.host.id }}" />
-									<input type="hidden" name="displayName" value="{{ author.displayName }}" />
-									<button class="btn btn-primary">Add Friend</button>
-								</form>
-							{% else %}
-								<form action="{% url 'remove_friendship' %}" method="post">
-									{% csrf_token %}
-									<input type="hidden" name="friend_id" value="{{ author.id }}" />
-									<button class="btn btn-danger">Unfriend</button>
-								</form>
+							{% if user.is_authenticated %}
+								{% if not friends %}
+									<form action="{% url 'request_friendship' %}" method="post">
+										{% csrf_token %}
+										<input type="hidden" name="friend_id" value="{{ author.id }}" />
+										<input type="hidden" name="host_id" value="{{ author.host.id }}" />
+										<input type="hidden" name="displayName" value="{{ author.displayName }}" />
+										<button class="btn btn-primary">Add Friend</button>
+									</form>
+								{% else %}
+									<form action="{% url 'remove_friendship' %}" method="post">
+										{% csrf_token %}
+										<input type="hidden" name="friend_id" value="{{ author.id }}" />
+										<button class="btn btn-danger">Unfriend</button>
+									</form>
+								{% endif %}
 							{% endif %}
 						</div>
 					</div>
