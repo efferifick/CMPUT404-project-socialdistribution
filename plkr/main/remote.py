@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from main.models import *
-import datetime, json, requests
+import datetime, dateutil.parser, json, requests
 
 class RemoteApi:
-	TIMEOUT = 0.3
+	TIMEOUT = 1.5
 	HEADERS = {"accept": "application/json"}
 	
 	@classmethod
@@ -110,23 +110,24 @@ class RemoteApi:
 		try:
 			# Query the URL
 			response = requests.get(url, params=dict(id=viewer_id), headers=cls.HEADERS, timeout=cls.TIMEOUT)
-			
+
 			# Parse the response
 			data = response.json()
 
 			# Add the post to the result list
-			for post_data in data:
+			for post_data in data["posts"]:
 				try:
 					post = Post()
 					post.title = post_data["title"]
-					post.source = post_data["source"]
+					post.source = post_data["source"] if "source" in post_data else cls.get_post_url(author.host, post_data["guid"])
 					post.origin = post_data["origin"]
 					post.description = post_data["description"]
 					post.contentType = post_data["content-type"]
 					post.content = post_data["content"]
 					post.author = author
-					post.categories = [Category(name=c) for c in post_data["categories"]]
-					post.comments = [Comment(author=Author(id=com["author"]["id"], displayName=com["author"]["displayname"], host=author.host), pubDate=dateutil.parser.parse(com["pubDate"]),comment=com["comment"],post=post) for com in post_data["comments"]]
+					# TODO To add this we need to save the post. Do we want to though?
+					# post.categories = [Category(name=c) for c in post_data["categories"]]
+					# post.comments = [Comment(author=Author(id=com["author"]["id"], displayName=com["author"]["displayname"], host=author.host), pubDate=dateutil.parser.parse(com["pubDate"]),comment=com["comment"],post=post) for com in post_data["comments"]]
 					post.pubDate = dateutil.parser.parse(post_data["pubDate"])
 					post.id = post_data["guid"]
 					post.visibility = post_data["visibility"]
