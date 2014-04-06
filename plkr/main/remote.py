@@ -184,7 +184,7 @@ class RemoteApi:
 		'''
 
 		# TODO test this
-		
+
 		try:
 			# Determine the params of the request
 			params = dict(query='friends', author=author.id, authors=[friend.id for friend in friends])
@@ -197,6 +197,36 @@ class RemoteApi:
 
 			# If the result has at least one friend
 			return len(data["friends"]) > 0
+
+		except Exception, e:
+			pass
+
+		# Return False by default or in error
+		return False
+
+	@classmethod
+	def send_friend_request(author, friend, cancel=False):
+		'''
+		Determine if an author is friends with a group of authors
+		'''
+
+		# TODO test this
+		
+		try:
+			# Determine the type of query
+			if cancel:
+				query = 'unfriend'
+			else:
+				query = 'friendrequest'
+
+			# Determine the params of the request
+			params = dict(query=query, author=friend.json(), friend=dict(author=author.json()))
+
+			# Query the remote host
+			response = requests.post(cls.send_friend_request_url(author.host), params=params, headers=cls.HEADERS, timeout=cls.TIMEOUT)
+
+			# If the response is ok
+			return response.status_code == 200
 
 		except Exception, e:
 			pass
