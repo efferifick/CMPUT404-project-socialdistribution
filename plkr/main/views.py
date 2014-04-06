@@ -12,6 +12,7 @@ from django.shortcuts import *
 from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
+from main.remote import RemoteApi
 import cgi, datetime, json, dateutil.parser, os.path, requests
 
 # API
@@ -526,9 +527,17 @@ def api_search(request):
         remote_host = valid[1]
 
     try:
-        # Get the query term
-        query = request.GET.get('query', None)
-        local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True)
+        # If there's a query
+        if "query" in request.GET:
+            # Get the query term
+            query = request.GET.get('query', None)
+
+            # Retrieve the local authors
+            local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True)
+        else:
+            # Retrieve the local authors
+            local_authors = Author.objects.filter(host__is_local=True)
+
         authors = []
 
         # Looping local authors to add the json version to the results
@@ -637,19 +646,14 @@ def timeline_posts(request):
     user = request.user
     author = user.author
 
-    # TODO We have to build a function to get the user's stream
+    # Nice2Have. We have to build a function to get the user's stream
     # Maybe this isn't the best way to build the user's stream
     # but it filters out content we are not allowed to see.
     posts = Post.objects.order_by("-pubDate").select_related()
     
     # Filter the posts that can be viewed and that are supposed to be in the user's timeline
-    posts = [post for post in posts if (post.can_be_viewed_by(author) and post.should_appear_on_stream_of(author))]
+    posts = [post for post in posts if post.should_appear_on_stream_of(author)]
 
-    # TODO This might need to change. This is showing github posts for friends/following in the author's timeline.
-    # I (diego) think that the requirement is that my github activity is imported as my public activity.
-    # Therefore, it should show up in my friends/followers timeline, as well as on my profile.
-    # If that's true, we would just need to add this logic into profile (next function) as well.
-    
     # Add github posts from all the author's friends
     for friend in author.friends():
         github_posts = get_authors_github_posts(friend)
@@ -692,10 +696,9 @@ def search(request):
     friendships = []
 
     # Query remote hosts
-    # TODO Test this
     for host in hosts:
         try:
-            # Get the user's github activity
+            # Search the remote host
             response = requests.get(host.get_search_url(), params=dict(query=query), timeout=0.3)
 
             # Parse the response
@@ -744,6 +747,49 @@ def profile(request):
         posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
     return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
+
+def profile_author_remote(request, host_id, author_id):
+    '''
+    This view displays the profile for a specific remote author
+    '''
+    context = RequestContext(request)
+
+    try:
+        # Get the host and author
+        host, author = RemoteApi.get_author(host_id, author_id)
+
+        # Validate the host and author
+        if host is None or author is None:
+            raise Http404
+
+        # Create a user just to be able to display some fields
+        user = User(username='N/A', email='N/A', author=author)
+
+        # The author that wants to see this profile
+        viewer = request.user.author if request.user.is_authenticated() else None
+
+        # Determine if the viewer and the profile owner are friends
+        are_friends = False if viewer is None else viewer.is_friends_with(author)
+
+        # If the authors are not friends
+        if author != viewer and not are_friends:
+            # Determine if the viewer has sent a friend request to the author
+            sent_request = author.friend_requests_received.filter(sender=viewer, accepted=False).count() > 0
+        else:
+            sent_request = False
+
+        # Get all posts from this author
+        posts = RemoteApi.get_author_posts(author, viewer)
+
+        # Sort the posts
+        posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
+
+        # Render the profile template
+        return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request}, context)
+
+    except Exception, e:
+        messages.error(request, "An error occured.")
+        return redirect('index')
 
 def profile_author(request, username):
     '''
