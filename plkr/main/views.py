@@ -712,21 +712,12 @@ def profile(request):
     This view displays the profile for the currently logged in user
     '''
     context = RequestContext(request)
+
+    # Get the logged in user
     user = request.user
-    author = user.author
 
-    # Get the authors's posts ordered by date
-    posts = author.posts.order_by("-pubDate").select_related()
-
-    # We need to include the Github posts here
-    # Here we retrieve the github posts from the current logged in user and display them on his profile.
-    github_posts = get_authors_github_posts(author)
-    if github_posts:
-        posts = [post for post in posts]
-        posts += github_posts
-        posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
-
-    return render_to_response('main/profile.html', {'posts' : posts, 'puser': user}, context)
+    # Redirect to the current logged in user's profile page
+    return redirect('profile_author', username=user.username)
 
 def profile_author_remote(request, host_id, author_id):
     '''
