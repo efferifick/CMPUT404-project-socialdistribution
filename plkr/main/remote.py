@@ -155,24 +155,24 @@ class RemoteApi:
 
 		# Query remote hosts
 		for host in hosts:
-		    try:
-		        # Search the remote host
-		        response = requests.get(cls.search_url(host), params=dict(query=query), headers=cls.HEADERS, timeout=cls.TIMEOUT)
+			try:
+				# Search the remote host
+				response = requests.get(cls.search_url(host), params=dict(query=query), headers=cls.HEADERS, timeout=cls.TIMEOUT)
 
-		        # Parse the response
-		        data = response.json()
+				# Parse the response
+				data = response.json()
 
-		        # Add the author to the result list
-		        for author_data in data:
-		            remote_author = Author()
-		            remote_author.id = author_data['id']
-		            remote_author.host = host
-		            remote_author.displayName = author_data['displayname']
-		            authors.append(remote_author)
+				# Add the author to the result list
+				for author_data in data:
+					remote_author = Author()
+					remote_author.id = author_data['id']
+					remote_author.host = host
+					remote_author.displayName = author_data['displayname']
+					authors.append(remote_author)
 
-		    except Exception, e:
-		        # If there's an exception, just catch it
-		        print('Querying %s failed, query: "%s"' % (cls.search_url(host), query))
+			except Exception, e:
+				# If there's an exception, just catch it
+				print('Querying %s failed, query: "%s"' % (cls.search_url(host), query))
 
 		# Return the search results
 		return authors
