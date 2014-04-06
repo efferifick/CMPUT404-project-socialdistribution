@@ -3,7 +3,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 from django_extensions.db.fields import UUIDField
-from main.remote import RemoteApi
 import dateutil.parser, requests
 
 # Create your models here.
@@ -110,8 +109,30 @@ class Author(models.Model):
         if author is None:
             return False
 
-        # TODO implement
-        return False
+        # If both authors are remote, it's not up to us to decide
+        if not self.is_local() and not author.is_local():
+            return False
+
+        # If the two are friends
+        if self.is_friends_with(author):
+            # They are also foaf
+            return True
+
+        # Determine who's the local author, and the other author
+        local = self if self.is_local() else author
+        other = self if local != self else author
+
+        # Get the friends of the local author
+        friends = local.friends()
+
+        # If the other is also local
+        if other.is_local():
+            # Then just check if other shares friends with the local author
+            return other.friends().filter(id__in=friends).count() > 0
+
+        # Check if the remote host if the author is friends with the local author's friends
+        from main.remote import RemoteApi
+        return RemoteApi.author_is_friends_with(other, friends)
 
     def is_local(self):
         # Determines if the current author is local to this server
@@ -154,6 +175,7 @@ class Author(models.Model):
 
         try:
             # Get the user's github activity
+            from main.remote import RemoteApi
             response = requests.get(url, timeout=RemoteApi.TIMEOUT);
 
             # Parse the response

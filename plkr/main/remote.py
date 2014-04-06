@@ -177,3 +177,11 @@ class RemoteApi:
 		# Return the search results
 		return authors
 
+	@classmethod
+	def author_is_friends_with(author, friends):
+		'''
+		Determine if an author is friends with a group of authors
+		'''
+
+		# TODO Implement this
+		
