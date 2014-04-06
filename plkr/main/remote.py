@@ -92,8 +92,46 @@ class RemoteApi:
 		Returns a list of remote author posts that a viewer can access
 		'''
 
-		#TODO implement
-		return []
+		# Initialize the results
+		posts = []
+
+		# Generate the URL
+		url = "%sauthor/%s/posts" % (author.host.get_url(), author.id)
+
+		# TODO Test this
+
+		try:
+			# Query the URL
+			response = requests.get(url, headers=cls.HEADERS, timeout=cls.TIMEOUT)
+			
+			# Parse the response
+			data = response.json()
+
+			# Add the post to the result list
+			for post_data in data:
+				try:
+					post = Post()
+					post.title = post_data["title"]
+					post.source = post_data["source"]
+					post.origin = post_data["origin"]
+					post.description = post_data["description"]
+					post.contentType = post_data["content-type"]
+					post.content = post_data["content"]
+					post.author = author
+					post.categories = [Category(name=c) for c in post_data["categories"]]
+					post.comments = [Comment(author=Author(id=com["author"]["id"], displayName=com["author"]["displayname"], host=author.host), pubDate=dateutil.parser.parse(com["pubDate"]),comment=com["comment"],post=post) for com in post_data["comments"]]
+					post.pubDate = dateutil.parser.parse(post_data["pubDate"])
+					post.id = post_data["guid"]
+					post.visibility = post_data["visibility"]
+					posts.append(post)
+
+				except Exception, e:
+					pass
+
+		except Exception, e:
+			pass
+
+		return posts
 
 	@classmethod
 	def get_search_results(cls, query):
