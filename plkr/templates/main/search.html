@@ -17,7 +17,7 @@
 							{% if author.is_local %}
 								<a href="{% url 'profile_author' username=author.user.username %}">{{ author.displayName }}</a>
 							{% else %}
-								<a href="#author-{{ author.id }}" title="Remote User: {{ author.displayName }}">{{ author.displayName }}</a>
+								<a href="{% url 'profile_author_remote' host_id=author.host.id author_id=author.id %}">{{ author.displayName }}</a>
 							{% endif %}
 						</div>
 						<div class="col-md-1">

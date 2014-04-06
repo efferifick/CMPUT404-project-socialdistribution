@@ -3,15 +3,23 @@
 <article class="post well" id="post-{{ post.id }}">
 	<header class="post-header">
 		{% if post.gitHub %}
-			<h1><img src="http://octodex.github.com/images/original.png" width="30" height="30" style="margin-right:10px;"><a href="{{ post.source }}">{{ post.title }}</a></h1>
+			<h1>
+				<img src="http://octodex.github.com/images/original.png" width="30" height="30" style="margin-right:10px;">
+				<a href="{{ post.source }}">{{ post.title }}</a>
+			</h1>
 		{% else %}
 			<h1><a href="{% url 'post' post_id=post.id %}">{{ post.title }}</a></h1>
 		{% endif %}
+
 		<p class="post-meta">
 			Posted by
-			<a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">
-				{{ post.author.displayName }}
-			</a>
+
+			{% if post.author.is_local %}
+				<a href="{% url 'profile_author' username=post.author.user.username %}" class="author-link">{{ post.author.displayName }}</a>
+			{% else %}
+				<a href="{% url 'profile_author_remote' host_id=post.author.host.id author_id=post.author.id %}" class="author-link">{{ post.author.displayName }}</a>
+			{% endif %}
+
 			on {{ post.pubDate|date:"D, M d, Y \a\t H:i" }}
 		</p>
 
@@ -59,11 +67,18 @@
 		<footer class="post-footer">
 			<h2 class="sr-only">Comments</h2>
 			
-			{% if post.comment_set.all %}
+			{% if post.comments.all %}
 				<div class="comment">
-				{% for comment in post.comment_set.all %}
+				{% for comment in post.comments.all %}
 					<div class="comment">
-						<p class="comment-meta"><a href="{% url 'profile_author' username=post.author.user.username %}" title="{{ post.author.displayName }}" class="author-link">{{ comment.author.displayName }}</a> said on {{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}:</p>
+						<p class="comment-meta">
+							{% if comment.author.is_local %}
+								<a href="{% url 'profile_author' username=comment.author.user.username %}" class="author-link">{{ comment.author.displayName }}</a>
+							{% else %}
+								<a href="{% url 'profile_author_remote' host_id=comment.author.host.id author_id=comment.author.id %}" class="author-link">{{ comment.author.displayName }}</a>
+							{% endif %}
+							
+							said on {{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}:</p>
 						<div class="comment-body">
 							{{ comment.comment|escape|linebreaks }}
 						</div>

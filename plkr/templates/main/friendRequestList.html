@@ -5,7 +5,7 @@
 			{% if friend.is_local %}
 				<a href="{% url 'profile_author' username=friend.user.username %}">{{ friend.displayName }}</a>
 			{% else %}
-				<a href="#friend-{{ friend.id }}" title="Remote User: {{ friend.displayName }}">{{ friend.displayName }}</a>
+				<a href="{% url 'profile_author_remote' host_id=friend.host.id author_id=friend.id %}">{{ friend.displayName }}</a>
 			{% endif %}
 		</div>
 		<div class="col-md-4">

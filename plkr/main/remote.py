@@ -49,7 +49,7 @@ class RemoteApi:
 
 		try:
 			# Get the host from the database
-			host = Host.object.get(pk=host_id)
+			host = Host.objects.get(pk=host_id)
 
 			# Get the author from the database
 			author = Author.objects.get(pk=author_id, host=host)
@@ -68,11 +68,11 @@ class RemoteApi:
 
 		try:
 			# Generate the URL
-			url = "%author/%s" % (host.get_(), author_id)
+			url = "%sauthor/%s" % (host.get_url(), author_id)
 
 			# Query the URL
-			response = requests.get(url, params=dict(query=query), timeout=cls.TIMEOUT)
-
+			response = requests.get(url, timeout=cls.TIMEOUT)
+			
 			# Parse the response
 			data = response.json()
 

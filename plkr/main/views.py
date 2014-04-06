@@ -763,7 +763,8 @@ def profile_author_remote(request, host_id, author_id):
             raise Http404
 
         # Create a user just to be able to display some fields
-        user = User(username='N/A', email='N/A', author=author)
+        user = User(username='N/A', email='N/A')
+        author.user = user
 
         # The author that wants to see this profile
         viewer = request.user.author if request.user.is_authenticated() else None
@@ -787,6 +788,8 @@ def profile_author_remote(request, host_id, author_id):
         # Render the profile template
         return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request}, context)
 
+    except Http404, e:
+        raise
     except Exception, e:
         messages.error(request, "An error occured.")
         return redirect('index')
