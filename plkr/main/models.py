@@ -3,6 +3,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 from django_extensions.db.fields import UUIDField
+from main.remote import RemoteApi
+import dateutil.parser, requests
 
 # Create your models here.
 
@@ -114,6 +116,116 @@ class Author(models.Model):
     def is_local(self):
         # Determines if the current author is local to this server
         return self.host.is_local
+
+    def get_posts_viewable_by(self, viewer):
+        # Gets this author's post viewable to another user
+        
+        # Get all posts from this author
+        posts = self.posts.order_by("-pubDate").select_related()
+
+        # Filter the posts that can be viewed by the viewer
+        posts = [post for post in posts if post.can_be_viewed_by(viewer)]
+
+        # Here we retrieve the github posts from the user to 
+        # display his github activity on his profile
+        # So I, Paulo, agree with Diego that we should display it here
+        github_posts = self.get_github_posts()
+        if len(github_posts) > 0:
+            posts += github_posts
+            posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
+
+        # Return the posts
+        return posts
+
+    def get_github_posts(self):
+        '''
+        Returns a list of the author's github posts (if any)
+        '''
+        
+        # Initialize the results
+        resp = []
+
+        # Validate that the author has a github username specified
+        if self.github_name is None or self.github_name == "":
+            return resp
+
+        # Github user activity url
+        url = "https://api.github.com/users/" + self.github_name + "/events/public"
+
+        try:
+            # Get the user's github activity
+            response = requests.get(url, timeout=RemoteApi.TIMEOUT);
+
+            # Parse the response
+            data = response.json()
+
+            # Validate that it was a successful request
+            if 'message' in data and (data['message'] == 'Not Found' or 'API rate limit exceeded' in data['message']):
+                return None
+
+            # Loop on all the activity
+            for p in data:
+                try:
+                    # Create a post for each activity
+                    gpost = GitHubPost()
+                    gpost.source = "http://github.com/" + self.github_name
+                    gpost.gitHub = True
+                    gpost.title = "GitHub " + p["type"]
+                    gpost.author = self
+                    gpost.contentType = "text/plain"
+                    gpost.pubDate = dateutil.parser.parse(p["created_at"])
+                    gpost.visibility = "PUBLIC"
+
+                    if p["type"] == "PushEvent":
+                        gpost.source = p["payload"]["commits"][0]["url"]
+                        gpost.source = gpost.source.replace('api.github.com','github.com')
+                        gpost.source = gpost.source.replace('/repos/','/')
+                        gpost.source = gpost.source.replace('/commits/','/commit/')
+
+                        gpost.origin = p["payload"]["commits"][0]["url"]
+                        gpost.description = p["payload"]["commits"][0]["message"]
+
+                    elif p["type"] == "ForkEvent":
+                        gpost.source = p["payload"]["forkee"]["html_url"]
+                        gpost.origin = p["repo"]["url"]
+                        gpost.description = "Fork " + p["payload"]["forkee"]["name"] + " from " + p["repo"]["name"]
+
+                    elif p["type"] == "CommitCommentEvent":
+                        gpost.source = p["payload"]["comment"]["html_url"]
+                        gpost.origin = p["payload"]["comment"]["url"]
+                        gpost.description = p["payload"]["comment"]["body"]
+
+                    # Add the post to the resulting list
+                    resp.append(gpost)
+
+                except Exception, e:
+                    raise e
+
+        except Exception, e:
+            pass
+
+        # Return the posts
+        return resp
+
+    def get_timeline_posts(self):
+        # Get all the authors posts including github posts
+        posts = self.get_posts_viewable_by(self)
+        
+        # Convert into an array
+        posts = [post for post in posts]
+
+        # Add posts from all the author's friends
+        for friend in self.friends():
+            posts += friend.get_posts_viewable_by(self)
+
+        # Add posts from all the authors that the author follows
+        for friend in self.following():
+            posts += friend.get_posts_viewable_by(self)
+
+        # Sort the posts by publication date
+        posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
+
+        return posts
 
     def json(self):
         user = {} 
@@ -272,6 +384,19 @@ class Post(models.Model):
     class Meta:
         ordering = ["-pubDate"]
         get_latest_by = "pubDate"
+
+# GitHubPost subclass
+class GitHubPost(Post):
+    '''
+    Post subclass for GitHub posts
+    '''
+
+    def __init___(self):
+        self.origin = "https://github.com/"
+
+    class Meta:
+        abstract = True
+        managed = False
 
 # Comment Model
 class Comment(models.Model):

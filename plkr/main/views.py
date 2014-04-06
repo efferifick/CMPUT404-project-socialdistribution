@@ -637,45 +637,12 @@ def register(request):
 @login_required
 def timeline(request):
     context = RequestContext(request)
-    posts = timeline_posts(request)
+    user = request.user
+    author = user.author
+    posts = author.get_timeline_posts()
 
     # Render the timeline
     return render_to_response('main/timeline.html', {'posts': posts}, context)
-
-def timeline_posts(request):
-    user = request.user
-    author = user.author
-
-    # Nice2Have. We have to build a function to get the user's stream
-    # Maybe this isn't the best way to build the user's stream
-    # but it filters out content we are not allowed to see.
-    posts = Post.objects.order_by("-pubDate").select_related()
-    
-    # Filter the posts that can be viewed and that are supposed to be in the user's timeline
-    posts = [post for post in posts if post.should_appear_on_stream_of(author)]
-
-    # Add github posts from all the author's friends
-    for friend in author.friends():
-        github_posts = get_authors_github_posts(friend)
-        if github_posts:
-            posts += github_posts
-
-    # Add github posts from all the authors that the author follows
-    for friend in author.following():
-        github_posts = get_authors_github_posts(friend)
-        if github_posts:
-            posts += github_posts
-
-    # Add the author's github posts
-    github_posts = get_authors_github_posts(author)
-    if github_posts:
-        posts += github_posts
-
-    # Sort the posts by publication date
-    posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
-
-    return posts
-
 
 def search(request):
     '''
@@ -790,24 +757,12 @@ def profile_author(request, username):
         else:
             sent_request = False
 
-        # Get all posts from this author
-        posts = Post.objects.order_by("-pubDate").select_related().filter(author=author)
+        # Get all posts from this author viewable by the viewer
+        posts = author.get_posts_viewable_by(viewer)
 
-        # Filter the posts that can be viewed and that are supposed to be in the user's timeline
-        posts = [post for post in posts if post.can_be_viewed_by(viewer)]
-
-        # Here we retrieve the github posts from the user to 
-        # display his github activity on his profile
-        # So I, Paulo, agree with Diego that we should display it here
-        github_posts = get_authors_github_posts(author)
-        if github_posts:
-            posts = [post for post in posts]
-
-            posts += github_posts
-            
-            posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
-
+        # Render the profile
         return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request}, context)
+
     except ObjectDoesNotExist, e:
         raise Http404
     except Exception, e:
@@ -1201,72 +1156,6 @@ def accept_friendship(request):
     # Redirect to the friends view
     return redirect('friends')
 
-
-def get_authors_github_posts(author):
-    '''
-    This function returns a list of the author's github posts (if any)
-    '''
-    # Validate that the author has a github username specified
-    if author.github_name is None or author.github_name == "":
-        return None
-
-    # Github user activity url
-    url = "https://api.github.com/users/" + author.github_name + "/events/public"
-
-    # Get the user's github activity
-    response = requests.get(url, timeout=0.3);
-
-    # Parse the response
-    data = response.json()
-
-    if ('message' in data and (data['message'] == 'Not Found' or 'API rate limit exceeded' in data['message'] )):
-        return None
-
-    resp = []
-
-    # Loop on all the activity
-    for p in data:
-        # Create a post for each activity
-        gpost = GitHubPost()
-        gpost.source = "http://github.com/" + author.github_name
-        gpost.gitHub = True
-        gpost.title = "GitHub " + p["type"]
-        gpost.author = author
-        gpost.contentType = "text/plain"
-        gpost.pubDate = dateutil.parser.parse(p["created_at"])
-        gpost.visibility = "PUBLIC"
-
-        if p["type"] == "PushEvent":
-            gpost.source = p["payload"]["commits"][0]["url"]
-            gpost.source = gpost.source.replace('api.github.com','github.com')
-            gpost.source = gpost.source.replace('/repos/','/')
-            gpost.source = gpost.source.replace('/commits/','/commit/')
-
-            gpost.origin = p["payload"]["commits"][0]["url"]
-            gpost.description = p["payload"]["commits"][0]["message"]
-
-        elif p["type"] == "ForkEvent":
-            gpost.source = p["payload"]["forkee"]["html_url"]
-            gpost.origin = p["repo"]["url"]
-            gpost.description = "Fork " + p["payload"]["forkee"]["name"] + " from " + p["repo"]["name"]
-
-        elif p["type"] == "CommitCommentEvent":
-            gpost.source = p["payload"]["comment"]["html_url"]
-            gpost.origin = p["payload"]["comment"]["url"]
-            gpost.description = p["payload"]["comment"]["body"]
-
-        # Add the post to the resulting list
-        resp.append(gpost)
-
-    return resp
-
-class GitHubPost(Post):
-    '''
-    Post subclass for GitHub posts
-    '''
-
-    def __init___(self):
-        self.origin = "https://github.com/"
 
 def validateHTML(body):
     parser = StackExchangeSite()
