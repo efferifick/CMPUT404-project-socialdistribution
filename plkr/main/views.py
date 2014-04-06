@@ -690,31 +690,11 @@ def search(request):
 
     query = request.GET.get('query', None)
     posts = []
-    hosts = Host.objects.filter(is_local=False)
     local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True)
-    authors = []
     friendships = []
 
-    # Query remote hosts
-    for host in hosts:
-        try:
-            # Search the remote host
-            response = requests.get(host.get_search_url(), params=dict(query=query), timeout=0.3)
-
-            # Parse the response
-            data = response.json()
-
-            # Add the author to the result list
-            for author_data in data:
-                remote_author = Author()
-                remote_author.id = author_data['id']
-                remote_author.host = host
-                remote_author.displayName = author_data['displayname']
-                authors.append(remote_author)
-
-        except Exception, e:
-            # If there's an exception, just catch it
-            print('Querying %s failed, query: "%s"' % (host.get_search_url(), query))
+    # Get the remote search results
+    authors = RemoteApi.get_search_results(query)
 
     # Add the local authors to the result list
     authors.extend(local_authors)

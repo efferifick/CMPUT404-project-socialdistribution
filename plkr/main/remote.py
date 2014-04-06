@@ -93,3 +93,40 @@ class RemoteApi:
 
 		#TODO implement
 		return []
+
+	@classmethod
+	def get_search_results(cls, query):
+		'''
+		Returns a list of remote authors that match a search query
+		'''
+
+		# Initialize the results
+		authors = []
+
+		# Get all the remote hosts
+		hosts = Host.objects.filter(is_local=False)
+
+		# Query remote hosts
+		for host in hosts:
+		    try:
+		        # Search the remote host
+		        response = requests.get(host.get_search_url(), params=dict(query=query), timeout=cls.TIMEOUT)
+
+		        # Parse the response
+		        data = response.json()
+
+		        # Add the author to the result list
+		        for author_data in data:
+		            remote_author = Author()
+		            remote_author.id = author_data['id']
+		            remote_author.host = host
+		            remote_author.displayName = author_data['displayname']
+		            authors.append(remote_author)
+
+		    except Exception, e:
+		        # If there's an exception, just catch it
+		        print('Querying %s failed, query: "%s"' % (host.get_search_url(), query))
+
+		# Return the search results
+		return authors
+
