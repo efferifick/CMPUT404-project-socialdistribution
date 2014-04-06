@@ -205,7 +205,7 @@ class RemoteApi:
 		return False
 
 	@classmethod
-	def send_friend_request(author, friend, cancel=False):
+	def send_friend_request(author, friend, query='friendrequest'):
 		'''
 		Determine if an author is friends with a group of authors
 		'''
@@ -213,12 +213,6 @@ class RemoteApi:
 		# TODO test this
 		
 		try:
-			# Determine the type of query
-			if cancel:
-				query = 'unfriend'
-			else:
-				query = 'friendrequest'
-
 			# Determine the params of the request
 			params = dict(query=query, author=friend.json(), friend=dict(author=author.json()))
 
