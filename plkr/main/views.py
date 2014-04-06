@@ -1059,16 +1059,17 @@ def request_friendship(request):
 
         # Otherwise, send the friend request
         else:
+            # If friend is remote
+            if not friend.is_local():
+                # First, try sending the friend request to remote host
+                if not RemoteApi.send_friend_request(friend, author):
+                    raise Exception('Could not send friend request to remote host.')
+
             # Create the friend request
             frequest = FriendRequest(sender=author, receiver=friend, accepted=False)
 
             # Save the friend request
             frequest.save()
-
-            # If friend is remote
-            if not friend.is_local():
-                # TODO Send friend request to the remote server
-                pass
 
             # Set the success message for the user
             messages.info(request, 'The friend request has been sent.')
@@ -1106,6 +1107,13 @@ def remove_friendship(request):
         # Get the friendship
         frequest = author.friendships().get(Q(receiver=friend_id) | Q(sender=friend_id))
 
+        if not frequest.receiver.is_local() or not frequest.sender.is_local():
+            # Try unfriending the friend in the remote host
+            # Note that given that this was an optional feature, we're not making it a requirement
+            # That is, if the remote host does not respond ok, we still proceed with unfriending locally
+
+            RemoteApi.send_friend_request(frequest.receiver if frequest.receiver.is_local() else frequest.sender, author, 'unfriend')
+
         # Remove the friendship
         frequest.delete()
 
@@ -1124,6 +1132,7 @@ def remove_friendship(request):
 @login_required
 def accept_friendship(request):
     context = RequestContext(request)
+    author = request.user.author
     request_id = request.POST.get('request_id')
 
     # Validate the request id
@@ -1138,6 +1147,12 @@ def accept_friendship(request):
         if frequest.accepted:
             messages.error(request, 'The friend request has already been accepted.')
         else:
+            # If friend is remote
+            if not frequest.sender.is_local():
+                # First, try sending the friend request to remote host
+                if not RemoteApi.send_friend_request(frequest.sender, author):
+                    raise Exception('Could not send the acceptance of the friend request to remote host.')
+
             # Accept the friend request
             frequest.accepted = True
 
