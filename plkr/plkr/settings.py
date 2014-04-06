@@ -85,7 +85,7 @@ LOGIN_URL = '/login'
 
 # API Urls
 
-API_PREFIX = 'api/'
+API_PREFIX = ''
 API_GET_AUTHOR = API_PREFIX + 'author/%(author_id)s'
 API_GET_AUTHOR_POSTS = API_PREFIX + 'author/%(author_id)s/posts'
 API_GET_PUBLIC_POSTS = API_PREFIX + 'posts'
