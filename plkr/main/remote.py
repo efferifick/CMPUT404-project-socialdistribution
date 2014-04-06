@@ -5,6 +5,7 @@ import datetime, json, requests
 
 class RemoteApi:
 	TIMEOUT = 0.3
+	HEADERS = {"accept": "application/json"}
 	
 	@classmethod
 	def get_author_url(cls):
@@ -71,7 +72,7 @@ class RemoteApi:
 			url = "%sauthor/%s" % (host.get_url(), author_id)
 
 			# Query the URL
-			response = requests.get(url, timeout=cls.TIMEOUT)
+			response = requests.get(url, headers=cls.HEADERS, timeout=cls.TIMEOUT)
 			
 			# Parse the response
 			data = response.json()
@@ -110,7 +111,7 @@ class RemoteApi:
 		for host in hosts:
 		    try:
 		        # Search the remote host
-		        response = requests.get(host.get_search_url(), params=dict(query=query), timeout=cls.TIMEOUT)
+		        response = requests.get(host.get_search_url(), params=dict(query=query), headers=cls.HEADERS, timeout=cls.TIMEOUT)
 
 		        # Parse the response
 		        data = response.json()
