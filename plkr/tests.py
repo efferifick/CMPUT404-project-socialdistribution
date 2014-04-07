@@ -87,9 +87,48 @@ class TestSequence(unittest.TestCase):
         self.assertTrue(data["query"] == "friends", "we are sending an invalid query field")
         self.assertTrue(data["friends"] == "YES", "user is not friend with friend user")
 
+    def test_is_author_friends_with_these_people_that_are_not_users(self):
+        url = self.baseurl + '/friends/' + str(self.dluces["id"])
+        payload = {"query": "friends", "author": str(self.dluces["id"])}
+        fake_authors = ["hello", "this", "are", "all", "not", "real", "authors", "12938", "<>", "!@#"]
 
+        payload["authors"] = fake_authors
+        response = requests.post(url, headers=HEADERS, timeout=TIMEOUT, data=json.dumps(payload))
+        data = response.json()
+        different_keys = False
+        for key in data:
+            if key not in ("query", "author", "friends"):
+                different_keys = True
+        self.assertFalse(different_keys, "we are sending an invalid key")
+        self.assertFalse(data["friends"], "there is a friend in what should be an empty friend's list")
 
+    def test_is_author_friends_with_this_people_who_he_is_not_friends_with(self):
+        url = self.baseurl + '/friends/' + str(self.dluces["id"])
+        payload = {"query":"friends", "author": str(self.dluces["id"])}
+        real_non_friend_author = "108ded43-8520-4035-a262-547454d32024"
+        payload["authors"] = real_non_friend_author
+        response = requests.post(url, headers=HEADERS, timeout=TIMEOUT, data=json.dumps(payload))
+        data = response.json()
+        different_keys = False
+        for key in data:
+            if key not in ("query", "author", "friends"):
+                different_keys = True
+        self.assertFalse(different_keys, "we are sending an invalid key")
+        self.assertFalse(data["friends"], "author should not be friends with user")
 
+    def test_is_author_friends_with_friend(self):
+        url = self.baseurl + '/friends/' + str(self.dluces["id"])
+        payload = {"query":"friends", "author": str(self.dluces["id"])}
+        real_friend = "108ded43-8520-4035-a262-547454d32023"
+        payload["authors"] = real_friend
+        response = requests.post(url, headers=HEADERS, timeout=TIMEOUT, data=json.dumps(payload))
+        data = response.json()
+        different_keys = False
+        for key in data:
+            if key not in ("query", "author", "friends"):
+                different_keys = True
+        self.assertFalse(different_keys, "we are sending an invalid key")
+        self.assertTrue("108ded43-8520-4035-a262-547454d32023" not in data["friends"], "author should be friends with user")
 
 
 if __name__ == '__main__':
