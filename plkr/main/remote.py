@@ -258,7 +258,7 @@ class RemoteApi:
 			params = dict(query=query, author=friend.json(), friend=dict(author=author.json()))
 
 			# Query the remote host
-			response = requests.post(cls.send_friend_request_url(author.host), params=params, headers=cls.HEADERS, timeout=cls.TIMEOUT)
+			response = requests.post(cls.send_friend_request_url(author.host), data=json.dumps(params), headers=cls.HEADERS, timeout=cls.TIMEOUT)
 
 			# If the response is ok
 			return response.status_code == 200
