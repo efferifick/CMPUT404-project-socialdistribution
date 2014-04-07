@@ -105,8 +105,6 @@ class RemoteApi:
 		# Generate the viewer id parameter
 		viewer_id = viewer.id if viewer is not None else None
 
-		# TODO Test this
-
 		try:
 			# Query the URL
 			response = requests.get(url, params=dict(id=viewer_id), headers=cls.HEADERS, timeout=cls.TIMEOUT)
@@ -143,6 +141,9 @@ class RemoteApi:
 							category = Category.objects.create(name=category_name)
 
 						post.categories.add(category)
+
+					# Remove all the existing comments
+					Comment.objects.filter(post=post).delete()
 
 					# Now add the comments
 					for comment_data in post_data["comments"]:
