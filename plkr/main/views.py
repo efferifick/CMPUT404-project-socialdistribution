@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
 from main.remote import RemoteApi
-import cgi, datetime, json, dateutil.parser, os.path, requests, re
+import cgi, datetime, json, dateutil.parser, os.path, requests, urllib, hashlib, re
 
 # API
 

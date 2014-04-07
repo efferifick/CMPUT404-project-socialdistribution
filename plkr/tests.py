@@ -130,6 +130,47 @@ class TestSequence(unittest.TestCase):
         self.assertFalse(different_keys, "we are sending an invalid key")
         self.assertTrue("108ded43-8520-4035-a262-547454d32023" not in data["friends"], "author should be friends with user")
 
+    def test_making_users(self):
+
+        url = self.baseurl + '/register'
+
+        response = requests.get(url, timeout=TIMEOUT)
+
+        csrf = response.cookies['csrftoken']
+
+
+
+        payload = {u"email":u"eochoa@ualberta.ca",
+                u"username":u"efferifick",
+                u"password":u"password",
+                u"displayName":u"displayName",
+                u"github_name":u"efferifick",
+                u"csrfmiddlewaretoken": unicode(csrf)
+                }
+
+        response = requests.post(url, timeout=TIMEOUT, data=payload)
+
+
+        # Now we should test whether or not we can find this author...
+
+        url = self.baseurl + '/api/search?query=' + payload["displayName"]
+        response = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+        data = response.json()
+
+        different_key = False
+        try:
+            for author in data:
+                for key in author.keys():
+                    if (key not in ("url", "host", "displayname", "id")):
+                        different_key = True
+                        break
+                    if key == "displayname" and author[key] == "displayName":
+                        self.author = author
+        except:
+            self.assertTrue(False, "something went wrong")
+
+        if self.author != None:
+            print self.author
 
 if __name__ == '__main__':
     unittest.main()
