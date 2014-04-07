@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
 from main.remote import RemoteApi
-import cgi, datetime, json, dateutil.parser, os.path, requests
+import cgi, datetime, json, dateutil.parser, os.path, requests, re
 
 # API
 
@@ -590,6 +590,11 @@ def register(request):
         if username is None or username == '':
             # Set error
             messages.error(request, 'Username is required.')
+            error = True
+
+        if bool(re.compile(r'[^a-z0-9\-]').search(username)):
+            # Set error
+            messages.error(request, 'Username can only contain letters, numbers and hyphens.')
             error = True
 
         if password is None or password == '':
