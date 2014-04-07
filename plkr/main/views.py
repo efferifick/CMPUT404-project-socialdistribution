@@ -726,8 +726,8 @@ def profile_author_remote(request, host_id, author_id):
         else:
             sent_request = False
 
-        # Get all posts from this author
-        posts = RemoteApi.get_author_posts(author, viewer)
+        # Get all posts from this author viewable by the viewer
+        posts = author.get_posts_viewable_by(viewer)
 
         # Sort the posts
         posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
