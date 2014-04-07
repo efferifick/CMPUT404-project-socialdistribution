@@ -1122,7 +1122,7 @@ def remove_friendship(request):
             # Note that given that this was an optional feature, we're not making it a requirement
             # That is, if the remote host does not respond ok, we still proceed with unfriending locally
 
-            RemoteApi.send_friend_request(frequest.receiver if frequest.receiver.is_local() else frequest.sender, author, 'unfriend')
+            RemoteApi.send_friend_request(frequest.receiver if not frequest.receiver.is_local() else frequest.sender, author, 'unfriend')
 
         # Remove the friendship
         frequest.delete()
