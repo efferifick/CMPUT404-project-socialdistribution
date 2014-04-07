@@ -185,6 +185,10 @@ class Author(models.Model):
             if 'message' in data and (data['message'] == 'Not Found' or 'API rate limit exceeded' in data['message']):
                 return None
 
+            # Define function to truncate certain strings
+            def truncate_string(what, size):
+                return what[:size-3] + '...' if len(what) > size else what
+
             # Loop on all the activity
             for p in data:
                 try:
@@ -206,16 +210,32 @@ class Author(models.Model):
 
                         gpost.origin = p["payload"]["commits"][0]["url"]
                         gpost.description = p["payload"]["commits"][0]["message"]
+                        gpost.description = truncate_string(gpost.description, POST_DESCRIPTION_MAX_SIZE)
+                        gpost.content = "\n".join(c["message"] for c in p["payload"]["commits"])
 
                     elif p["type"] == "ForkEvent":
                         gpost.source = p["payload"]["forkee"]["html_url"]
                         gpost.origin = p["repo"]["url"]
                         gpost.description = "Fork " + p["payload"]["forkee"]["name"] + " from " + p["repo"]["name"]
+                        gpost.content = "Fork " + p["payload"]["forkee"]["name"] + " from " + p["repo"]["name"]
 
-                    elif p["type"] == "CommitCommentEvent":
+                    elif p["type"] == "CommitCommentEvent" or p["type"] == "IssueCommentEvent":
                         gpost.source = p["payload"]["comment"]["html_url"]
                         gpost.origin = p["payload"]["comment"]["url"]
                         gpost.description = p["payload"]["comment"]["body"]
+                        gpost.description = truncate_string(gpost.description, POST_DESCRIPTION_MAX_SIZE)
+                        gpost.content = p["payload"]["comment"]["body"]
+
+                    elif p["type"] == "IssuesEvent":
+                        gpost.source = p["payload"]["issue"]["html_url"]
+                        gpost.origin = p["payload"]["issue"]["url"]
+                        gpost.description = p["payload"]["issue"]["body"]
+                        gpost.description = truncate_string(gpost.description, POST_DESCRIPTION_MAX_SIZE)
+                        gpost.content = p["payload"]["issue"]["body"]
+
+                    else:
+                        # Event not supported
+                        continue
 
                     # Add the post to the resulting list
                     resp.append(gpost)
