@@ -145,6 +145,7 @@ class Author(models.Model):
         if self.is_local():
             posts = self.posts.order_by("-pubDate").select_related()
         else:
+            from main.remote import RemoteApi
             posts = RemoteApi.get_author_posts(self, viewer)
 
         # Filter the posts that can be viewed by the viewer
