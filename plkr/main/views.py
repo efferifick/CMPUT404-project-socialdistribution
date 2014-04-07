@@ -337,7 +337,7 @@ def api_get_posts_for_user(request):
         # Get all the posts
         posts = Post.objects.order_by("-pubDate").select_related()
         
-        # Only return posts that the user can 
+        # Only return posts that the user can view
         posts = [post.json() for post in posts if post.should_appear_on_stream_of(viewer)]
 
         # Send the response
@@ -1080,13 +1080,14 @@ def request_friendship(request):
             return redirect('profile_author', username=friend.user.username)
         else:
             # Otherwise, redirect to the list of friends
-            return redirect('friends')
+            return redirect('profile_author_remote', host_id=friend.host.id, author_id=friend.id)
 
     except ObjectDoesNotExist,e:
         # Set the error message
         messages.error(request, 'The author to befriend does not exist.')
 
     except Exception, e:
+        raise
         # Set the generic error message
         messages.error(request, 'The friend request could not be sent at the moment. Please try again later.')
 
