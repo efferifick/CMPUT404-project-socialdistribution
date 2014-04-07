@@ -31,7 +31,7 @@
     "fields": {
       "ip_address": "10.4.10.1",
       "port": 80,
-      "prefix": "/api/",
+      "prefix": "/",
       "is_local": false
     }
   },
@@ -50,7 +50,7 @@
     "pk": 4,
     "fields": {
       "ip_address": "127.0.0.1",
-      "port": 8000,
+      "port": 8001,
       "prefix": "/",
       "is_local": false
     }
