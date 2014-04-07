@@ -117,7 +117,12 @@ class RemoteApi:
 			# Add the post to the result list
 			for post_data in data["posts"]:
 				try:
-					post = Post()
+					if "github" in post_data["origin"]:
+						post = GitHubPost()
+						post.gitHub = True
+					else:
+						post = Post()
+
 					post.title = post_data["title"]
 					post.source = post_data["source"] if "source" in post_data else cls.get_post_url(author.host, post_data["guid"])
 					post.origin = post_data["origin"]
