@@ -207,6 +207,7 @@ class RemoteApi:
 					remote_author.id = author_data['id']
 					remote_author.host = host
 					remote_author.displayName = author_data['displayname']
+					remote_author.save()
 					authors.append(remote_author)
 
 			except Exception, e:
