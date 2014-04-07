@@ -66,6 +66,11 @@ Note that Pillow also needs python-dev package (Ubuntu) to be installed.
 
 	pip install pillow
 
+Pytz:
+This is required to do date operations that are timezone-aware
+
+	pip install pytz
+
 Requests:
 This is required to send requests to other server
 

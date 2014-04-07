@@ -2,8 +2,9 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
 from django_extensions.db.fields import UUIDField
-import dateutil.parser, requests
+import dateutil.parser, requests, pytz
 
 # Create your models here.
 
@@ -269,7 +270,7 @@ class Author(models.Model):
             posts += friend.get_posts_viewable_by(self)
 
         # Sort the posts by publication date
-        posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
+        posts = sorted(posts, key=lambda p: p.pubDate if timezone.is_aware(p.pubDate) else pytz.UTC.localize(p.pubDate), reverse=True)
 
         return posts
 
