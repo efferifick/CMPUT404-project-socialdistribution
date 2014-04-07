@@ -114,15 +114,15 @@ class RemoteApi:
 			# Parse the response
 			data = response.json()
 
+			# Get all hosts
+			hosts = Host.objects.all()
+
 			# Add the post to the result list
 			for post_data in data["posts"]:
 				try:
+					post = Post()
 					if "github" in post_data["origin"]:
-						post = GitHubPost()
 						post.gitHub = True
-					else:
-						post = Post()
-
 					post.title = post_data["title"]
 					post.source = post_data["source"] if "source" in post_data else cls.get_post_url(author.host, post_data["guid"])
 					post.origin = post_data["origin"]
@@ -130,19 +130,53 @@ class RemoteApi:
 					post.contentType = post_data["content-type"]
 					post.content = post_data["content"]
 					post.author = author
-					# TODO To add this we need to save the post. Do we want to though?
-					# post.categories = [Category(name=c) for c in post_data["categories"]]
-					# post.comments = [Comment(author=Author(id=com["author"]["id"], displayName=com["author"]["displayname"], host=author.host), pubDate=dateutil.parser.parse(com["pubDate"]),comment=com["comment"],post=post) for com in post_data["comments"]]
 					post.pubDate = dateutil.parser.parse(post_data["pubDate"])
 					post.id = post_data["guid"]
 					post.visibility = post_data["visibility"]
+					post.save()
+
+					# Now that the post exists, add the categories
+					for category_name in post_data["categories"]:
+						try:
+							category = Category.objects.get(name=category_name)
+						except ObjectDoesNotExist, e:
+							category = Category.objects.create(name=category_name)
+
+						post.categories.add(category)
+
+					# Now add the comments
+					for comment_data in post_data["comments"]:
+						try:
+							comment_owner = Author.objects.get(pk=comment_data["author"]["id"])
+						except ObjectDoesNotExist, e:
+							# Try to determine the host of the author commenting
+							comment_host = None
+							for host in hosts:
+								if host.get_url() == comment_data["author"]["host"]:
+									comment_host = author.host
+									break
+
+							# If the host could not be found, then just don't try to add the comment
+							if comment_host is None:
+								break
+
+							# Import the author
+							comment_owner = Author.objects.create(id=comment_data["author"]["id"], displayName=comment_data["author"]["displayname"], host=comment_host)
+
+						# Finally, create the comment
+						comment = Comment.objects.create(post=post, author=comment_owner, comment=comment_data["comment"], pubDate=dateutil.parser.parse(comment_data["pubDate"]))
+
+					# Save the post again
+					post.save()
+
+					# Append the post
 					posts.append(post)
 
 				except Exception, e:
 					pass
 
 		except Exception, e:
-			pass
+			print 'Querying %s, error: %s' % (url, e.message)
 
 		return posts
 
