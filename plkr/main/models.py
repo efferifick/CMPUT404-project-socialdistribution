@@ -183,7 +183,7 @@ class Author(models.Model):
 
             # Validate that it was a successful request
             if 'message' in data and (data['message'] == 'Not Found' or 'API rate limit exceeded' in data['message']):
-                return None
+                return resp
 
             # Define function to truncate certain strings
             def truncate_string(what, size):
