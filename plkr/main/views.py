@@ -377,7 +377,7 @@ def api_get_author_posts(request, user_id):
         viewer = api_get_viewer(request)
 
         # Only return posts that the user can 
-        posts = [post.json() for post in author.posts.select_related().all() if post.can_be_viewed_by(viewer)]
+        posts = [post.json() for post in author.get_posts_viewable_by(viewer)]
 
         # Send the response
         return api_send_json(dict(posts=posts))
