@@ -431,65 +431,74 @@ def api_send_friendrequest(request):
         friend_data = frequest["friend"]["author"]
         author_data = frequest["author"]
 
+        # Define function to get the corresponding Author instances
+        def get_author(data):
+            try:
+                author = Author.objects.get(id=data["id"])
+
+                return (True, author)
+            except ObjectDoesNotExist, e:
+                author = Author(id=data["id"], displayName=data["displayname"], host=remote_host)
+
+                return (False, author)
+
+        # Get the friend
+        savedf, friend = get_author(friend_data)
+
+        # Get the author
+        saveda, author = get_author(author_data)
+
+        # Check that one is local and one is remote
+        if friend.is_local() == author.is_local():
+            if friend.is_local():
+                return api_send_error("The authors are local to this server and a remote server may not submit a friend request on their behalf.", 400)
+            else:
+                return api_send_error("None of the authors exist locally.", 404)
+
+        # Save the author that needs to be saved
+        if not savedf:
+            friend.save()
+        elif not saveda:
+            author.save()
+
+        # From now on, friend is the local user and author is the remote user
+        if not friend.is_local():
+            temp = friend
+            friend = author
+            author = temp
+
         try:
-            friend = Author.objects.get(id=friend_data["id"])
-
-            # Validate that the friend is a local author
-            if not friend.is_local():
-                return api_send_error("Friend does not exist locally.", 404)
-        except ObjectDoesNotExist, e:
-            # Friend should be a local author
-            return api_send_error("Friend does not exist locally.", 404)
-
-        try:
-            author = Author.objects.get(id=author_data["id"])
-
-            # Validate that the author is NOT a local author
-            if author.is_local():
-                return api_send_error("The author is a local to this server and a remote server may not submit a friend request on its behalf.", 400)
-
-            # Validate that the author host is the one making the request
-            if author.host != remote_host:
-                return api_send_error("The author is not local to the server making the request and thus the server should not submit a friend request on its behalf.", 400)
-
             # If the action is to send a friend request
             if action == "friendrequest":
                 # Check if they are already friends
                 if author.is_friends_with(friend):
-                    return api_send_json(frequest)
+                    # Just return success
+                    return api_send_json(dict(error=False, message='Authors are already friends.'))
 
                 # Check if the friend request already exists
-                friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted=False);
+                friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted=False)
 
                 # If it's just an attempt to resend a friend request
                 if friendship.sender == author:
                     # Just return success
-                    return api_send_json(frequest)
+                    return api_send_json(dict(error=False, message='Friend request already sent.'))
 
                 # Otherwise, it means that the author is trying to accept a previously sent friend request
                 friendship.accepted = True
                 friendship.save()
+
+                # Return success
+                return api_send_json(dict(error=False, message='Friend request sent.'))
+
             else:
                 # Check if the friend request already exists
-                friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted=True);
+                friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted=True)
 
                 # Delete the friendship
                 friendship.delete()
 
-        except Author.DoesNotExist, e:
-            # If it's an unfriend request
-            if action == "unfriend":
-                return api_send_error("The friendship does not exist in the host.", 400)
-
-            # Validate more request data (author)
-            if not "displayname" in author_data:
-                return api_send_error("Missing author data in request.", 400)
-
-            # Create the author
-            author = Author.objects.create(id=author_data["id"], displayName=author_data["displayname"], host=remote_host)
-
-            # Create friend request
-            friendship = FriendRequest.objects.create(sender=author, receiver=friend, accepted=False);
+                # Return success
+                return api_send_json(dict(error=False, message='Friendship removed.'))
 
         except FriendRequest.DoesNotExist, e:
             # If it's an unfriend request
@@ -497,10 +506,10 @@ def api_send_friendrequest(request):
                 return api_send_error("The friendship does not exist in the host.", 400)
 
             # Create friend request
-            friendship = FriendRequest.objects.create(sender=author, receiver=friend, accepted=False);
+            friendship = FriendRequest.objects.create(sender=author, receiver=friend, accepted=False)
 
-        # Send the original request
-        return api_send_json(frequest)
+            # Return success
+            return api_send_json(dict(error=False, message='Friend request sent.'))
 
     except Exception, e:
         return api_send_error("Missing data in request.", 400)
