@@ -137,19 +137,18 @@ class TestSequence(unittest.TestCase):
         response = requests.get(url, timeout=TIMEOUT)
 
         csrf = response.cookies['csrftoken']
-
-
+        cookies = response.cookies
 
         payload = {u"email":u"eochoa@ualberta.ca",
                 u"username":u"efferifick",
                 u"password":u"password",
                 u"displayName":u"displayName",
                 u"github_name":u"efferifick",
-                u"csrfmiddlewaretoken": unicode(csrf)
+                u"csrfmiddlewaretoken": unicode(csrf),
                 }
 
-        response = requests.post(url, timeout=TIMEOUT, data=payload)
-
+        #IMPORTANT: remember to send cookies on the POST request, otherwise the csrf token will not work!
+        response = requests.post(url, timeout=TIMEOUT, data=payload, cookies=cookies)
 
         # Now we should test whether or not we can find this author...
 
