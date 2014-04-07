@@ -1,5 +1,6 @@
 {% load static %}
 {% load dajaxice_templatetags %}
+{% load gravatar %}
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
@@ -17,6 +18,10 @@
         {% dajaxice_js_import %}
     </head>
     <body>
+        <style type="text/css">
+        .bar_picture{margin-top: -10px; margin-bottom: -10px;}
+        .overflow_visible{overflow: visible;}
+        </style>
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
@@ -67,6 +72,7 @@
                     </form>
 
                     <ul class="nav navbar-nav navbar-right">
+                        <li><a href="{% url 'profile' %}">{% gravatar user.email 40 'class="bar_picture"' %}</a></li>
                         <li><a href="{% url 'profile' %}">{{ user.username }}</a></li>
                         <li><a href="{% url 'django.contrib.auth.views.logout' %}">Logout</a></li>
                     </ul>

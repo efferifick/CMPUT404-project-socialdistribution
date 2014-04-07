@@ -39,7 +39,10 @@ INSTALLED_APPS = (
     'markdown_deux',
     'main',
     'dajaxice',
+    'django_gravatar',
 )
+
+GRAVATAR_DEFAULT_URL = 'http://simpleicon.com/wp-content/uploads/user1.png'
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -135,6 +138,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
+    'django.template.loaders.app_directories.Loader', 
     'django.template.loaders.eggs.Loader',
 )
