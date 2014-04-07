@@ -93,7 +93,7 @@ API_GET_POST = API_PREFIX + 'post/%(post_id)s'
 API_AUTHOR_HAS_FRIENDS = API_PREFIX + 'friends/%(author_id)s'
 API_AUTHORS_ARE_FRIENDS = API_PREFIX + 'friends/%(author_id)s/%(friend_id)s'
 API_SEND_FRIENDREQUEST = API_PREFIX + 'friendrequest'
-API_SEARCH = API_PREFIX + 'search'
+API_SEARCH = API_PREFIX + 'api/search'
 
 # Media files (uploaded)
 
