@@ -5,7 +5,7 @@ import datetime, dateutil.parser, json, requests
 
 class RemoteApi:
 	TIMEOUT = 1.5
-	HEADERS = {"accept": "application/json"}
+	HEADERS = {"accept": "application/json", "content-type": "application/json"}
 	
 	@classmethod
 	def get_author_url(cls, host, author_id):
@@ -217,7 +217,7 @@ class RemoteApi:
 		return authors
 
 	@classmethod
-	def author_is_friends_with(author, friends):
+	def author_is_friends_with(cls, author, friends):
 		'''
 		Determine if an author is friends with a group of authors
 		'''
@@ -244,7 +244,7 @@ class RemoteApi:
 		return False
 
 	@classmethod
-	def send_friend_request(author, friend, query='friendrequest'):
+	def send_friend_request(cls, author, friend, query='friendrequest'):
 		'''
 		Determine if an author is friends with a group of authors
 		'''
