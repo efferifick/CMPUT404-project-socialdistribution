@@ -65,7 +65,7 @@ class Author(models.Model):
             return True
 
         try:
-            FriendRequest.objects.get(Q(sender=author1_id, receiver = author2_id) | Q(sender=author2_id, receiver = author1_id), accepted = True);
+            FriendRequest.objects.get(Q(sender=author1_id, receiver = author2_id) | Q(sender=author2_id, receiver = author1_id), accepted = True)
         except ObjectDoesNotExist,e:
             return False
 
@@ -176,7 +176,7 @@ class Author(models.Model):
         try:
             # Get the user's github activity
             from main.remote import RemoteApi
-            response = requests.get(url, timeout=RemoteApi.TIMEOUT);
+            response = requests.get(url, timeout=RemoteApi.TIMEOUT)
 
             # Parse the response
             data = response.json()
