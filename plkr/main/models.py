@@ -142,7 +142,10 @@ class Author(models.Model):
         # Gets this author's post viewable to another user
         
         # Get all posts from this author
-        posts = self.posts.order_by("-pubDate").select_related()
+        if self.is_local():
+            posts = self.posts.order_by("-pubDate").select_related()
+        else:
+            posts = RemoteApi.get_author_posts(self, viewer)
 
         # Filter the posts that can be viewed by the viewer
         posts = [post for post in posts if post.can_be_viewed_by(viewer)]
