@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
 from main.remote import RemoteApi
-import cgi, datetime, json, dateutil.parser, os.path, requests
+import cgi, datetime, json, dateutil.parser, os.path, requests, urllib, hashlib
 
 # API
 
@@ -1181,6 +1181,72 @@ def accept_friendship(request):
     # Redirect to the friends view
     return redirect('friends')
 
+def get_authors_github_posts(author):
+    '''
+    This function returns a list of the author's github posts (if any)
+    '''
+    # Validate that the author has a github username specified
+    if author.github_name is None or author.github_name == "":
+        return None
+
+    # Github user activity url
+    url = "https://api.github.com/users/" + author.github_name + "/events/public"
+
+    # Get the user's github activity
+    response = requests.get(url, timeout=0.3);
+
+    # Parse the response
+    data = response.json()
+
+    if ('message' in data and (data['message'] == 'Not Found' or 'API rate limit exceeded' in data['message'] )):
+        return None
+
+    resp = []
+
+    # Loop on all the activity
+    for p in data:
+        # Create a post for each activity
+        gpost = GitHubPost()
+        gpost.source = "http://github.com/" + author.github_name
+        gpost.gitHub = True
+        gpost.title = "GitHub " + p["type"]
+        gpost.author = author
+        gpost.contentType = "text/plain"
+        gpost.pubDate = dateutil.parser.parse(p["created_at"])
+        gpost.visibility = "PUBLIC"
+
+        if p["type"] == "PushEvent":
+            gpost.source = p["payload"]["commits"][0]["url"]
+            gpost.source = gpost.source.replace('api.github.com','github.com')
+            gpost.source = gpost.source.replace('/repos/','/')
+            gpost.source = gpost.source.replace('/commits/','/commit/')
+
+            gpost.origin = p["payload"]["commits"][0]["url"]
+            gpost.description = p["payload"]["commits"][0]["message"]
+
+        elif p["type"] == "ForkEvent":
+            gpost.source = p["payload"]["forkee"]["html_url"]
+            gpost.origin = p["repo"]["url"]
+            gpost.description = "Fork " + p["payload"]["forkee"]["name"] + " from " + p["repo"]["name"]
+
+        elif p["type"] == "CommitCommentEvent":
+            gpost.source = p["payload"]["comment"]["html_url"]
+            gpost.origin = p["payload"]["comment"]["url"]
+            gpost.description = p["payload"]["comment"]["body"]
+
+        # Add the post to the resulting list
+        resp.append(gpost)
+
+    return resp
+
+
+class GitHubPost(Post):
+    '''
+    Post subclass for GitHub posts
+    '''
+
+    def __init___(self):
+        self.origin = "https://github.com/"
 
 def validateHTML(body):
     parser = StackExchangeSite()
