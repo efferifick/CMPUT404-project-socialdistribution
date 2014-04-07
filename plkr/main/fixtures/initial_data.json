@@ -59,8 +59,8 @@
     "model": "main.host",
     "pk": 5,
     "fields": {
-      "ip_address": "129.128.41.238",
-      "port": 8080,
+      "ip_address": "10.4.10.6",
+      "port": 80,
       "prefix": "/",
       "is_local": false
     }
