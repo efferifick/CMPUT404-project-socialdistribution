@@ -20,6 +20,10 @@ class RemoteApi:
 		return host.get_url() + settings.API_GET_POST % {'post_id':post_id}
 
 	@classmethod
+	def get_public_posts_url(cls, host):
+		return host.get_url() + settings.API_GET_PUBLIC_POSTS
+
+	@classmethod
 	def author_has_friends_url(cls, host, author_id):
 		return host.get_url() + settings.API_AUTHOR_HAS_FRIENDS % {'author_id':author_id}
 
@@ -91,6 +95,72 @@ class RemoteApi:
 			return error
 
 	@classmethod
+	def import_post(cls, author, host, post_data):
+		post = Post()
+		if "github" in post_data["origin"]:
+			post.gitHub = True
+		post.title = post_data["title"]
+		post.source = post_data["source"]
+		post.origin = post_data["origin"]
+		post.description = post_data["description"]
+		post.contentType = post_data["content-type"]
+		post.content = post_data["content"]
+		
+		if author is None:
+			host, author = cls.get_author(host.id, post_data["author"]["id"])
+		
+		post.author = author
+
+		post.pubDate = dateutil.parser.parse(post_data["pubDate"])
+		post.id = post_data["guid"]
+		post.visibility = post_data["visibility"]
+		post.save()
+
+		# Now that the post exists, add the categories
+		for category_name in post_data["categories"]:
+			try:
+				category = Category.objects.get(name=category_name)
+			except ObjectDoesNotExist, e:
+				category = Category.objects.create(name=category_name)
+
+			post.categories.add(category)
+
+		# Remove all the existing comments
+		Comment.objects.filter(post=post).delete()
+
+		# Now add the comments
+		for comment_data in post_data["comments"]:
+			try:
+				comment_owner = Author.objects.get(pk=comment_data["author"]["id"])
+			except ObjectDoesNotExist, e:
+				# Try to determine the host of the author commenting
+				comment_host = None
+				
+				# Get all hosts
+				hosts = Host.objects.all()
+		
+				# Test each host using the URL
+				for host in hosts:
+					if host.get_url() == comment_data["author"]["host"]:
+						comment_host = post.author.host
+						break
+
+				# If the host could not be found, then just don't try to add the comment
+				if comment_host is None:
+					break
+
+				# Import the author
+				comment_owner = Author.objects.create(id=comment_data["author"]["id"], displayName=comment_data["author"]["displayname"], host=comment_host)
+
+			# Finally, create the comment
+			comment = Comment.objects.create(post=post, author=comment_owner, comment=comment_data["comment"], pubDate=dateutil.parser.parse(comment_data["pubDate"]))
+
+		# Save the post again
+		post.save()
+
+		return post
+
+	@classmethod
 	def get_author_posts(cls, author, viewer):
 		'''
 		Returns a list of remote author posts that a viewer can access
@@ -112,63 +182,11 @@ class RemoteApi:
 			# Parse the response
 			data = response.json()
 
-			# Get all hosts
-			hosts = Host.objects.all()
-
 			# Add the post to the result list
 			for post_data in data["posts"]:
 				try:
-					post = Post()
-					if "github" in post_data["origin"]:
-						post.gitHub = True
-					post.title = post_data["title"]
-					post.source = post_data["source"] if "source" in post_data else cls.get_post_url(author.host, post_data["guid"])
-					post.origin = post_data["origin"]
-					post.description = post_data["description"]
-					post.contentType = post_data["content-type"]
-					post.content = post_data["content"]
-					post.author = author
-					post.pubDate = dateutil.parser.parse(post_data["pubDate"])
-					post.id = post_data["guid"]
-					post.visibility = post_data["visibility"]
-					post.save()
-
-					# Now that the post exists, add the categories
-					for category_name in post_data["categories"]:
-						try:
-							category = Category.objects.get(name=category_name)
-						except ObjectDoesNotExist, e:
-							category = Category.objects.create(name=category_name)
-
-						post.categories.add(category)
-
-					# Remove all the existing comments
-					Comment.objects.filter(post=post).delete()
-
-					# Now add the comments
-					for comment_data in post_data["comments"]:
-						try:
-							comment_owner = Author.objects.get(pk=comment_data["author"]["id"])
-						except ObjectDoesNotExist, e:
-							# Try to determine the host of the author commenting
-							comment_host = None
-							for host in hosts:
-								if host.get_url() == comment_data["author"]["host"]:
-									comment_host = author.host
-									break
-
-							# If the host could not be found, then just don't try to add the comment
-							if comment_host is None:
-								break
-
-							# Import the author
-							comment_owner = Author.objects.create(id=comment_data["author"]["id"], displayName=comment_data["author"]["displayname"], host=comment_host)
-
-						# Finally, create the comment
-						comment = Comment.objects.create(post=post, author=comment_owner, comment=comment_data["comment"], pubDate=dateutil.parser.parse(comment_data["pubDate"]))
-
-					# Save the post again
-					post.save()
+					# Import the post
+					post = cls.import_post(author, author.host, post_data)
 
 					# Append the post
 					posts.append(post)
@@ -178,6 +196,47 @@ class RemoteApi:
 
 		except Exception, e:
 			print 'Querying %s, error: %s' % (url, e.message)
+
+		return posts
+
+	@classmethod
+	def get_public_posts(cls):
+		'''
+		Returns a list of remote public posts
+		'''
+
+		# Initialize the results
+		posts = []
+
+		# Get all hosts
+		hosts = Host.objects.filter(is_local=False)
+
+		# Get public posts from each remote host
+		for host in hosts:
+			# Generate the URL
+			url = cls.get_public_posts_url(host)
+
+			try:
+				# Query the URL
+				response = requests.get(url, headers=cls.HEADERS, timeout=cls.TIMEOUT)
+
+				# Parse the response
+				data = response.json()
+
+				# Add the post to the result list
+				for post_data in data["posts"]:
+					try:
+						# Import the post
+						post = cls.import_post(None, host, post_data)
+
+						# Append the post
+						posts.append(post)
+
+					except Exception, e:
+						pass
+
+			except Exception, e:
+				print 'Querying %s, error: %s' % (url, e.message)
 
 		return posts
 
