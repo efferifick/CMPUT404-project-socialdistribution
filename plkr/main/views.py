@@ -245,8 +245,11 @@ def api_get_post(request, post_id):
         if not "author" in body or not "id" in body["author"]:
             return api_send_error("Missing author information.", 400)
 
-        # Get the author
-        author = Author.objects.get(id=body["author"]["id"])
+        try:
+            # Get the author
+            author = Author.objects.get(id=body["author"]["id"])
+        except ObjectDoesNotExist, e:
+            return api_send_error('Post author does not exist locally', 400)
 
         # Assign the post author
         post.author = author
