@@ -695,7 +695,7 @@ def search(request):
 
     query = request.GET.get('query', None)
     posts = []
-    local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True)
+    local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True).exclude(id=author.id if author is not None else None)
     friendships = []
 
     # Get the remote search results
