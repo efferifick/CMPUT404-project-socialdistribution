@@ -497,10 +497,31 @@ def api_send_friendrequest(request):
 
             else:
                 # Check if the friend request already exists
-                friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author), accepted=True)
+                friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author))
 
-                # Delete the friendship
-                friendship.delete()
+                # If the friend request was not accepted
+                if not friendship.accepted:
+                    # If the sender was the remote author
+                    if friendship.sender == author:
+                        # Just remove the friend request
+                        friendship.delete()
+                    else:
+                        # Otherwise, do nothing. Rejecting friend requests is not yet allowed.
+                        pass
+                else:
+                    # Otherwise, we will leave the (ex) friend following the remote author
+
+                    # If the sender was the remote author
+                    if friendship.sender == author:
+                        # Swap sender and receiver
+                        friendship.sender = friend
+                        friendship.receiver = author
+
+                    # Change this to a follow relationship
+                    friendship.accepted = False
+
+                    # Save the friendship
+                    friendship.save()
 
                 # Return success
                 return api_send_json(dict(error=False, message='Friendship removed.'))
@@ -1126,24 +1147,51 @@ def remove_friendship(request):
         messages.error(request, 'The friendship does not exist.')
 
     try:
-        # Get the friendship
-        frequest = author.friendships().get(Q(receiver=friend_id) | Q(sender=friend_id))
+        # Get the friend
+        friend = Author.objects.get(pk=friend_id)
 
-        if not frequest.receiver.is_local() or not frequest.sender.is_local():
+        # Get the friendship
+        friendship = FriendRequest.objects.get(Q(sender=author, receiver=friend) | Q(sender=friend, receiver=author))
+
+        # If the friend is a remote author
+        if not friend.is_local():
             # Try unfriending the friend in the remote host
             # Note that given that this was an optional feature, we're not making it a requirement
             # That is, if the remote host does not respond ok, we still proceed with unfriending locally
 
-            RemoteApi.send_friend_request(frequest.receiver if not frequest.receiver.is_local() else frequest.sender, author, 'unfriend')
+            RemoteApi.send_friend_request(friend, author, 'unfriend')
 
-        # Remove the friendship
-        frequest.delete()
+        # If the friend request was not accepted
+        if not friendship.accepted:
+            # If the sender was the local author
+            if friendship.sender == author:
+                # Just remove the friend request
+                friendship.delete()
+            else:
+                # Otherwise, do nothing. Rejecting friend requests is not yet allowed.
+                pass
+        else:
+            # Otherwise, we will leave the (ex) friend following the author
+
+            # If the sender was the author
+            if friendship.sender == author:
+                # Swap sender and receiver
+                friendship.sender = friend
+                friendship.receiver = author
+
+            # Change this to a follow relationship
+            friendship.accepted = False
+
+            # Save the friendship
+            friendship.save()
 
         # Set the success message for the user
         messages.info(request, 'The friendship has been removed.')
+
     except ObjectDoesNotExist,e:
         # Set the error message
         messages.error(request, 'The friendship does not exist.')
+
     except Exception, e:
         # Set the generic error message
         messages.error(request, 'The friendship could not be removed at the moment. Please try again later.')
