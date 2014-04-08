@@ -1121,7 +1121,7 @@ def request_friendship(request):
             # Redirect to the friend's profile view
             return redirect('profile_author', username=friend.user.username)
         else:
-            # Otherwise, redirect to the list of friends
+            # Otherwise, redirect to the friend's remote profile view
             return redirect('profile_author_remote', host_id=friend.host.id, author_id=friend.id)
 
     except ObjectDoesNotExist,e:
@@ -1188,6 +1188,14 @@ def remove_friendship(request):
         # Set the success message for the user
         messages.info(request, 'The friendship has been removed.')
 
+        # If the friend is local
+        if friend.is_local():
+            # Redirect to the friend's profile view
+            return redirect('profile_author', username=friend.user.username)
+        else:
+            # Otherwise, redirect to the friend's remote profile view
+            return redirect('profile_author_remote', host_id=friend.host.id, author_id=friend.id)
+
     except ObjectDoesNotExist,e:
         # Set the error message
         messages.error(request, 'The friendship does not exist.')
@@ -1231,6 +1239,7 @@ def accept_friendship(request):
 
             # Set the success message for the user
             messages.info(request, 'The friend request has been accepted.')
+            
     except ObjectDoesNotExist,e:
         # Set the error message
         messages.error(request, 'The friend request does not exist.')
