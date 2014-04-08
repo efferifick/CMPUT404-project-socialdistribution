@@ -11,7 +11,7 @@
 			<div id="users">
 				<h2>Users</h2>
 
-				{% for author, friends in friendships %}
+				{% for author, friends, sent_request, received_request in friendships %}
 					<div class="author row" id="author-{{ author.id }}">
 						<div class="col-md-2">
 							{% if author.is_local %}
@@ -22,19 +22,31 @@
 						</div>
 						<div class="col-md-1">
 							{% if user.is_authenticated %}
-								{% if not friends %}
+								{% if friends %}
+									<form action="{% url 'remove_friendship' %}" method="post">
+										{% csrf_token %}
+										<input type="hidden" name="friend_id" value="{{ author.id }}" />
+										<button class="btn btn-danger">Unfriend</button>
+									</form>
+								{% elif received_request %}
+									<form action="{% url 'accept_friendship' %}" method="post">
+										{% csrf_token %}
+										<input type="hidden" name="request_id" value="{{ received_request.id }}" />
+										<button class="btn btn-success">Accept</button>
+									</form>
+								{% elif sent_request %}
+									<form action="{% url 'remove_friendship' %}" method="post">
+										{% csrf_token %}
+										<input type="hidden" name="friend_id" value="{{ author.id }}" />
+										<button class="btn btn-warning">Cancel Friend Request</button>
+									</form>
+								{% else %}
 									<form action="{% url 'request_friendship' %}" method="post">
 										{% csrf_token %}
 										<input type="hidden" name="friend_id" value="{{ author.id }}" />
 										<input type="hidden" name="host_id" value="{{ author.host.id }}" />
 										<input type="hidden" name="displayName" value="{{ author.displayName }}" />
 										<button class="btn btn-primary">Add Friend</button>
-									</form>
-								{% else %}
-									<form action="{% url 'remove_friendship' %}" method="post">
-										{% csrf_token %}
-										<input type="hidden" name="friend_id" value="{{ author.id }}" />
-										<button class="btn btn-danger">Unfriend</button>
 									</form>
 								{% endif %}
 							{% endif %}

@@ -706,7 +706,24 @@ def search(request):
 
     # Determine the friendships
     for matched_author in authors:
-        friendships.append((matched_author, matched_author.is_friends_with(author)))
+        # Determine if authors are friends
+        are_friends = matched_author.is_friends_with(author)
+
+        # If the authors are not friends
+        if matched_author != author and author is not None and not are_friends:
+            # Determine if the viewer has sent a friend request to the author
+            sent_request = matched_author.friend_requests_received.filter(sender=author, accepted=False).count() > 0
+
+            # Determine if the author has sent a friend request to the viewer
+            try:
+                received_request = author.friend_requests_received.get(sender=matched_author, accepted=False)
+            except Exception, e:
+                received_request = None
+        else:
+            sent_request = False
+            received_request = None
+
+        friendships.append((matched_author, are_friends, sent_request, received_request))
 
     return render_to_response('main/search.html', {'query': query, 'posts' : posts, 'friendships': friendships}, context)
 
