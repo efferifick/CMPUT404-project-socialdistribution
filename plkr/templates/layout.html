@@ -43,6 +43,10 @@
                             {% endwith %}
                             
                             <li><a href="{% url 'profile_edit' %}">Settings</a></li>
+
+                            {% if user.is_staff %}
+                                <li><a href="{% url 'admin:index' %}">Admin</a></li>
+                            {% endif %}
                         {% else %}
                             <li><a href="{% url 'register' %}">Register</a></li>
                         {% endif %}
