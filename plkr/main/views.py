@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
-from django.db import IntegrityError
+from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import *
@@ -631,31 +631,31 @@ def register(request):
 
         if not error:
             try:
-                # Create a User wiith its username, email and password
-                user = User.objects.create_user(username, email, password)
-                
-                # Users start as inactive so the admin can activate them (except for tests)
-                if not TESTING:
-                    user.is_active = False
+                # This should all be a transaction
+                with transaction.atomic():
+                    # Create and save the User wiith its username, email and password
+                    user = User.objects.create_user(username, email, password)
+                    
+                    # Users start as inactive so the admin can activate them (except for tests)
+                    if not TESTING:
+                        user.is_active = False
+                        user.save()
 
-                # Create the Author and set the user and display name
-                # Update: also set the github account:
+                    # Create the Author and set the user and display name
+                    author = Author(user=user, displayName=displayName, github_name=github_name)
 
-                author = Author(user=user, displayName=displayName, github_name = github_name)
+                    # Assign the local host to the author
+                    author.host = Host.get_local_host()
 
-                # Assign the local host to the author
-                author.host = Host.get_local_host()
-
-                # Save the User first
-                user.save()
-                # Save the Author last
-                author.save()
+                    # Save the Author
+                    author.save()
 
                 # Add a success flash message
                 messages.info(request, "Registration complete! Your account now needs to be approved by the administrator.")
 
                 # Send the user to the login screen
                 return redirect('django.contrib.auth.views.login')
+
             except IntegrityError, e:
                 if "username" in e.message:
                     # Add the username error
