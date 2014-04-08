@@ -10,6 +10,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import *
+from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
@@ -960,6 +961,11 @@ def post_new(request):
         error = True
 
     if error:
+        if request.is_ajax():
+            msgs = messages.get_messages(request)
+            msgs = " ".join([str(msg) for msg in msgs])
+            return api_send_error(msgs)
+            
         # Send the user to the profile screen
         return redirect('profile')
 
@@ -975,8 +981,13 @@ def post_new(request):
         post.visibility = visibility
 
         if post.contentType == 'text/html' and not validateHTML(body):
+            error = "You can only use the following html tags: <a>, <b>, <blockquote>, <code>, <del>, <dd>, <dl>, <dt>, <em>, <h1>, <h2>, <h3>, <i>, <img>, <kbd>, <li>, <ol>, <p>, <pre>, <s>, <sup>, <sub>, <strong>, <strike>, <ul>, <br>, <hr>."
+            
+            if request.is_ajax():
+                return api_send_error(error)
+
             # Set error
-            messages.error(request, 'You can only use the following html tags: <a>, <b>, <blockquote>, <code>, <del>, <dd>, <dl>, <dt>, <em>, <h1>, <h2>, <h3>, <i>, <img>, <kbd>, <li>, <ol>, <p>, <pre>, <s>, <sup>, <sub>, <strong>, <strike>, <ul>, <br>, <hr>.')
+            messages.error(request, error)
             # Send the user to the profile screen
             return redirect('profile')
 
@@ -1006,10 +1017,16 @@ def post_new(request):
         # Save the Post
         post.save()
 
+        if request.is_ajax():
+            return api_send_json(dict(post=render_to_string('main/post.html', {'post': post}, context)))
+
         # Add a success flash message
         messages.info(request, "Post created successfully.")
 
     except Exception, e:
+        if request.is_ajax():
+            return api_send_error(e.message)
+
         # Add the generic error
         messages.error(request, e.message)
 

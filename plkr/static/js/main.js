@@ -64,3 +64,95 @@
     $(window).mousemove(checkMouseActivity);
   });
 })();
+
+
+(function(undefined){
+  $(document).ready(function() {
+    var $file = $("#newpost-file");
+    var $form = $("#newpost");
+    var $messages = $("#messages");
+    var $tokens = $("input[name=csrfmiddlewaretoken]");
+      
+
+    // Validate the file
+    $file.change(function(){
+      var $this = $(this)
+      var file = this.files[0];
+      var name = file.name;
+      var size = file.size;
+      var type = file.type;
+      
+      if (type.indexOf("image/") !== 0) {
+        $this.val('');
+        $this.parent().addClass("has-error");
+      }
+    });
+
+    $form.submit(function(){
+      var $this = $(this);
+
+      /* Taken from http://stackoverflow.com/a/8758614 */
+      var formData = new FormData($this[0]);
+
+      console.log(formData)
+      
+      $.ajax({
+          url: $this.attr('action'),
+          type: $this.attr('method'),
+          
+          beforeSend: function() {
+            // Clear error messages
+            $messages.html("");
+
+            // Disable all controls in the form
+            $("#newpost :input").attr("disabled", "disabled");
+          },
+
+          success: function(data, status, xhr) {
+            var $posts = $("#posts")
+            var post = data.post;
+
+            // Insert the post first
+            $posts.children("h2").after(post);
+            
+            // Clear the values of input fields
+            $("#newpost input, #newpost textarea").val("");
+          },
+
+          error: function(xhr, status, error) {
+            // Show the error
+            $messages.prepend('<p class="bg-danger">' + xhr.responseJSON.message + '</p>');
+          },
+
+          complete: function(xhr) {
+            var cookies = (document.cookie? document.cookie.split(";") : [])
+            var token = null;
+
+            // Search for the csrf token cookie
+            for (i=0;i<cookies.length;++i) {
+              if (cookies[i].trim().indexOf("csrftoken") === 0) {
+                token = cookies[i].split("=")[1];
+                break;
+              }
+            }
+            
+            // Enable all controls
+            $("#newpost :input").attr("disabled", null)
+
+            // Renew the csfrtoken
+            $tokens.val(token);
+          },
+
+          // Form data
+          data: formData,
+
+          // Options to tell jQuery not to process data or worry about content-type.
+          cache: false,
+          contentType: false,
+          processData: false
+      });
+
+      return false
+    })
+  });
+})();
