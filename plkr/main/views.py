@@ -15,6 +15,11 @@ from main.models import *
 from main.remote import RemoteApi
 import cgi, datetime, json, dateutil.parser, os.path, requests, urllib, hashlib, re
 
+# This should be set as true if we are testing
+# If set as True, there's no need for an admin to approve a new user. we need to use in order to make the tests
+#   where we can easily create a new user and test without waiting for admin approval.
+TEST_MODE = False
+
 # API
 
 def api_send_json(obj):
@@ -612,7 +617,9 @@ def register(request):
                 # Create a User wiith its username, email and password
                 user = User.objects.create_user(username, email, password)
                 # Users start as inactive so the admin can activate them
-                user.is_active = False
+                # Note: If we are testing, we disbale this to auto activate users
+                if not TEST_MODE:
+                    user.is_active = False
 
                 # Create the Author and set the user and display name
                 # Update: also set the github account:
