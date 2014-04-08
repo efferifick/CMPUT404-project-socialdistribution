@@ -999,11 +999,16 @@ def post_new(request):
         if image is not None:
             post.image = image
 
+        # Set the origin and the source
+        post.origin = post.get_url()
+        post.source = post.get_url()
+
         # Save the Post
         post.save()
 
         # Add a success flash message
         messages.info(request, "Post created successfully.")
+
     except Exception, e:
         # Add the generic error
         messages.error(request, e.message)
