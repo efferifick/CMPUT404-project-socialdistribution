@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+
+{% block title %}Explore{% endblock %}
+
+{% block content %}
+	<div id="posts">
+		<h2>Public Stream</h2>
+		{% include "main/postList.html" with posts=posts %}
+
+		<script>post_reload=false;</script>
+	</div>
+{% endblock %}

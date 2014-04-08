@@ -51,6 +51,7 @@
                         {% else %}
                             <li><a href="{% url 'register' %}">Register</a></li>
                         {% endif %}
+                        <li><a href="{% url 'explore' %}">Explore</a></li>
                     </ul>
                     
                     <form class="navbar-form navbar-left" role="form" action="{% url 'search' %}" method="get">

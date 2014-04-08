@@ -11,11 +11,12 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import *
 from django.template.loader import render_to_string
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from ipware.ip import get_ip
 from main.models import *
 from main.remote import RemoteApi
-import cgi, datetime, json, dateutil.parser, os.path, requests, urllib, hashlib, re
+import cgi, datetime, json, dateutil.parser, os.path, requests, urllib, hashlib, pytz, re
 
 # API
 
@@ -727,6 +728,24 @@ def search(request):
         friendships.append((matched_author, are_friends, sent_request, received_request))
 
     return render_to_response('main/search.html', {'query': query, 'posts' : posts, 'friendships': friendships}, context)
+
+def explore(request):
+    '''
+    This view renders all public posts, both local and remote
+    '''
+    context = RequestContext(request)
+
+    # Get the local public posts
+    posts = [post for post in Post.objects.select_related().filter(visibility='PUBLIC')]
+
+    # Get the remote public posts
+    posts.extend(RemoteApi.get_public_posts())
+
+    # Sort the posts
+    posts = sorted(posts, key=lambda p: p.pubDate if timezone.is_aware(p.pubDate) else pytz.UTC.localize(p.pubDate), reverse=True) 
+
+    # Render the explore page
+    return render_to_response('main/explore.html', {'posts' : posts}, context)
 
 
 @login_required

@@ -37,6 +37,7 @@ body {
 
 .post h1 {
 	font-size: 2em;
+	margin-top: 0;
 }
 
 .post .post-body {

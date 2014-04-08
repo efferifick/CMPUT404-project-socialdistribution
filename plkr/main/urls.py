@@ -43,6 +43,9 @@ urlpatterns = patterns('',
 
 		# Search
 		url(r'^site/search$', 'main.views.search', name='search'),
+
+		# Explore - Public posts
+		url(r'^site/explore$', 'main.views.explore', name='explore'),
 		
 		# Profile - View
 		url(r'^site/profile$', 'main.views.profile', name='profile'),
