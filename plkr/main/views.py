@@ -568,7 +568,7 @@ def api_search(request):
             query = request.GET.get('query', None)
 
             # Retrieve the local authors
-            local_authors = Author.objects.filter(displayName__contains=query, host__is_local=True)
+            local_authors = Author.objects.filter(Q(displayName__contains=query) | Q(user__username__contains=query), host__is_local=True)
         else:
             # Retrieve the local authors
             local_authors = Author.objects.filter(host__is_local=True)
