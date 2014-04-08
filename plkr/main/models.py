@@ -408,6 +408,9 @@ class Post(models.Model):
         # Return if the author is following the post's author and it can view the post
         return is_following and can_view
 
+    def get_url(self):
+        return "%spost/%s" % (self.author.host.get_url(), self.id)
+
     def json(self):
         post = {} 
         post["title"] = self.title
