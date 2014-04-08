@@ -932,6 +932,7 @@ def post_new(request):
     body = request.POST.get('body')
     categories = request.POST.get('categories')
     visibility = request.POST.get('visibility')
+    recipient = request.POST.get('recipient')
     contentType = request.POST.get('contentType')
     image = request.FILES.get('image')
     error = False
@@ -960,12 +961,20 @@ def post_new(request):
         messages.error(request, 'Content Type option is required.')
         error = True
 
+    if recipient is not None and recipient != '':
+        try:
+            recipient = Author.objects.get(user__username=recipient)
+        except ObjectDoesNotExist, e:
+            # Set error
+            messages.error(request, 'The recipient does not exist on our server.')
+            error = True
+
     if error:
         if request.is_ajax():
             msgs = messages.get_messages(request)
             msgs = " ".join([str(msg) for msg in msgs])
             return api_send_error(msgs)
-            
+
         # Send the user to the profile screen
         return redirect('profile')
 
@@ -979,6 +988,7 @@ def post_new(request):
         post.content = body
         post.pubDate = datetime.datetime.now()
         post.visibility = visibility
+        post.recipient = recipient
 
         if post.contentType == 'text/html' and not validateHTML(body):
             error = "You can only use the following html tags: <a>, <b>, <blockquote>, <code>, <del>, <dd>, <dl>, <dt>, <em>, <h1>, <h2>, <h3>, <i>, <img>, <kbd>, <li>, <ol>, <p>, <pre>, <s>, <sup>, <sub>, <strong>, <strike>, <ul>, <br>, <hr>."
