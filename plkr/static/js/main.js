@@ -93,8 +93,6 @@
 
       /* Taken from http://stackoverflow.com/a/8758614 */
       var formData = new FormData($this[0]);
-
-      console.log(formData)
       
       $.ajax({
           url: $this.attr('action'),
@@ -114,6 +112,11 @@
 
             // Insert the post first
             $posts.children("h2").after(post);
+
+            // Reload the fancybox
+            if (post.indexOf("fancybox") >= 0) {
+              $(".fancybox").fancybox();
+            }
             
             // Clear the values of input fields
             $("#newpost input, #newpost textarea").val("");
@@ -154,5 +157,11 @@
 
       return false
     })
+  });
+})();
+
+(function(undefined){
+  $(document).ready(function() {
+    $(".fancybox").fancybox();
   });
 })();

@@ -42,7 +42,22 @@
 			{% elif post.contentType == 'text/x-markdown' %}
 				{{ post.content|markdown }}
 			{% endif %}
+
+			{% if post.image %}
+				<div class="post-image clearfix">
+					<a href="{{ post.image.url }}" target="_blank" class="fancybox">
+						<img src="{{ post.image.url }}" alt="{{ post.image.name }}" class="img-responsive pull-left" />
+					</a>
+				</div>
+			{% endif %}
 		{% else %}
+			{% if post.image %}
+				<div class="post-image clearfix">
+					<a href="{{ post.image.url }}" target="_blank" class="fancybox">
+						<img src="{{ post.image.url }}" alt="{{ post.image.name }}" class="img-responsive img-thumbnail pull-left" />
+					</a>
+				</div>
+			{% endif %}
 			<p>
 				{{ post.description|escape }}
 
@@ -52,14 +67,6 @@
 				<a href="{% url 'post' post_id=post.id %}">Read more</a>
 				{% endif %}
 			</p>
-		{% endif %}
-
-		{% if post.image %}
-			<div class="post-image">
-				<a href="{{ post.image.url }}">
-					<img src="{{ post.image.url }}" alt="{{ post.image.name }}" />
-				</a>
-			</div>
 		{% endif %}
 	</section>
 	

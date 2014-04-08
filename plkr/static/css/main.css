@@ -43,6 +43,10 @@ body {
 	margin: 0.9em 0;
 }
 
+.post-image img.img-thumbnail {
+	max-width: 10em;
+}
+
 .post .post-footer {
 	border-top: 1px dotted #bbb;
 	padding-top: .9em;
