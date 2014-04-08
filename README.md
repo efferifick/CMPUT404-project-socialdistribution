@@ -5,6 +5,8 @@ Welcome to our term project for CMPUT404-project-socialdistribution.
 
 See project.org (plain-text/org-mode) for a description of the project as well as required functionality. 
 
+* Demo video at: https://www.youtube.com/watch?v=SjshqZlXHBw&edit=vd
+
 
 Contributors / Licensing
 ========================
