@@ -756,8 +756,15 @@ def profile_author_remote(request, host_id, author_id):
         if author != viewer and not are_friends:
             # Determine if the viewer has sent a friend request to the author
             sent_request = author.friend_requests_received.filter(sender=viewer, accepted=False).count() > 0
+
+            # Determine if the author has sent a friend request to the viewer
+            try:
+                received_request = viewer.friend_requests_received.get(sender=author, accepted=False)
+            except Exception, e:
+                received_request = None
         else:
             sent_request = False
+            received_request = None
 
         # Get all posts from this author viewable by the viewer
         posts = author.get_posts_viewable_by(viewer)
@@ -766,7 +773,7 @@ def profile_author_remote(request, host_id, author_id):
         posts = sorted(posts, key=lambda p: p.pubDate, reverse=True) 
 
         # Render the profile template
-        return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request}, context)
+        return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request, 'received_request': received_request}, context)
 
     except Http404, e:
         raise
@@ -796,14 +803,21 @@ def profile_author(request, username):
         if author != viewer and not are_friends:
             # Determine if the viewer has sent a friend request to the author
             sent_request = author.friend_requests_received.filter(sender=viewer, accepted=False).count() > 0
+
+            # Determine if the author has sent a friend request to the viewer
+            try:
+                received_request = viewer.friend_requests_received.get(sender=author, accepted=False)
+            except Exception, e:
+                received_request = None
         else:
             sent_request = False
+            received_request = None
 
         # Get all posts from this author viewable by the viewer
         posts = author.get_posts_viewable_by(viewer)
 
         # Render the profile
-        return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request}, context)
+        return render_to_response('main/profile.html', {'posts' : posts, 'puser': user, 'friends': are_friends, 'sent_request': sent_request, 'received_request': received_request}, context)
 
     except ObjectDoesNotExist, e:
         raise Http404
@@ -1239,7 +1253,7 @@ def accept_friendship(request):
 
             # Set the success message for the user
             messages.info(request, 'The friend request has been accepted.')
-            
+
     except ObjectDoesNotExist,e:
         # Set the error message
         messages.error(request, 'The friend request does not exist.')

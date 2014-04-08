@@ -35,21 +35,25 @@
 				<input type="hidden" name="friend_id" value="{{ puser.author.id }}" />
 				<button class="btn btn-danger">Unfriend</button>
 			</form>
-		{% elif not sent_request %}
-			<div>
-				<form action="{% url 'request_friendship' %}" method="post">
-					{% csrf_token %}
-					<input type="hidden" name="friend_id" value="{{ puser.author.id }}" />
-					<input type="hidden" name="host_id" value="{{ puser.author.host.id }}" />
-					<input type="hidden" name="displayName" value="{{ puser.author.displayName }}" />
-					<button class="btn btn-primary">Add Friend</button>
-				</form>
-			</div>
-		{% else %}
+		{% elif received_request %}
+			<form action="{% url 'accept_friendship' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="request_id" value="{{ received_request.id }}" />
+				<button class="btn btn-success">Accept</button>
+			</form>
+		{% elif sent_request %}
 			<form action="{% url 'remove_friendship' %}" method="post">
 				{% csrf_token %}
 				<input type="hidden" name="friend_id" value="{{ puser.author.id }}" />
 				<button class="btn btn-warning">Cancel Friend Request</button>
+			</form>
+		{% else %}
+			<form action="{% url 'request_friendship' %}" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="friend_id" value="{{ puser.author.id }}" />
+				<input type="hidden" name="host_id" value="{{ puser.author.host.id }}" />
+				<input type="hidden" name="displayName" value="{{ puser.author.displayName }}" />
+				<button class="btn btn-primary">Add Friend</button>
 			</form>
 		{% endif %}
 	{% endif %}
