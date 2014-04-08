@@ -59,3 +59,20 @@ body {
 .comment-meta {
 	margin-bottom: 0;
 }
+
+/* Profile */
+.profile-info {
+	margin:40px 0;
+}
+
+/* Avatar */
+
+.bar_picture{
+	margin-top: -10px;
+	margin-bottom: -10px;
+}
+
+.overflow_visible{
+	overflow: visible;
+}
+
