@@ -1079,9 +1079,10 @@ def post_comment(request, post_id):
 def friends(request):
     context = RequestContext(request)
     author = request.user.author
-    friends = author.friends
-    requests = author.requests
-    return render_to_response('main/friendView.html', {'friends': friends, 'requests': requests}, context)
+    friends = author.friends()
+    requests = author.requests()
+    following = author.following()
+    return render_to_response('main/friendView.html', {'friends': friends, 'requests': requests, 'following': following}, context)
 
 @login_required
 def request_friendship(request):
@@ -1254,7 +1255,7 @@ def accept_friendship(request):
         else:
             # Get the friend
             friend = frequest.sender
-            
+
             # If friend is remote
             if not friend.is_local():
                 # First, try sending the friend request to remote host

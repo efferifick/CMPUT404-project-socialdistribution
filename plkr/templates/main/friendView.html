@@ -16,4 +16,29 @@
 		{% include "main/friendList.html" with friends=friends %}
 	</div>
 
+	<div id="following">
+		<h2>Following</h2>
+		
+		{% for friend in following %}
+			<div class="friend row" id="friend-{{ friend.id }}">
+				<div class="col-md-1">
+					{% if friend.is_local %}
+						<a href="{% url 'profile_author' username=friend.user.username %}">{{ friend.displayName }}</a>
+					{% else %}
+						<a href="{% url 'profile_author_remote' host_id=friend.host.id author_id=friend.id %}">{{ friend.displayName }}</a>
+					{% endif %}
+				</div>
+				<div class="col-md-1 col-md-offset-4">
+					<form action="{% url 'remove_friendship' %}" method="post">
+						{% csrf_token %}
+						<input type="hidden" name="friend_id" value="{{ friend.id }}" />
+						<button class="btn btn-warning">Cancel Friend Request</button>
+					</form>
+				</div>
+			</div>
+		{% empty %}
+			<p class="well">Oops, there are no friends.</p>
+		{% endfor %}
+	</div>
+
 {% endblock %}
