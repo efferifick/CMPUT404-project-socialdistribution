@@ -335,6 +335,7 @@ class Post(models.Model):
     categories = models.ManyToManyField(Category)
     pubDate = models.DateTimeField(auto_now_add=True)
     visibility = models.TextField(max_length = 10, choices = VISIBILITY_OPTIONS)
+    recipient = models.ForeignKey(Author, null=True, related_name='private_posts')
     image = models.ImageField(upload_to='posts')
 
     def can_be_viewed_by(self, author):
@@ -352,8 +353,8 @@ class Post(models.Model):
             # The post cannot be viewed
             return False
 
-        # Check if it's the same user
-        identity = self.author == author
+        # Check if it's the same user or if it's a private post for the viewer
+        identity = self.author == author or self.recipient == author
 
         # Check if the viewer is in the same host as the post author
         in_server = identity or self.author.host == author.host
