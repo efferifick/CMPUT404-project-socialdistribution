@@ -22,6 +22,10 @@ SECRET_KEY = '+*w=x(49rrq6(mwzty8#it)57$p3dej@8^5#55w=z3r34y(d8i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Are we testing?
+import sys
+TESTING = 'test' in sys.argv
+
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
