@@ -637,7 +637,7 @@ def register(request):
                     user = User.objects.create_user(username, email, password)
                     
                     # Users start as inactive so the admin can activate them (except for tests)
-                    if not TESTING:
+                    if not settings.TESTING:
                         user.is_active = False
                         user.save()
 
