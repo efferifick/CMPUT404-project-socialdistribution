@@ -1,4 +1,5 @@
 {% load markdown_deux_tags %}
+{% load humanize %}
 
 <article class="post well" id="post-{{ post.id }}">
 	<header class="post-header">
@@ -20,7 +21,7 @@
 				<a href="{% url 'profile_author_remote' host_id=post.author.host.id author_id=post.author.id %}" class="author-link">{{ post.author.displayName }}</a>
 			{% endif %}
 
-			on {{ post.pubDate|date:"D, M d, Y \a\t H:i" }}
+			<span data-toggle="tooltip" data-placement="left" title="{{ post.pubDate|date:"D, M d, Y \a\t H:i" }}">{{ post.pubDate|naturaltime }}</span>
 		</p>
 
 		{% if not post.gitHub and post.author == user.author %}
@@ -85,7 +86,9 @@
 								<a href="{% url 'profile_author_remote' host_id=comment.author.host.id author_id=comment.author.id %}" class="author-link">{{ comment.author.displayName }}</a>
 							{% endif %}
 							
-							said on {{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}:</p>
+							said
+							<span data-toggle="tooltip" data-placement="left" title="{{ comment.pubDate|date:"D, M d, Y \a\t H:i" }}">{{ comment.pubDate|naturaltime }}</span>:
+						</p>
 						<div class="comment-body">
 							{{ comment.comment|escape|linebreaks }}
 						</div>
