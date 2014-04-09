@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% load gravatar %}
+
 {% block title %}Search{% endblock %}
 
 {% block content %}
@@ -12,7 +14,13 @@
 				<h2>Users</h2>
 
 				{% for author, friends, sent_request, received_request in friendships %}
-					<div class="author row" id="author-{{ author.id }}">
+					<div class="friend row" id="author-{{ author.id }}">
+						<div class="col-md-1 friend-picture">
+							<a href="{% gravatar_url author.user.email %}" class="fancybox" target="_blank">
+								<img src="{% gravatar_url author.user.email %}" alt="{{ author.displayName }}" />
+							</a>
+						</div>
+
 						<div class="col-md-2">
 							{% if author.is_local %}
 								<a href="{% url 'profile_author' username=author.user.username %}">{{ author.displayName }}</a>
@@ -20,6 +28,7 @@
 								<a href="{% url 'profile_author_remote' host_id=author.host.id author_id=author.id %}">{{ author.displayName }}</a>
 							{% endif %}
 						</div>
+						
 						<div class="col-md-1">
 							{% if user.is_authenticated %}
 								{% if friends %}

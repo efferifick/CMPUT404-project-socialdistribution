@@ -85,4 +85,24 @@ body {
 
 .friend {
 	padding: 1em 0;
+	line-height: 38px;
+}
+
+.friend-name {
+	line-height: 16px;
+}
+
+.friendship-meta {
+	font-size: 0.9em;
+	display: inline-block;
+	width:100%;
+}
+
+.friend-picture img {
+	width: 38px;
+	height: 38px;
+}
+
+.friend-action {
+	vertical-align: center;
 }

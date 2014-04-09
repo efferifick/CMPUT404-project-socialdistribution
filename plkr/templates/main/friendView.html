@@ -23,18 +23,21 @@
 		
 		{% for friend in following %}
 			<div class="friend row" id="friend-{{ friend.id }}">
-				<div class="col-md-1">
-					<a href="{% url 'profile' %}">{% gravatar friend.user.email 40 'class="bar_picture"' %}</a>
+				<div class="col-md-1 friend-picture">
+					<a href="{% gravatar_url friend.user.email %}" class="fancybox" target="_blank">
+						<img src="{% gravatar_url friend.user.email %}" alt="{{ friend.displayName }}" />
+					</a>
 				</div>
 
-				<div class="col-md-1">
+				<div class="col-md-2">
 					{% if friend.is_local %}
 						<a href="{% url 'profile_author' username=friend.user.username %}">{{ friend.displayName }}</a>
 					{% else %}
 						<a href="{% url 'profile_author_remote' host_id=friend.host.id author_id=friend.id %}">{{ friend.displayName }}</a>
 					{% endif %}
 				</div>
-				<div class="col-md-1 col-md-offset-3">
+				
+				<div class="col-md-1 friend-action">
 					<form action="{% url 'remove_friendship' %}" method="post">
 						{% csrf_token %}
 						<input type="hidden" name="friend_id" value="{{ friend.id }}" />
