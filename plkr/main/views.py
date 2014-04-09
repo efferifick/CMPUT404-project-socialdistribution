@@ -990,6 +990,8 @@ def post_new(request):
             # Set error
             messages.error(request, 'The recipient does not exist on our server.')
             error = True
+    else:
+        recipient = None
 
     if error:
         if request.is_ajax():
