@@ -81,3 +81,8 @@ body {
 	overflow: visible;
 }
 
+/* Friend lists */
+
+.friend {
+	padding: 1em 0;
+}
